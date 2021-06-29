@@ -4,6 +4,9 @@ version = "0.0.1"
 description = "pipelines gathering data to support research at ROCS"
 authors = ["Jakob J. Kolb <jakob.j.kolb@gmail.com>"]
 
+[tool.poetry.scripts]
+
+
 [tool.poetry.dependencies]
 python = "^3.8"
 returns = "^0.16.0"
