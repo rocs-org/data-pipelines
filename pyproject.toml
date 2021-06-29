@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "data-pipelines"
+version = "0.0.1"
+description = "pipelines gathering data to support research at ROCS"
+authors = ["Jakob J. Kolb <jakob.j.kolb@gmail.com>"]
+
+[tool.poetry.scripts]
+
+
+[tool.poetry.dependencies]
+python = "^3.8"
+returns = "^0.16.0"
+
+[tool.poetry.dev-dependencies]
+flake8 = "^3.9.2"
+black = { version = "*", allow-prereleases = true } # according to https://github.com/peterjc/flake8-black#python-package-management
+flake8-black = "^0.2.1"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
