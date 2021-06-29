@@ -15,6 +15,7 @@ returns = "^0.16.0"
 flake8 = "^3.9.2"
 black = { version = "*", allow-prereleases = true } # according to https://github.com/peterjc/flake8-black#python-package-management
 flake8-black = "^0.2.1"
+pytest = "^6.2.4"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
