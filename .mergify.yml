@@ -1,0 +1,15 @@
+pull_request_rules:
+  - name: Automatic merge on approval and passing checks
+    conditions:
+      - "#approved-reviews-by>=1"
+      - check-success=integration-tests
+      - check-success=build-and-unit-test (3.8, 1.1.6)
+    actions:
+      merge:
+        method: merge
+        
+  - name: delete head branch after merge
+    conditions:
+      - merged
+    actions:
+      delete_head_branch:
