@@ -3,3 +3,10 @@
 
 # cache
 **/__pycache__
+.gitsecret/keys/random_seed
+
+# logs
+/logs/*
+
+# environments
+.env
