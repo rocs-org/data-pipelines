@@ -10,9 +10,9 @@ This project uses [poetry](https://python-poetry.org/) for package management.
 
 1. Install poetry: `$pip install --user poetry`
 2. Install and set up docker and docker-compose 
-3. Install dependencies: `poetry install`
-4. Spin up containers: `docker-compose up -d`
-5. Run tests: `docker exec airflow_sheduler poetry run pytest -v`
+3. Install dependencies: `$poetry install`
+4. Spin up containers: `$docker-compose up -d`
+5. Run tests: `$make test` or open the Airflow UI on `localhost:8080` and login with username: `airflow` and password: `airflow`
 
 ## Contribute:
 
