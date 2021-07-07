@@ -10,6 +10,7 @@ authors = ["Jakob J. Kolb <jakob.j.kolb@gmail.com>"]
 [tool.poetry.dependencies]
 python = "^3.8"
 returns = "^0.16.0"
+apache-airflow = "^2.1.1"
 
 [tool.poetry.dev-dependencies]
 flake8 = "^3.9.2"
@@ -17,6 +18,7 @@ black = { version = "*", allow-prereleases = true } # according to https://githu
 flake8-black = "^0.2.1"
 pytest = "^6.2.4"
 pytest-watch = "^4.2.0"
+testfixtures = "^6.17.1"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
