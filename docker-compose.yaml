@@ -27,6 +27,8 @@ x-airflow-common:
   build: .
   environment:
     &airflow-common-env
+    LD_PRELOAD: /usr/lib/x86_64-linux-gnu/libstdc++.so.6 # workaround for TLS allocation errors according to https://bugs.launchpad.net/ubuntu/+source/opencv/+bug/1890170
+    AIRFLOW__WEBSERVER__EXPOSE_CONFIG: 'true'
     AIRFLOW__CORE__EXECUTOR: CeleryExecutor
     AIRFLOW__CORE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
     AIRFLOW__CELERY__RESULT_BACKEND: db+postgresql://airflow:airflow@postgres/airflow
@@ -37,7 +39,7 @@ x-airflow-common:
     AIRFLOW__API__AUTH_BACKEND: 'airflow.api.auth.backend.basic_auth'
   volumes:
     - ./dags:/opt/airflow/dags
-    - ./logs:/opt/airflow/logs
+    - airflow-logs-volume:/opt/airflow/logs
     - ./plugins:/opt/airflow/plugins
     - ./src:/opt/airflow/src
     - ./poetry.lock:/opt/airflow/poetry.lock
@@ -140,3 +142,4 @@ services:
 
 volumes:
   postgres-db-volume:
+  airflow-logs-volume:
