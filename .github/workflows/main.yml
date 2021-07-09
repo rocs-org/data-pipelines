@@ -41,7 +41,7 @@ jobs:
       - name: Lint and style check with flake8 and black
         run: poetry run flake8 && poetry run black --check .
       - name: Run unit tests
-        run: poetry run pytest
+        run: make unittest
   integration-tests:
     # this workflow runs tests on the full docker stack
     runs-on: ubuntu-latest
@@ -50,8 +50,8 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Build docker stack
-        run: docker-compose up -d
+        run: make setup
       - name: Check running containers
         run: docker ps
       - name: Run tests
-        run: make test
+        run: make integrationtest
