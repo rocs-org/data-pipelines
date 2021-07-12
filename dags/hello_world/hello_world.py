@@ -11,7 +11,7 @@ from returns.curry import curry
 def pull_execute_push(origin_key: str, target_key: str, function):
     def wrapper(ti: TaskInstance):
         data = ti.xcom_pull(key=origin_key)
-        ti.xcom_push(key=target_key, value=function(data))
+        ti.xcom_push(key=target_key, value=function(data=data))
 
     return wrapper
 
@@ -20,7 +20,7 @@ def pull_execute_push(origin_key: str, target_key: str, function):
 def pull_execute(origin_key: str, function):
     def wrapper(ti: TaskInstance):
         data = ti.xcom_pull(key=origin_key)
-        function(data)
+        function(data=data)
 
     return wrapper
 

@@ -25,6 +25,8 @@ version: '3'
 x-airflow-common:
   &airflow-common
   build: .
+  env_file: 
+    .env
   environment:
     &airflow-common-env
     LD_PRELOAD: /usr/lib/x86_64-linux-gnu/libstdc++.so.6 # workaround for TLS allocation errors according to https://bugs.launchpad.net/ubuntu/+source/opencv/+bug/1890170
@@ -44,6 +46,7 @@ x-airflow-common:
     - ./src:/opt/airflow/src
     - ./poetry.lock:/opt/airflow/poetry.lock
     - ./pyproject.toml:/opt/airflow/pyproject.toml
+    - ./setup.cfg:/opt/airflow/setup.cfg
   user: "${AIRFLOW_UID:-50000}:${AIRFLOW_GID:-50000}"
   depends_on:
     redis:
@@ -55,6 +58,7 @@ x-airflow-common:
 
 services:
   target-db:
+    container_name: "${TARGET_DB_HOSTNAME}"
     image: postgres:13
     environment: 
       POSTGRES_USER: "${TARGET_DB_USER}"
@@ -67,6 +71,8 @@ services:
       interval: 5s
       retries: 5
     restart: always
+    ports: 
+      - 5432:${TARGET_DB_PORT}
 
   postgres:
     image: postgres:13
