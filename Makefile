@@ -11,7 +11,7 @@ integrationtest:
 	docker exec airflow-scheduler pytest -v -k 'integration'
 
 watch:
-	docker exec airflow-scheduler poetry run ptw
+	docker exec airflow-scheduler poetry run pytest -k 'not integration' -f --ignore ./logs
 
 lint:
 	poetry run flake8 && poetry run black --check
