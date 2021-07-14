@@ -76,6 +76,8 @@ jobs:
           git-secret reveal
       - name: Build docker stack
         run: make setup
+      - name: Wait for container health
+        run: bash wait-for-healthy-container.sh airflow-scheduler 120
       - name: Setup tmate session
         uses: mxschmitt/action-tmate@v3
         if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.debug_enabled }}
