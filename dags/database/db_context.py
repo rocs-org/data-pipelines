@@ -44,8 +44,19 @@ def create_db_context() -> DB_Context:
     )()
 
 
-def teardown_db_context(context: DB_Context):
+def teardown_db_context(context: DB_Context) -> DB_Context:
     context["connection"].close()
+    return context
+
+
+def teardown_test_db_context(context: DB_Context) -> DB_Context:
+    context["connection"].close()
+
+    new_context = _create_db_context_with_autocommit()
+    execute_sql(
+        new_context, f"DROP DATABASE {R.path(['credentials', 'database'], context)};"
+    )
+    new_context["connection"].close()
     return context
 
 
@@ -55,7 +66,7 @@ def create_test_db_context() -> DB_Context:
         _create_random_db_name,
         _create_database,
         teardown_db_context,
-        _recreate_context,
+        _update_connection_in_context,
     )()
 
 
@@ -107,7 +118,7 @@ def _read_db_credentials_from_env() -> DB_Credentials:
     }
 
 
-def _connect_to_db(credentials: dict) -> Connection:
+def _connect_to_db(credentials: DB_Credentials) -> Connection:
     return psycopg2.connect(connection_factory=Connection, **credentials)
 
 
@@ -118,7 +129,9 @@ _create_context_from_credentials = R.apply_spec(
     }
 )
 
-_recreate_context = pipe(R.prop("credentials"), _create_context_from_credentials)
+_update_connection_in_context = pipe(
+    R.prop("credentials"), _create_context_from_credentials
+)
 
 
 def _create_random_db_name(context: DB_Context) -> DB_Context:

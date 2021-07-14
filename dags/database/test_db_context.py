@@ -1,8 +1,11 @@
 from os import environ
 import pytest
 import psycopg2
+from psycopg2.errors import OperationalError
 import ramda as R
+from returns.pipeline import pipe
 from .db_context import (
+    _connect_to_db,
     create_db_context,
     create_test_db_context,
     pipe0,
@@ -11,6 +14,7 @@ from .db_context import (
     query_one_element,
     teardown_db_context,
     execute_sql,
+    teardown_test_db_context,
 )
 
 
@@ -30,7 +34,6 @@ def test_create_db_context():
 def test_teardown_db_context():
 
     db_context = pipe0(create_db_context, teardown_db_context)()
-
     # assert that connection is closed after teardown
     assert db_context["connection"].closed == 1
 
@@ -39,7 +42,7 @@ def test_teardown_db_context():
 def db_context():
     context = create_test_db_context()
     yield context
-    teardown_db_context(context)
+    teardown_test_db_context(context)
 
 
 def test_db_connection_read_write(db_context):
@@ -76,6 +79,13 @@ def test_db_connection_read_write(db_context):
         )
         == (1, "Hello", "World!")
     )
+
+
+def test_teardown_test_db_context():
+    context = create_test_db_context()
+    teardown_test_db_context(context)
+    with pytest.raises(OperationalError):
+        pipe(R.prop("credentials"), _connect_to_db)(context)
 
 
 def test_read_credentials():
