@@ -1,3 +1,4 @@
+from typing import Any
 import psycopg2
 from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
 import os
@@ -6,72 +7,85 @@ import string
 from returns.pipeline import pipe
 from returns.curry import curry
 import ramda as R
+from typing import TypedDict
 
 from psycopg2.extensions import connection, cursor
 
 
-def teardown_db_context(context):
-    context["connection"].close()
-    return context
-
-
-@curry
-def execute_sql(context, sql, data=None):
-    return pipe(
-        R.prop("connection"),
-        _get_cursor_from_db_connection,
-        _execute_sql_on_cursor(sql, data=data),
-        lambda c: c.close(),
-    )(context)
-
-
-@curry
-def execute_sql_and_return_cursor(context, sql):
-    return pipe(
-        R.prop("connection"),
-        _get_cursor_from_db_connection,
-        _execute_sql_on_cursor(sql),
-    )(context)
-
-
-@curry
-def query_one_element(context, sql):
-    cursor = execute_sql_and_return_cursor(context, sql)
-    res = cursor.fetchone()[0]
-    cursor.close()
-    return res
-
-
-@curry
-def query_all_elements(context, sql):
-    cursor = execute_sql_and_return_cursor(
-        context,
-        sql,
-    )
-    res = cursor.fetchall()[0]
-    cursor.close()
-    return res
-
-
-def create_test_db_context():
-    return pipe0(
-        _create_db_context_with_autocommit,
-        R.assoc_path(["credentials", "database"], _get_random_string(8).lower()),
-        _create_database,
-        teardown_db_context,
-        recreate_context,
-    )()
-
-
 class Connection(connection):
-    def __copy__(self):
-        return self
+    # this is a hack. Ramda wants to deepcopy objects,
+    # so psycopg connections have to pretend to be able
+    # to support this.
 
     def __deepcopy__(self, memo):
         return self
 
 
 psycopg2.extensions.connection = Connection
+
+
+class DB_Credentials(TypedDict):
+    user: str
+    password: str
+    database: str
+    host: str
+    port: int
+
+
+class DB_Context(TypedDict):
+    credentials: DB_Credentials
+    connection: Connection
+
+
+def create_db_context() -> DB_Context:
+    return pipe0(
+        _read_db_credentials_from_env,
+        _create_context_from_credentials,
+    )()
+
+
+def teardown_db_context(context: DB_Context):
+    context["connection"].close()
+    return context
+
+
+def create_test_db_context() -> DB_Context:
+    return pipe0(
+        _create_db_context_with_autocommit,
+        _create_random_db_name,
+        _create_database,
+        teardown_db_context,
+        _recreate_context,
+    )()
+
+
+@curry
+def execute_sql(context, sql: str, data=None) -> None:
+    return pipe(
+        R.prop("connection"),
+        _get_cursor_from_db_connection,
+        _execute_sql_on_cursor(sql, data=data),
+        lambda cursor: cursor.close(),
+    )(context)
+
+
+@curry
+def query_one_element(context, sql: str) -> Any:
+    cursor = _execute_sql_and_return_cursor(context, sql)
+    res = cursor.fetchone()[0]
+    cursor.close()
+    return res
+
+
+@curry
+def query_all_elements(context, sql: str) -> Any:
+    cursor = _execute_sql_and_return_cursor(
+        context,
+        sql,
+    )
+    res = cursor.fetchall()[0]
+    cursor.close()
+    return res
 
 
 @curry
@@ -83,7 +97,7 @@ def pipe0(foo, *other_functions):
     return patched_pipe
 
 
-def _read_db_credentials_from_env():
+def _read_db_credentials_from_env() -> DB_Credentials:
     return {
         "user": os.environ["TARGET_DB_USER"],
         "password": os.environ["TARGET_DB_PW"],
@@ -93,21 +107,46 @@ def _read_db_credentials_from_env():
     }
 
 
-def _connect_to_db(credentials):
+def _connect_to_db(credentials: dict) -> Connection:
     return psycopg2.connect(connection_factory=Connection, **credentials)
 
 
-def _get_cursor_from_db_connection(connection):
+_create_context_from_credentials = R.apply_spec(
+    {
+        "connection": _connect_to_db,
+        "credentials": R.identity,
+    }
+)
+
+_recreate_context = pipe(R.prop("credentials"), _create_context_from_credentials)
+
+
+def _create_random_db_name(context: DB_Context) -> DB_Context:
+    return R.assoc_path(["credentials", "database"], _get_random_string(8).lower())(
+        context
+    )
+
+
+@curry
+def _execute_sql_and_return_cursor(context, sql):
+    return pipe(
+        R.prop("connection"),
+        _get_cursor_from_db_connection,
+        _execute_sql_on_cursor(sql),
+    )(context)
+
+
+def _get_cursor_from_db_connection(connection: Connection) -> cursor:
     return connection.cursor()
 
 
 @curry
-def _set_isolation_level(isolation_level, connection):
+def _set_isolation_level(isolation_level: int, connection: Connection) -> Connection:
     connection.set_isolation_level(isolation_level)
     return connection
 
 
-def _create_db_context_with_autocommit():
+def _create_db_context_with_autocommit() -> DB_Context:
     return pipe0(
         _read_db_credentials_from_env,
         R.apply_spec(
@@ -122,33 +161,18 @@ def _create_db_context_with_autocommit():
 
 
 @curry
-def _execute_sql_on_cursor(sql, c: cursor, data=None) -> cursor:
+def _execute_sql_on_cursor(sql: str, c: cursor, data=None) -> cursor:
     c.execute(sql, data)
     return c
 
 
 @curry
-def _create_database(context):
+def _create_database(context: DB_Context) -> DB_Context:
     execute_sql(
         context, f"CREATE DATABASE {R.path(['credentials', 'database'], context)};"
     )
     return context
 
 
-def _get_random_string(length):
+def _get_random_string(length: int) -> str:
     return "".join(random.choice(string.ascii_letters) for i in range(length))
-
-
-create_context_from_credentials = R.apply_spec(
-    {
-        "connection": _connect_to_db,
-        "credentials": R.identity,
-    }
-)
-
-recreate_context = pipe(R.prop("credentials"), create_context_from_credentials)
-
-create_db_context = pipe0(
-    _read_db_credentials_from_env,
-    create_context_from_credentials,
-)
