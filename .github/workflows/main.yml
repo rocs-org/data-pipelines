@@ -12,6 +12,11 @@ on:
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
+    inputs:
+      debug_enabled:
+        description: 'Run the build with tmate debugging enabled (https://github.com/marketplace/actions/debugging-with-tmate)'     
+        required: false
+        default: false
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -71,6 +76,9 @@ jobs:
           git-secret reveal
       - name: Build docker stack
         run: make setup
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
+        if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.debug_enabled }}
       - name: Check running containers
         run: docker ps
       - name: Run tests
