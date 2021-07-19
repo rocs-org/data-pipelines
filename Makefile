@@ -5,13 +5,13 @@ down:
 	docker-compose down -v
 
 unittest:
-	poetry run pytest -v -k 'not integration'
+	docker exec airflow-scheduler poetry run pytest -v -k 'not integration'
 
 integrationtest: 
-	docker exec airflow_worker pytest -v -k 'integration'
+	docker exec airflow-scheduler pytest -v -k 'integration'
 
 watch:
-	docker exec airflow_sheduler poetry run ptw
+	docker exec airflow-scheduler poetry run pytest -k 'not integration' -f --ignore ./logs
 
 lint:
 	poetry run flake8 && poetry run black --check
