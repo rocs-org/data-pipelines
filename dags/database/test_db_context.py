@@ -6,6 +6,7 @@ import ramda as R
 from returns.pipeline import pipe
 from .db_context import (
     _connect_to_db,
+    close_cursor,
     create_db_context,
     create_test_db_context,
     pipe0,
@@ -15,6 +16,7 @@ from .db_context import (
     teardown_db_context,
     execute_sql,
     teardown_test_db_context,
+    open_cursor
 )
 
 
@@ -77,7 +79,7 @@ def test_db_connection_read_write(db_context):
              SELECT * FROM test_table;
         """,
         )
-        == (1, "Hello", "World!")
+        == [(1, "Hello", "World!")]
     )
 
 
@@ -91,3 +93,44 @@ def test_teardown_test_db_context():
 def test_read_credentials():
     credentials = _read_db_credentials_from_env()
     assert credentials["user"] == environ["TARGET_DB_USER"]
+
+
+def test_open_cursor(db_context):
+
+    with_cursor = open_cursor(db_context)
+    assert with_cursor["cursor"] is not None
+    assert with_cursor["cursor"].closed == 0
+
+
+def test_close_cursor(db_context):
+
+    with_cursor = open_cursor(db_context)
+
+    cursor = with_cursor["cursor"]
+
+    assert cursor.closed == 0
+
+    close_cursor(with_cursor)
+
+    assert cursor.closed == 1
+
+
+# is Ramda working as expected?
+def test_invoker():
+    class TestClass:
+        def one(self):
+            return 1
+
+    one = R.invoker(0, "one")(TestClass())
+    assert one == 1
+
+
+def test_use_with_lambda():
+    def add(x, y):
+        return x + y
+
+    two = R.use_with(R.add, [lambda x: x, R.identity])(1, 1)
+    assert two == 2
+
+    three = R.use_with(R.add, [R.pipe(R.identity), R.identity])(1, 2)
+    assert three == 3
