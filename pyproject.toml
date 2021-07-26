@@ -4,14 +4,12 @@ version = "0.0.1"
 description = "pipelines gathering data to support research at ROCS"
 authors = ["Jakob J. Kolb <jakob.j.kolb@gmail.com>"]
 
-[tool.poetry.scripts]
-
-
 [tool.poetry.dependencies]
 python = "^3.8"
 returns = "^0.16.0"
 apache-airflow = "^2.1.1"
-ramda = "^0.6.0"
+fsspec = "^2021.7.0"
+ramda = "^0.6.1"
 
 [tool.poetry.dev-dependencies]
 flake8 = "^3.9.2"
@@ -21,8 +19,14 @@ pytest = "^6.2.4"
 testfixtures = "^6.17.1"
 pytest-xdist = "^2.3.0"
 mypy = "^0.910"
+responses = "^0.13.3"
+types-requests = "^2.25.0"
+pytest-dotenv = "^0.5.2"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
 
+[tool.pytest]
+env_files =".env"
+looponfailroots="dags"
