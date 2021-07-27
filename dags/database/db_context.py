@@ -1,4 +1,4 @@
-from typing import Any, Callable, List
+from typing import Any, List
 import psycopg2
 import psycopg2.extras
 from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
@@ -11,6 +11,8 @@ import ramda as R
 from typing import TypedDict
 
 from psycopg2.extensions import connection, cursor
+from dags.airflow_fp import pipe0
+
 
 # this is a hack. Ramda wants to deepcopy objects,
 # so psycopg connections have to pretend to be able
@@ -175,15 +177,6 @@ def query_all_elements(context, sql: str) -> Any:
     res = cursor.fetchall()
     cursor.close()
     return res
-
-
-@curry
-def pipe0(foo, *other_functions):
-    # ugly hack because pipe does not work with functions without any args.
-    def patched_pipe(*throwaway_args):
-        return pipe(lambda x: foo(), *other_functions)("blub")
-
-    return patched_pipe
 
 
 def _read_db_credentials_from_env() -> DB_Credentials:

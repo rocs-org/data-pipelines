@@ -2,7 +2,6 @@ from dags.database.db_context import (
     create_test_db_context,
     execute_sql,
     query_all_elements,
-    query_one_element,
     teardown_test_db_context,
 )
 

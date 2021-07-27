@@ -1,4 +1,4 @@
-from dags.database.db_context import create_test_db_context, pipe0
+from dags.airflow_fp import pipe0
 from typing import Callable, List
 from pandas.core.frame import DataFrame
 import requests
@@ -11,15 +11,12 @@ from airflow import DAG
 from airflow.utils.dates import days_ago
 from airflow.operators.python import PythonOperator
 
-try:
-    from dags.database import (
-        DB_Context,
-        execute_values,
-        create_db_context,
-        teardown_db_context,
-    )
-except ModuleNotFoundError:
-    from database import DB_Context, execute_values  # type: ignore
+from dags.database import (
+    DB_Context,
+    execute_values,
+    create_db_context,
+    teardown_db_context,
+)
 
 URL = "https://shitcloud.hopto.org/s/JoM6bZiQ24gRze2/download/test.csv"
 
