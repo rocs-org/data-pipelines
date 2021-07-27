@@ -45,8 +45,10 @@ jobs:
         run: make setup
       - name: Wait for container health
         run: bash wait-for-healthy-container.sh airflow-scheduler 120
-      - name: Lint and style check with flake8 and black
+      - name: Lint with flake8
         run: make lint
+      - name: Check code styles with black
+        run: make stylecheck
       - name: Run unit tests
         run: make unittest
   integration-tests:

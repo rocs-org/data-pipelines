@@ -1,5 +1,5 @@
 from .db_context import DB_Context
-from yoyo import migrations, read_migrations, get_backend
+from yoyo import read_migrations, get_backend
 import pathlib
 import ramda as R
 
