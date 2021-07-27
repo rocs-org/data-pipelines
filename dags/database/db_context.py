@@ -1,4 +1,4 @@
-from typing import Any, List
+from typing import Any, Callable, List
 import psycopg2
 import psycopg2.extras
 from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
@@ -11,7 +11,6 @@ import ramda as R
 from typing import TypedDict
 
 from psycopg2.extensions import connection, cursor
-
 
 # this is a hack. Ramda wants to deepcopy objects,
 # so psycopg connections have to pretend to be able
@@ -135,8 +134,25 @@ def create_test_db_context() -> DB_Context:
 @curry
 def execute_sql(context, sql: str, data=None) -> None:
     return R.pipe(
-        R.apply(
-            R.use_with(_execute_sql_on_cursor, [open_cursor, R.identity, R.identity])
+        R.try_catch(
+            R.apply(
+                R.use_with(
+                    _execute_sql_on_cursor, [open_cursor, R.identity, R.identity]
+                )
+            ),
+            R.unapply(
+                R.pipe(
+                    R.tap(
+                        R.pipe(
+                            R.nth(1),
+                            R.head,
+                            rollback_changes,
+                        )
+                    ),
+                    R.head,
+                    raiser,
+                )
+            ),
         ),
         close_cursor,
     )([context, sql, data])
@@ -248,3 +264,7 @@ def _create_database(context: DB_Context) -> DB_Context:
 
 def _get_random_string(length: int) -> str:
     return "".join(random.choice(string.ascii_letters) for i in range(length))
+
+
+def raiser(err):
+    raise err

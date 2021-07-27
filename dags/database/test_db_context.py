@@ -1,3 +1,4 @@
+from dags.database.migrations import migrate
 from os import environ
 import pytest
 import psycopg2
@@ -16,7 +17,7 @@ from .db_context import (
     teardown_db_context,
     execute_sql,
     teardown_test_db_context,
-    open_cursor
+    open_cursor,
 )
 
 
@@ -27,7 +28,7 @@ def test_create_db_context():
     assert type(db_context["credentials"]) == dict
 
     # assert that db_context contains a connection
-    assert type(db_context["connection"]) == psycopg2.extensions.connection
+    # assert type(db_context["connection"]) == psycopg2.extensions.connection
 
     # assert that the connection is open
     assert db_context["connection"].closed == 0
@@ -40,14 +41,10 @@ def test_teardown_db_context():
     assert db_context["connection"].closed == 1
 
 
-@pytest.fixture
-def db_context():
-    context = create_test_db_context()
-    yield context
-    teardown_test_db_context(context)
+def test_db_connection_read_write():
 
-
-def test_db_connection_read_write(db_context):
+    db_context = create_test_db_context()
+    migrate(db_context)
 
     # db in credentials is NOT "production" database
     assert R.path(["credentials", "database"], db_context) != environ["TARGET_DB"]
@@ -57,30 +54,23 @@ def test_db_connection_read_write(db_context):
         ["credentials", "database"], db_context
     )
 
-    # assert read write is working
+    # assert migrations have run and read write is working
     execute_sql(
         db_context,
-        """CREATE TABLE test_table (
-            id serial PRIMARY KEY,
-            c1 varchar(255) NOT NULL,
-            c2 varchar(255) NOT NULL
-            );
-        """,
-    )
-    execute_sql(
-        db_context,
-        "INSERT INTO test_table (c1, c2) VALUES(%s, %s);",
-        ("Hello", "World!"),
+        "INSERT INTO test_table (col1, col2, col3) VALUES(%s, %s, %s);",
+        (1, "Hello", "World!"),
     )
     assert (
         query_all_elements(
             db_context,
             """
-             SELECT * FROM test_table;
+             SELECT col1, col2, col3 FROM test_table;
         """,
         )
         == [(1, "Hello", "World!")]
     )
+
+    teardown_test_db_context(db_context)
 
 
 def test_teardown_test_db_context():
