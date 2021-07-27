@@ -1,7 +1,6 @@
 from dags.database.migrations import migrate
 from os import environ
 import pytest
-import psycopg2
 from psycopg2.errors import OperationalError
 import ramda as R
 from returns.pipeline import pipe
