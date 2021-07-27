@@ -1,4 +1,4 @@
-from typing import Any, Callable, List
+from typing import Any, List
 import psycopg2
 import psycopg2.extras
 from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
@@ -11,6 +11,7 @@ import ramda as R
 from typing import TypedDict
 
 from psycopg2.extensions import connection, cursor
+
 
 # this is a hack. Ramda wants to deepcopy objects,
 # so psycopg connections have to pretend to be able
