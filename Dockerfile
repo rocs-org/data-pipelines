@@ -24,7 +24,7 @@ RUN pip install "poetry==$POETRY_VERSION"
 
 WORKDIR /opt/airflow/
 
-COPY poetry.lock pyproject.toml /opt/airflow/
+COPY poetry.lock pyproject.toml .flake8 /opt/airflow/
 
 RUN poetry install $(test "$YOUR_ENV" == production && echo "--no-dev") --no-interaction --no-ansi
 
