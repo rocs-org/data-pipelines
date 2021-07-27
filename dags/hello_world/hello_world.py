@@ -7,7 +7,7 @@ from airflow.utils.dates import days_ago
 try:
     from dags.airflow_fp import pull_execute_push, pull_execute, execute_push
 except ModuleNotFoundError:
-    from airflow_fp import pull_execute_push, pull_execute, execute_push
+    from airflow_fp import pull_execute_push, pull_execute, execute_push  # type: ignore
 
 
 def extract() -> str:
