@@ -28,7 +28,6 @@ jobs:
       fail-fast: false
       matrix:
         python-version: [3.8]
-        poetry-version: [1.1.6]
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
@@ -42,20 +41,14 @@ jobs:
         run: |
           sudo apt install git-secret
           git-secret reveal
-      - name: Set up Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: ${{ matrix.python-version }}
-      - name: Setup poetry
-        uses: abatilo/actions-poetry@v2.0.0
-        with:
-          poetry-version: ${{ matrix.poetry-version }}
-      - name: Install dependencies
-        run: poetry install
-      - name: Lint and style check with flake8 and black
-        run: poetry run flake8 && poetry run black --check .
       - name: Build docker stack
         run: make setup
+      - name: Wait for container health
+        run: bash wait-for-healthy-container.sh airflow-scheduler 120
+      - name: Lint with flake8
+        run: make lint
+      - name: Check code styles with black
+        run: make stylecheck
       - name: Run unit tests
         run: make unittest
   integration-tests:
@@ -78,10 +71,10 @@ jobs:
         run: make setup
       - name: Wait for container health
         run: bash wait-for-healthy-container.sh airflow-scheduler 120
+      - name: Run DB migrations
+        run: make migrations
       - name: Setup tmate session
         uses: mxschmitt/action-tmate@v3
         if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.debug_enabled }}
-      - name: Check running containers
-        run: docker ps
       - name: Run tests
         run: make integrationtest
