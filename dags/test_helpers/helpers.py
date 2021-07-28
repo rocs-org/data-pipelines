@@ -1,10 +1,12 @@
 import typing
 import functools
+from psycopg2.extensions import JSON
 import responses
 from io import StringIO
 import subprocess
 import os
 import pytest
+import json
 from dags.database import (
     teardown_test_db_context,
     create_test_db_context,
@@ -28,20 +30,24 @@ def db_context():
     teardown_test_db_context(context)
 
 
-def execute_dag(dag_id: str, execution_date: str, environment: dict = {}):
+def execute_dag(dag_id: str, execution_date: str, dag_config: dict = {}):
     """Execute a DAG in a specific date this process wait for DAG run or fail to continue"""
-    env = R.merge(os.environ.copy(), environment)
-    print(env)
+
+    subprocess.Popen(["airflow", "tasks", "clear", dag_id, "-y"])
+
     process = subprocess.Popen(
         [
             "airflow",
             "dags",
             "backfill",
+            "-v",
+            "-l",
             "-s",
             execution_date,
+            "-c",
+            json.dumps(dag_config),
             dag_id,
         ],
-        env=env,
     )
     process.communicate()[0]
     return process.returncode

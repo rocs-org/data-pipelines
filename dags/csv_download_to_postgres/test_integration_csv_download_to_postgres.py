@@ -1,4 +1,9 @@
-from dags.database.db_context import DB_Context
+from dags.database.db_context import (
+    DB_Context,
+    execute_sql,
+    query_all_elements,
+    _create_context_from_credentials,
+)
 from airflow.models import DagBag
 
 try:
@@ -16,11 +21,15 @@ def test_dag_loads_with_no_errors():
 
 def test_dag_executes_with_no_errors(db_context: DB_Context):
     credentials = db_context["credentials"]
+
     assert (
         execute_dag(
             "example_csv_to_postgres",
-            "2021-01-01",
+            "2021-01-06",
             {"TARGET_DB": credentials["database"]},
         )
         == 0
     )
+    res = query_all_elements(db_context, "SELECT * FROM test_table")
+
+    assert len(res) == 2
