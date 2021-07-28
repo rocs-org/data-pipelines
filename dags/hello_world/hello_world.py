@@ -3,34 +3,8 @@ from datetime import timedelta
 from airflow import DAG
 from airflow.operators.python import PythonOperator
 from airflow.utils.dates import days_ago
-from airflow.models.taskinstance import TaskInstance
-from returns.curry import curry
 
-
-@curry
-def pull_execute_push(origin_key: str, target_key: str, function):
-    def wrapper(ti: TaskInstance):
-        data = ti.xcom_pull(key=origin_key)
-        ti.xcom_push(key=target_key, value=function(data=data))
-
-    return wrapper
-
-
-@curry
-def pull_execute(origin_key: str, function):
-    def wrapper(ti: TaskInstance):
-        data = ti.xcom_pull(key=origin_key)
-        function(data=data)
-
-    return wrapper
-
-
-@curry
-def execute_push(target_key: str, function):
-    def wrapper(ti: TaskInstance):
-        ti.xcom_push(key=target_key, value=function())
-
-    return wrapper
+from dags.airflow_fp import pull_execute_push, pull_execute, execute_push
 
 
 def extract() -> str:
