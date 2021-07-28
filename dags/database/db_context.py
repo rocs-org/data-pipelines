@@ -100,7 +100,7 @@ def execute_values(context: DB_Context, query: str, tuples: List[Any]) -> DB_Con
     )(context, query, tuples)
 
 
-def create_db_context() -> DB_Context:
+def create_db_context(*args) -> DB_Context:
     return pipe0(
         _read_db_credentials_from_env,
         _create_context_from_credentials,
