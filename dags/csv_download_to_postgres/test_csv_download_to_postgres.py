@@ -28,16 +28,16 @@ csv_content = """col1,col2,col3
 def test_check_if_var_exists_in_dag_conf():
     assert (
         check_if_var_exists_in_dag_conf("var", {"dag_run": {"conf": {"var": "value"}}})
-        == True
+        is True
     )
     assert (
         check_if_var_exists_in_dag_conf(
             "varrr", {"dag_run": {"conf": {"var": "value"}}}
         )
-        == False
+        is False
     )
-    assert check_if_var_exists_in_dag_conf("var", {"dag_run": {}}) == False
-    assert check_if_var_exists_in_dag_conf("var", {}) == False
+    assert check_if_var_exists_in_dag_conf("var", {"dag_run": {}}) is False
+    assert check_if_var_exists_in_dag_conf("var", {}) is False
 
 
 def test_set_env_variable():

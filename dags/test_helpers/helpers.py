@@ -1,6 +1,5 @@
 import typing
 import functools
-from psycopg2.extensions import JSON
 import responses
 from io import StringIO
 import subprocess
@@ -12,7 +11,6 @@ from dags.database import (
     create_test_db_context,
     migrate,
 )
-import ramda as R
 
 
 @pytest.fixture
