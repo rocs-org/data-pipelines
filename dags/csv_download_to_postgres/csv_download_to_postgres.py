@@ -1,5 +1,3 @@
-from ramda.T import T
-from dags.airflow_fp import pipe0
 from typing import Callable, List
 from pandas.core.frame import DataFrame
 import requests
