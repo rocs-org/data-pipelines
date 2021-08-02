@@ -3,12 +3,14 @@ import pytest
 import os
 import psycopg2
 from .csv_download_to_postgres import (
-    check_if_var_exists_in_dag_conf,
     download_csv,
     download_csv_and_upload_to_postgres,
-    set_env_variable,
-    set_env_variable_from_dag_config,
     write_dataframe_to_postgres,
+)
+from ..test_helpers.helpers import (
+    set_env_variable,
+    check_if_var_exists_in_dag_conf,
+    set_env_variable_from_dag_config_if_present,
 )
 from dags.database.db_context import (
     DB_Context,
@@ -46,13 +48,14 @@ def test_set_env_variable():
 
 
 def test_set_env_variable_from_dag_config():
-    set_env_variable_from_dag_config("var")({"dag_run": {"conf": {"var": "value"}}})
+    set_env_variable_from_dag_config_if_present("var")(
+        {"dag_run": {"conf": {"var": "value"}}}
+    )
     assert os.environ.get("var") == "value"
 
 
 @with_downloadable_csv(url=URL, content=csv_content)
 def test_download_csv_and_write_to_postgres_happy_path(db_context):
-
     table = "test_table"
 
     download_csv_and_upload_to_postgres(URL, table)
@@ -69,7 +72,6 @@ def test_download_csv_and_write_to_postgres_happy_path(db_context):
 
 @with_downloadable_csv(url=URL, content=csv_content)
 def test_download_csv_and_write_to_postgres_picks_up_injected_db_name(db_context):
-
     table = "test_table"
 
     with pytest.raises(psycopg2.OperationalError) as exception_info:
@@ -83,7 +85,6 @@ def test_download_csv_and_write_to_postgres_picks_up_injected_db_name(db_context
 
 @with_downloadable_csv(url=URL, content=csv_content)
 def test_download_csv():
-
     result = download_csv(URL)
 
     assert result.equals(
@@ -101,7 +102,6 @@ def test_download_csv():
 
 @pytest.mark.usefixtures("db_context")
 def test_write_df_to_postgres(db_context: DB_Context):
-
     df = pd.DataFrame(
         columns=["col1", "col2", "col3"],
         data=[[1, "hello", "world"], [2, "not", "today"]],
