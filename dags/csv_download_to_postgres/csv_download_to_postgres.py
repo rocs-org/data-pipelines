@@ -10,7 +10,6 @@ from airflow import DAG
 from airflow.utils.dates import days_ago
 from airflow.operators.python import PythonOperator
 from returns.curry import curry
-import os
 
 from dags.database import (
     DB_Context,
@@ -18,52 +17,16 @@ from dags.database import (
     create_db_context,
     teardown_db_context,
 )
+from dags.test_helpers.helpers import set_env_variable_from_dag_config_if_present
 
-URL = "https://shitcloud.hopto.org/s/JoM6bZiQ24gRze2/download/test.csv"
-
-
-@curry
-def set_env_variable(name: str, value):
-    os.environ[name] = value
-
-
-def get_from_dag_conf(name: str):
-    return R.pipe(R.path(["dag_run", "conf"]), lambda x: x.get(name))
-
-
-@curry
-def check_if_var_exists_in_dag_conf(name: str, kwargs):
-    return R.try_catch(R.pipe(get_from_dag_conf(name), R.is_nil, R.not_func), R.F)(
-        kwargs
-    )
-
-
-@curry
-def set_env_variable_from_dag_config(name: str, kwargs):
-    return R.if_else(
-        check_if_var_exists_in_dag_conf(name),
-        R.pipe(
-            R.tap(
-                R.pipe(
-                    R.path(["dag_run", "conf"]),
-                    lambda x: print("setting to env from dag_config: ", x),
-                )
-            ),
-            get_from_dag_conf(name),
-            set_env_variable(name),
-        ),
-        R.F,
-    )(kwargs)
+URL = "https://drive.google.com/uc?export=download&id=1t_WFejY2lXj00Qkc-6RAFgyr4sm5woQz"
 
 
 @curry
 def download_csv_and_upload_to_postgres(url: str, table: str, **kwargs) -> DB_Context:
     return R.pipe(
-        set_env_variable_from_dag_config("TARGET_DB"),
-        R.tap(lambda x: print(x, os.environ["TARGET_DB"])),
+        set_env_variable_from_dag_config_if_present("TARGET_DB"),
         create_db_context,
-        R.tap(lambda x: print(x, os.environ["TARGET_DB"])),
-        R.tap(print),
         R.tap(
             R.converge(
                 write_dataframe_to_postgres,
@@ -90,27 +53,9 @@ def download_csv(url: str) -> DataFrame:
     )(url)
 
 
-def _get_columns(df: DataFrame) -> str:
-    return ",".join(list(df.columns))
-
-
-def _get_tuples(df: DataFrame) -> List:
-    return [tuple(x) for x in df.to_numpy()]
-
-
 @R.curry
 def write_dataframe_to_postgres(context: DB_Context, table: str, data: DataFrame):
-    """
-    Using psycopg2.extras.execute_values() to insert the dataframe
-    """
-    print(data)
-    # Comma-separated dataframe columns
-    # SQL quert to execute
     return R.converge(execute_values(context), [_build_query(table), _get_tuples])(data)
-
-
-def _raise(ex: Exception):
-    raise ex
 
 
 @R.curry
@@ -119,6 +64,18 @@ def _build_query(table: str) -> Callable[[DataFrame], str]:
         _get_columns,
         lambda columns: "INSERT INTO %s (%s) VALUES %%s;" % (table, columns),
     )
+
+
+def _get_columns(df: DataFrame) -> str:
+    return ",".join(list(df.columns))
+
+
+def _get_tuples(df: DataFrame) -> List:
+    return [tuple(x) for x in df.to_numpy()]
+
+
+def _raise(ex: Exception):
+    raise ex
 
 
 default_args = {
@@ -147,11 +104,3 @@ t1 = PythonOperator(
     dag=dag,
     op_args=[URL, "test_table"],
 )
-
-t2 = PythonOperator(
-    task_id="transform",
-    python_callable=lambda: print("that worked!"),
-    dag=dag,
-)
-
-t1 >> t2
