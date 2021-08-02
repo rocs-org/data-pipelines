@@ -1,16 +1,21 @@
 import typing
 import functools
+
+import ramda as R
 import responses
 from io import StringIO
 import subprocess
 import os
 import pytest
+import json
+
+from returns.curry import curry
+
 from dags.database import (
     teardown_test_db_context,
     create_test_db_context,
     migrate,
 )
-import ramda as R
 
 
 @pytest.fixture
@@ -28,20 +33,24 @@ def db_context():
     teardown_test_db_context(context)
 
 
-def execute_dag(dag_id: str, execution_date: str, environment: dict = {}):
+def execute_dag(dag_id: str, execution_date: str, dag_config: dict = {}):
     """Execute a DAG in a specific date this process wait for DAG run or fail to continue"""
-    env = R.merge(os.environ.copy(), environment)
-    print(env)
+
+    subprocess.Popen(["airflow", "dags", "delete", dag_id, "-y"])
+
     process = subprocess.Popen(
         [
             "airflow",
             "dags",
             "backfill",
+            "-v",
+            "-l",
             "-s",
             execution_date,
+            "-c",
+            json.dumps(dag_config),
             dag_id,
         ],
-        env=env,
     )
     process.communicate()[0]
     return process.returncode
@@ -70,3 +79,37 @@ def with_downloadable_csv(
         return foo(*args, **kwargs)  # type: ignore
 
     return wrapped_foo
+
+
+@curry
+def set_env_variable(name: str, value):
+    os.environ[name] = value
+
+
+def get_from_dag_conf(name: str):
+    return R.pipe(R.path(["dag_run", "conf"]), lambda x: x.get(name))
+
+
+@curry
+def check_if_var_exists_in_dag_conf(name: str, kwargs):
+    return R.try_catch(R.pipe(get_from_dag_conf(name), R.is_nil, R.not_func), R.F)(
+        kwargs
+    )
+
+
+@curry
+def set_env_variable_from_dag_config_if_present(name: str, kwargs):
+    return R.if_else(
+        check_if_var_exists_in_dag_conf(name),
+        R.pipe(
+            R.tap(
+                R.pipe(
+                    R.path(["dag_run", "conf"]),
+                    lambda x: print("setting to env from dag_config: ", x),
+                )
+            ),
+            get_from_dag_conf(name),
+            set_env_variable(name),
+        ),
+        R.F,
+    )(kwargs)
