@@ -2,6 +2,16 @@ from typing import Any
 from airflow.models.taskinstance import TaskInstance
 import ramda as R
 from pandas import DataFrame
+from returns.curry import curry
+
+
+@curry
+def pipe0(foo, *other_functions):
+    # ugly hack because pipe does not work with functions without any args.
+    def patched_pipe(*throwaway_args):
+        return R.pipe(lambda x: foo(), *other_functions)("blub")
+
+    return patched_pipe
 
 
 def pull_execute_push(origin_key: str, target_key: str, foo):
