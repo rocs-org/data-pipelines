@@ -1,13 +1,9 @@
-from dags.database.db_context import (
-    create_test_db_context,
-    execute_sql,
-    query_all_elements,
-    teardown_test_db_context,
-)
+from dags.database.execute_sql import query_all_elements
+from dags.database import execute_sql, teardown_test_db_context, create_test_db_context
 
 import pytest
 from psycopg2.errors import UndefinedTable
-from dags.database.migrations import get_connection_string, migrate
+from dags.database.migrations.migrations import get_connection_string, migrate
 
 
 def test_migrations():
