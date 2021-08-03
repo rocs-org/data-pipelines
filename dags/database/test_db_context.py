@@ -1,4 +1,3 @@
-from dags.database.migrations import migrate
 from os import environ
 import pytest
 from psycopg2.errors import OperationalError
@@ -8,15 +7,18 @@ from .db_context import (
     _connect_to_db,
     close_cursor,
     create_db_context,
-    create_test_db_context,
     pipe0,
     _read_db_credentials_from_env,
-    query_all_elements,
-    query_one_element,
     teardown_db_context,
+    open_cursor,
+)
+from .execute_sql import query_one_element, query_all_elements
+from . import (
     execute_sql,
     teardown_test_db_context,
-    open_cursor,
+    create_test_db_context,
+    DBCredentials,
+    migrate,
 )
 
 

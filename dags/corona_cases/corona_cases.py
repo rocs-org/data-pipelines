@@ -2,6 +2,7 @@ from typing import Callable, List
 from pandas.core.frame import DataFrame
 from returns.pipeline import pipe
 import ramda as R
+from psycopg2 import sql
 from datetime import timedelta
 from airflow import DAG
 from airflow.utils.dates import days_ago
@@ -14,8 +15,8 @@ from dags.database import (
     create_db_context,
     teardown_db_context,
 )
-from dags.helpers.dag_helpers import download_csv
 from dags.helpers.test_helpers import set_env_variable_from_dag_config_if_present
+from dags.helpers.dag_helpers import download_csv
 
 URL = "https://drive.google.com/uc?export=download&id=1t_WFejY2lXj00Qkc-6RAFgyr4sm5woQz"
 
@@ -45,16 +46,21 @@ def write_dataframe_to_postgres(context: DBContext, table: str, data: DataFrame)
 def _build_query(table: str) -> Callable[[DataFrame], str]:
     return pipe(
         _get_columns,
+        R.tap(print),
         lambda columns: "INSERT INTO %s (%s) VALUES %%s;" % (table, columns),
     )
 
 
 def _get_columns(df: DataFrame) -> str:
-    return ",".join(list(df.columns))
+    return sql.SQL(",").join(sql.Identifier(name) for name in df.columns)
 
 
 def _get_tuples(df: DataFrame) -> List:
     return [tuple(x) for x in df.to_numpy()]
+
+
+def _raise(ex: Exception):
+    raise ex
 
 
 default_args = {

@@ -1,18 +1,18 @@
-from .db_context import DB_Context
+from dags.database import DBContext
 from yoyo import read_migrations, get_backend
 import pathlib
 import ramda as R
 
 
-def migrate(context: DB_Context):
-    migrations = read_migrations(get_path_of_file() + "/migrations/")
+def migrate(context: DBContext):
+    migrations = read_migrations(get_path_of_file())
     backend = R.pipe(get_connection_string, get_backend)(context)
     with backend.lock():
         backend.apply_migrations(backend.to_apply(migrations))
     return context
 
 
-def get_connection_string(context: DB_Context) -> str:
+def get_connection_string(context: DBContext) -> str:
     creds = context["credentials"]
     return f"postgres://{creds['user']}:{creds['password']}@{creds['host']}:{creds['port']}/{creds['database']}"
 
