@@ -44,7 +44,6 @@ def execute_dag(dag_id: str, execution_date: str, dag_config: dict = {}):
             "dags",
             "backfill",
             "-v",
-            "-l",
             "-s",
             execution_date,
             "-c",
@@ -53,6 +52,7 @@ def execute_dag(dag_id: str, execution_date: str, dag_config: dict = {}):
         ],
     )
     process.communicate()[0]
+
     return process.returncode
 
 
@@ -112,4 +112,17 @@ def set_env_variable_from_dag_config_if_present(name: str, kwargs):
             set_env_variable(name),
         ),
         R.F,
+    )(kwargs)
+
+
+@curry
+def insert_url_from_dag_conf(task_function, url, *args, **kwargs):
+    print(R.path(["dag_run", "conf"], kwargs))
+    return R.if_else(
+        check_if_var_exists_in_dag_conf("URL"),
+        R.pipe(
+            get_from_dag_conf("URL"),
+            lambda x: task_function(x, *args, **kwargs),
+        ),
+        lambda x: task_function(url, *args, **kwargs),
     )(kwargs)

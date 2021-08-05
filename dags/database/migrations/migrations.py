@@ -5,7 +5,7 @@ import ramda as R
 
 
 def migrate(context: DBContext):
-    migrations = read_migrations(get_path_of_file())
+    migrations = read_migrations(get_path_of_file() + "/migration_files")
     backend = R.pipe(get_connection_string, get_backend)(context)
     with backend.lock():
         backend.apply_migrations(backend.to_apply(migrations))

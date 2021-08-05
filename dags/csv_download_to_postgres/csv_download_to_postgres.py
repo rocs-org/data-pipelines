@@ -15,7 +15,10 @@ from dags.database import (
     teardown_db_context,
 )
 from dags.helpers.dag_helpers import download_csv
-from dags.helpers.test_helpers import set_env_variable_from_dag_config_if_present
+from dags.helpers.test_helpers import (
+    set_env_variable_from_dag_config_if_present,
+    insert_url_from_dag_conf,
+)
 
 URL = "https://drive.google.com/uc?export=download&id=1t_WFejY2lXj00Qkc-6RAFgyr4sm5woQz"
 
@@ -79,7 +82,7 @@ dag = DAG(
 
 t1 = PythonOperator(
     task_id="extract",
-    python_callable=download_csv_and_upload_to_postgres,
+    python_callable=insert_url_from_dag_conf(download_csv_and_upload_to_postgres),
     dag=dag,
     op_args=[URL, "test_table"],
 )
