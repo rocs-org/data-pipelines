@@ -2,6 +2,7 @@ from dags.database.migrations import migrate
 from os import environ
 import pytest
 from psycopg2.errors import OperationalError
+from psycopg2 import sql
 import ramda as R
 from returns.pipeline import pipe
 from .db_context import (
@@ -17,6 +18,7 @@ from .db_context import (
     execute_sql,
     teardown_test_db_context,
     open_cursor,
+    DB_Context,
 )
 
 
@@ -25,9 +27,6 @@ def test_create_db_context():
     db_context = create_db_context()
 
     assert type(db_context["credentials"]) == dict
-
-    # assert that db_context contains a connection
-    # assert type(db_context["connection"]) == psycopg2.extensions.connection
 
     # assert that the connection is open
     assert db_context["connection"].closed == 0
@@ -102,6 +101,61 @@ def test_close_cursor(db_context):
     close_cursor(with_cursor)
 
     assert cursor.closed == 1
+
+
+def test_execute_sql_works_with_composable_query(db_context: DB_Context):
+    table = sql.Identifier("test_table")
+    columns = sql.SQL(",").join(sql.Identifier(col) for col in ["col1", "col2", "col3"])
+    values = sql.SQL(",").join(sql.Placeholder() for _ in range(3))
+
+    query = sql.SQL("INSERT INTO {table} ({columns}) VALUES({values})").format(
+        table=table, columns=columns, values=values
+    )
+    execute_sql(db_context, query, (1, "Hello", "World!"))
+
+    assert (
+        query_all_elements(
+            db_context,
+            """
+             SELECT col1, col2, col3 FROM test_table;
+        """,
+        )
+        == [(1, "Hello", "World!")]
+    )
+
+    execute_sql(db_context, query, (2, "not", "today"))
+
+    assert (
+        query_all_elements(
+            db_context,
+            """
+             SELECT col1, col2, col3 FROM test_table;
+        """,
+        )
+        == [(1, "Hello", "World!"), (2, "not", "today")]
+    )
+
+
+def test_execute_sql_works_with_mixed_composable_query_and_string_placeholder(
+    db_context: DB_Context,
+):
+    table = sql.Identifier("test_table")
+    columns = sql.SQL(",").join(sql.Identifier(col) for col in ["col1", "col2", "col3"])
+
+    query = sql.SQL("INSERT INTO {table} ({columns}) VALUES(%s, %s, %s)").format(
+        table=table, columns=columns
+    )
+    execute_sql(db_context, query, (1, "Hello", "World!"))
+
+    assert (
+        query_all_elements(
+            db_context,
+            """
+                 SELECT col1, col2, col3 FROM test_table;
+            """,
+        )
+        == [(1, "Hello", "World!")]
+    )
 
 
 # is Ramda working as expected?

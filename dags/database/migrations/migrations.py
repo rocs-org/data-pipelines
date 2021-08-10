@@ -1,11 +1,11 @@
-from .db_context import DB_Context
+from dags.database.db_context import DB_Context
 from yoyo import read_migrations, get_backend
 import pathlib
 import ramda as R
 
 
 def migrate(context: DB_Context):
-    migrations = read_migrations(get_path_of_file() + "/migrations/")
+    migrations = read_migrations(get_path_of_file() + "/migration_files/")
     backend = R.pipe(get_connection_string, get_backend)(context)
     with backend.lock():
         backend.apply_migrations(backend.to_apply(migrations))
