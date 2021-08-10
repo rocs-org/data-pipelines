@@ -3,7 +3,6 @@ from datetime import timedelta
 from airflow import DAG
 from airflow.operators.python import PythonOperator
 from airflow.utils.dates import days_ago
-
 from dags.airflow_fp import pull_execute_push, pull_execute, execute_push
 
 
