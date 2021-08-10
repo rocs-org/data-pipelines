@@ -24,7 +24,9 @@
 version: '3'
 x-airflow-common:
   &airflow-common
-  build: .
+  build:
+    context: .
+    dockerfile: ./docker/airflow/Dockerfile
   env_file: 
     .env
   environment:
@@ -57,6 +59,14 @@ x-airflow-common:
       condition: service_healthy
 
 services:
+  static-files:
+    container_name: static-files
+    build: ./docker/nginx
+    volumes:
+      - ./dags/helpers/test_helpers/static_files:/var/www
+    command: nginx
+    ports:
+      - 80:80
   target-db:
     container_name: "${TARGET_DB_HOSTNAME}"
     image: postgres:13

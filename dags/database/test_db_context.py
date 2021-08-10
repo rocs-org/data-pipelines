@@ -1,4 +1,3 @@
-from dags.database.migrations import migrate
 from os import environ
 import pytest
 from psycopg2.errors import OperationalError
@@ -9,16 +8,18 @@ from .db_context import (
     _connect_to_db,
     close_cursor,
     create_db_context,
-    create_test_db_context,
     pipe0,
     _read_db_credentials_from_env,
-    query_all_elements,
-    query_one_element,
     teardown_db_context,
+    open_cursor,
+)
+from .execute_sql import query_one_element, query_all_elements
+from . import (
     execute_sql,
     teardown_test_db_context,
-    open_cursor,
-    DB_Context,
+    create_test_db_context,
+    migrate,
+    DBContext,
 )
 
 
@@ -83,14 +84,14 @@ def test_read_credentials():
     assert credentials["user"] == environ["TARGET_DB_USER"]
 
 
-def test_open_cursor(db_context):
+def test_open_cursor(db_context: DBContext):
 
     with_cursor = open_cursor(db_context)
     assert with_cursor["cursor"] is not None
     assert with_cursor["cursor"].closed == 0
 
 
-def test_close_cursor(db_context):
+def test_close_cursor(db_context: DBContext):
 
     with_cursor = open_cursor(db_context)
 
@@ -103,7 +104,7 @@ def test_close_cursor(db_context):
     assert cursor.closed == 1
 
 
-def test_execute_sql_works_with_composable_query(db_context: DB_Context):
+def test_execute_sql_works_with_composable_query(db_context: DBContext):
     table = sql.Identifier("test_table")
     columns = sql.SQL(",").join(sql.Identifier(col) for col in ["col1", "col2", "col3"])
     values = sql.SQL(",").join(sql.Placeholder() for _ in range(3))
@@ -137,7 +138,7 @@ def test_execute_sql_works_with_composable_query(db_context: DB_Context):
 
 
 def test_execute_sql_works_with_mixed_composable_query_and_string_placeholder(
-    db_context: DB_Context,
+    db_context: DBContext,
 ):
     table = sql.Identifier("test_table")
     columns = sql.SQL(",").join(sql.Identifier(col) for col in ["col1", "col2", "col3"])
@@ -169,8 +170,6 @@ def test_invoker():
 
 
 def test_use_with_lambda():
-    def add(x, y):
-        return x + y
 
     two = R.use_with(R.add, [lambda x: x, R.identity])(1, 1)
     assert two == 2
