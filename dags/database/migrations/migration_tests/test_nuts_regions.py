@@ -1,11 +1,11 @@
-from dags.database import DB_Context, execute_sql, query_all_elements
+from dags.database import DBContext, execute_sql, query_all_elements
 from psycopg2 import sql
 
 SCHEMA = "censusdata"
 TABLE = "nuts"
 
 
-def test_nuts_regions_schema(db_context: DB_Context):
+def test_nuts_regions_schema(db_context: DBContext):
     columns = sql.SQL(",").join(
         sql.Identifier(name) for name in ["level", "geo", "name"]
     )

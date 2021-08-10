@@ -4,6 +4,7 @@
 CREATE TABLE censusdata.nuts (
     id SERIAL PRIMARY KEY,
     level INTEGER,
-    geo VARCHAR(16),
-    name VARCHAR(255)
+    geo VARCHAR(255),
+    name VARCHAR(255),
+    country_id INTEGER
     );

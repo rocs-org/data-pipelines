@@ -10,7 +10,6 @@ from dags.helpers.test_helpers.helpers import (
 
 URL = "https://prod-hub-indexer.s3.amazonaws.com/files/dd4580c810204019a7b8eb3e0b329dd6/0/full/4326/dd4580c810204019a7b8eb3e0b329dd6_0_full_4326.csv"  # noqa: E501
 
-
 SCHEMA = "coronacases"
 TABLE = "german_counties_more_info"
 
