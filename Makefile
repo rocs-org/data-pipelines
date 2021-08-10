@@ -6,7 +6,7 @@ test:
 	env
 
 build:
-	docker-compose build
+	 DOCKER_BUILDKIT=1 docker-compose build
 
 setup:
 	docker-compose up -d && make migrations

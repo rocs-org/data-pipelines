@@ -9,9 +9,9 @@ from .corona_cases_dag import (
 from .download_corona_cases import (
     download_csv_and_upload_to_postgres,
     transform_dataframe,
-    _build_query,
     COLUMNS,
 )
+from ..helpers.dag_helpers.write_dataframe_to_postgres import _build_query
 import datetime
 from collections import Counter
 import ramda as R
