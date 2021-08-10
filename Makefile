@@ -27,7 +27,7 @@ stylecheck:
 	docker exec airflow-scheduler poetry run black --check
 
 watch:
-	docker exec -w /opt/airflow/dags airflow-scheduler poetry run python -m pytest -k 'not integration' -f --ignore ./logs
+	docker exec -w /opt/airflow/dags -it airflow-scheduler poetry run python -m pytest -k 'not integration' -f --ignore ./logs
 
 migrations:
 	docker exec -w /opt/airflow/ airflow-scheduler poetry run yoyo apply --database postgresql://${TARGET_DB_USER}:${TARGET_DB_PW}@${TARGET_DB_HOSTNAME}/${TARGET_DB} ./dags/database/migrations
