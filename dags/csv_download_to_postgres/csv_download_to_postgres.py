@@ -1,8 +1,5 @@
 from typing import Callable, List
 from pandas.core.frame import DataFrame
-import requests
-import io
-from pandas import read_csv
 from returns.pipeline import pipe
 import ramda as R
 from datetime import timedelta
@@ -12,18 +9,22 @@ from airflow.operators.python import PythonOperator
 from returns.curry import curry
 
 from dags.database import (
-    DB_Context,
+    DBContext,
     execute_values,
     create_db_context,
     teardown_db_context,
 )
-from dags.test_helpers.helpers import set_env_variable_from_dag_config_if_present
+from dags.helpers.dag_helpers import download_csv
+from dags.helpers.test_helpers import (
+    set_env_variable_from_dag_config_if_present,
+    insert_url_from_dag_conf,
+)
 
 URL = "https://drive.google.com/uc?export=download&id=1t_WFejY2lXj00Qkc-6RAFgyr4sm5woQz"
 
 
 @curry
-def download_csv_and_upload_to_postgres(url: str, table: str, **kwargs) -> DB_Context:
+def download_csv_and_upload_to_postgres(url: str, table: str, **kwargs) -> DBContext:
     return R.pipe(
         set_env_variable_from_dag_config_if_present("TARGET_DB"),
         create_db_context,
@@ -38,23 +39,8 @@ def download_csv_and_upload_to_postgres(url: str, table: str, **kwargs) -> DB_Co
     )(kwargs)
 
 
-def download_csv(url: str) -> DataFrame:
-    return R.pipe(
-        R.try_catch(
-            requests.get,
-            lambda err, url: _raise(
-                FileNotFoundError(f"Cannot find file at {url} \n trace: \n {err}")
-            ),
-        ),
-        R.prop("content"),
-        R.invoker(1, "decode")("utf-8"),
-        io.StringIO,
-        read_csv,
-    )(url)
-
-
 @R.curry
-def write_dataframe_to_postgres(context: DB_Context, table: str, data: DataFrame):
+def write_dataframe_to_postgres(context: DBContext, table: str, data: DataFrame):
     return R.converge(execute_values(context), [_build_query(table), _get_tuples])(data)
 
 
@@ -72,10 +58,6 @@ def _get_columns(df: DataFrame) -> str:
 
 def _get_tuples(df: DataFrame) -> List:
     return [tuple(x) for x in df.to_numpy()]
-
-
-def _raise(ex: Exception):
-    raise ex
 
 
 default_args = {
@@ -100,7 +82,7 @@ dag = DAG(
 
 t1 = PythonOperator(
     task_id="extract",
-    python_callable=download_csv_and_upload_to_postgres,
+    python_callable=insert_url_from_dag_conf(download_csv_and_upload_to_postgres),
     dag=dag,
     op_args=[URL, "test_table"],
 )
