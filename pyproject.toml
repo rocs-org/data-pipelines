@@ -12,6 +12,8 @@ fsspec = "^2021.7.0"
 ramda = "^0.6.1"
 yoyo-migrations = "^7.3.2"
 pyhumps = "^3.0.2"
+openpyxl = "^3.0.7"
+great-expectations = "^0.13.26"
 
 [tool.poetry.dev-dependencies]
 flake8 = "^3.9.2"
