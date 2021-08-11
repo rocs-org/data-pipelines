@@ -11,7 +11,6 @@ from .download_corona_cases import (
     transform_dataframe,
     COLUMNS,
 )
-from ..helpers.dag_helpers.write_dataframe_to_postgres import _build_query
 import datetime
 from collections import Counter
 import ramda as R
@@ -60,17 +59,6 @@ def test_dataframe_transformer_transform_column_names_and_types():
     assert df.iloc[1]["agegroup2"] is not None
 
     assert type(df.iloc[0]["ref_date_is_symptom_onset"]) is numpy.bool_
-
-
-def test_query_builder_returns_correct_query(db_context):
-    df = pd.DataFrame(columns=["col1", "col2"], data=[[1, 2]])
-
-    query = _build_query("schemaname", "tablename")(df)
-
-    query_string = query.as_string(db_context["connection"])
-
-    print(query_string)
-    assert """"schemaname"."tablename" ("col1","col2")""" in query_string
 
 
 @with_downloadable_csv(url=URL, content=csv_content)
