@@ -3,7 +3,7 @@ pull_request_rules:
     conditions:
       - "#approved-reviews-by>=1"
       - check-success=integration-tests
-      - check-success=build-and-unit-test (3.8, 1.1.6)
+      - check-success=build-and-unit-test (3.8)
     actions:
       merge:
         method: merge
