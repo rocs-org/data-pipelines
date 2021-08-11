@@ -1,4 +1,3 @@
-import pandas as pd
 import numpy
 from psycopg2 import sql
 from pathlib import Path
@@ -9,7 +8,6 @@ from .corona_cases_dag import (
 from .download_corona_cases import (
     download_csv_and_upload_to_postgres,
     transform_dataframe,
-    _build_query,
     COLUMNS,
 )
 import datetime
@@ -60,17 +58,6 @@ def test_dataframe_transformer_transform_column_names_and_types():
     assert df.iloc[1]["agegroup2"] is not None
 
     assert type(df.iloc[0]["ref_date_is_symptom_onset"]) is numpy.bool_
-
-
-def test_query_builder_returns_correct_query(db_context):
-    df = pd.DataFrame(columns=["col1", "col2"], data=[[1, 2]])
-
-    query = _build_query("schemaname", "tablename")(df)
-
-    query_string = query.as_string(db_context["connection"])
-
-    print(query_string)
-    assert """"schemaname"."tablename" ("col1","col2")""" in query_string
 
 
 @with_downloadable_csv(url=URL, content=csv_content)
