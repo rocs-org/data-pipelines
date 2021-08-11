@@ -6,7 +6,7 @@ test:
 	env
 
 build:
-	docker-compose build
+	 DOCKER_BUILDKIT=1 docker-compose build
 
 setup:
 	docker-compose up -d && make migrations
@@ -27,7 +27,7 @@ stylecheck:
 	docker exec airflow-scheduler poetry run black --check
 
 watch:
-	docker exec airflow-scheduler poetry run python -m pytest -k 'not integration' -f --ignore ./logs
+	docker exec -it airflow-scheduler poetry run python -m pytest -k 'not integration' -f --ignore ./logs
 
 watchintegration:
 	docker exec -it airflow-scheduler pytest -k 'integration' -n 'auto' -f
