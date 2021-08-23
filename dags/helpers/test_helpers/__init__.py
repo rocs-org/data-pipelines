@@ -3,7 +3,7 @@ from .helpers import (
     execute_dag,
     db_context,
     set_env_variable_from_dag_config_if_present,
-    insert_url_from_dag_conf,
+    if_var_exists_in_dag_conf_use_as_first_arg,
 )
 
 __all__ = [
@@ -11,5 +11,5 @@ __all__ = [
     "with_downloadable_csv",
     "execute_dag",
     "set_env_variable_from_dag_config_if_present",
-    "insert_url_from_dag_conf",
+    "if_var_exists_in_dag_conf_use_as_first_arg",
 ]  # otherwise, flake8 is complaining about unused imports
