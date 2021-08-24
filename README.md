@@ -10,7 +10,7 @@ This project uses [poetry](https://python-poetry.org/) for package management.
 
 1. Clone the project
 2. Install poetry: `$pip install --user poetry`
-3. Install and set up docker and docker-compose 
+3. Install and set up docker and docker-compose for your operating system
 4. Run `make build` then `make  setup`
 6. Run tests: `$make watch` or open the Airflow UI on `localhost:8080` and login with username: `airflow` and password: `airflow`
 
