@@ -25,9 +25,9 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       - name: Add ssh key
-        run: ssh-add - <<< "${SSH_PRIVATE_KEY}"
-        env:
-          GPG_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+        uses: webfactory/ssh-agent@v0.5.3
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
       - name: Login to ornt
         run: ssh kolb@ornt.biologie.hu-berlin.de
       - name: Build and setup docker stack
