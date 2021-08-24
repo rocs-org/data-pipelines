@@ -1,4 +1,3 @@
-import pandas as pd
 import numpy
 from psycopg2 import sql
 from pathlib import Path

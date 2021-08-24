@@ -14,7 +14,7 @@ from dags.database import (
     create_db_context,
     teardown_db_context,
 )
-from dags.helpers.dag_helpers import download_csv, connect_to_db_and_insert
+from dags.helpers.dag_helpers import download_csv
 from dags.helpers.test_helpers import (
     set_env_variable_from_dag_config_if_present,
     if_var_exists_in_dag_conf_use_as_first_arg,

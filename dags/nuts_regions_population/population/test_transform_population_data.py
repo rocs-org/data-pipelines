@@ -8,7 +8,6 @@ from .transform_population_data import (
     INDICATORS,
     set_nth_indicator_as_column,
     split_number_into_int_and_data_flag,
-    filter_for_existing_regions,
 )
 from .download_population_data import download_data
 import pandas.api.types as ptypes
@@ -16,8 +15,10 @@ import pandas.api.types as ptypes
 URL = "http://static-files/static/demo_r_pjangrp3.tsv"
 
 
-def test_transform_returns_correct_columns():
+def test_transform_returns_correct_columns(db_context: DBContext):
+    insert_some_nuts_regions_into_db_to_filter_agains()
     df = R.pipe(download_data, transform)(URL)
+
     assert set(list(df.columns)) == {
         "year",
         "number",
@@ -28,7 +29,9 @@ def test_transform_returns_correct_columns():
     }
 
 
-def test_transform_population_returns_correct_dtypes():
+def test_transform_population_returns_correct_dtypes(db_context: DBContext):
+    insert_some_nuts_regions_into_db_to_filter_agains()
+
     transformed = R.pipe(download_data, transform)(URL)
     assert ptypes.is_integer_dtype(transformed["year"])
     assert ptypes.is_integer_dtype(transformed["number"])
@@ -86,3 +89,14 @@ def test_filtering_for_existing_regions_deletes_rows_without_regions(
 def test_use_with_with_lambda_functions_1():
     with pytest.raises(SyntaxError):
         assert 2 == R.use_with(lambda x, y: x + y, [R.identity, R.identity])([1, 1])
+
+
+def insert_some_nuts_regions_into_db_to_filter_agains():
+    return connect_to_db_and_insert(
+        "censusdata",
+        "nuts",
+        pd.DataFrame(
+            columns=["level", "geo", "name", "country_id"],
+            data=[[0, "ITI42", "something", 0], [1, "ITI43", "something", 0]],
+        ),
+    )
