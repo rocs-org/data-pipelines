@@ -11,7 +11,7 @@ from dags.nuts_regions_population.population import (
     POPULATION_ARGS,
 )
 from dags.nuts_regions_population.german_counties_more_info import (
-    german_counties_more_info_etl,
+    german_counties_etl,
     COUNTIES_ARGS,
 )
 from dags.helpers.test_helpers import (
@@ -62,10 +62,10 @@ t2 = PythonOperator(
 t3 = PythonOperator(
     task_id="load_more_infos_on_german_counties",
     python_callable=if_var_exists_in_dag_conf_use_as_first_arg(
-        "COUNTIES_URL", german_counties_more_info_etl
+        "COUNTIES_URL", german_counties_etl
     ),
     dag=dag,
     op_args=COUNTIES_ARGS,
 )
 
-t1 >> t2 >> t3
+t1 >> [t2, t3]
