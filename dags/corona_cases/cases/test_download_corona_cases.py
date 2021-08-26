@@ -1,12 +1,12 @@
 import numpy
 from psycopg2 import sql
 from pathlib import Path
-from .corona_cases_dag import (
+from dags.corona_cases.dag import (
     TABLE,
     SCHEMA,
 )
 from .download_corona_cases import (
-    download_csv_and_upload_to_postgres,
+    covid_cases_etl,
     transform_dataframe,
     COLUMNS,
 )
@@ -63,7 +63,7 @@ def test_dataframe_transformer_transform_column_names_and_types():
 @with_downloadable_csv(url=URL, content=csv_content)
 def test_download_csv_and_write_to_postgres_happy_path(db_context):
 
-    download_csv_and_upload_to_postgres(URL, SCHEMA, TABLE)
+    covid_cases_etl(URL, SCHEMA, TABLE)
 
     context = create_db_context()
 

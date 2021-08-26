@@ -3,15 +3,11 @@ from airflow import DAG
 from airflow.utils.dates import days_ago
 from airflow.operators.python import PythonOperator
 
-from dags.corona_cases.download_corona_cases import download_csv_and_upload_to_postgres
+from dags.corona_cases.cases import covid_cases_etl, CASES_ARGS
 from dags.helpers.test_helpers.helpers import (
     if_var_exists_in_dag_conf_use_as_first_arg,
 )
 
-URL = "https://prod-hub-indexer.s3.amazonaws.com/files/dd4580c810204019a7b8eb3e0b329dd6/0/full/4326/dd4580c810204019a7b8eb3e0b329dd6_0_full_4326.csv"  # noqa: E501
-
-SCHEMA = "coronacases"
-TABLE = "german_counties_more_info"
 
 default_args = {
     "owner": "airflow",
@@ -35,9 +31,7 @@ dag = DAG(
 
 t1 = PythonOperator(
     task_id="extract",
-    python_callable=if_var_exists_in_dag_conf_use_as_first_arg(
-        "URL", download_csv_and_upload_to_postgres
-    ),
+    python_callable=if_var_exists_in_dag_conf_use_as_first_arg("URL", covid_cases_etl),
     dag=dag,
-    op_args=[URL, SCHEMA, TABLE],
+    op_args=CASES_ARGS,
 )
