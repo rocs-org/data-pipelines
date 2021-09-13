@@ -116,12 +116,14 @@ def set_env_variable_from_dag_config_if_present(name: str, kwargs):
 
 
 @curry
-def insert_url_from_dag_conf(task_function, url, *args, **kwargs):
+def if_var_exists_in_dag_conf_use_as_first_arg(
+    var_name, task_function, url, *args, **kwargs
+):
     print(R.path(["dag_run", "conf"], kwargs))
     return R.if_else(
-        check_if_var_exists_in_dag_conf("URL"),
+        check_if_var_exists_in_dag_conf(var_name),
         R.pipe(
-            get_from_dag_conf("URL"),
+            get_from_dag_conf(var_name),
             lambda x: task_function(x, *args, **kwargs),
         ),
         lambda x: task_function(url, *args, **kwargs),

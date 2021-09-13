@@ -5,7 +5,7 @@ from airflow.operators.python import PythonOperator
 
 from dags.corona_cases.download_corona_cases import download_csv_and_upload_to_postgres
 from dags.helpers.test_helpers.helpers import (
-    insert_url_from_dag_conf,
+    if_var_exists_in_dag_conf_use_as_first_arg,
 )
 
 URL = "https://prod-hub-indexer.s3.amazonaws.com/files/dd4580c810204019a7b8eb3e0b329dd6/0/full/4326/dd4580c810204019a7b8eb3e0b329dd6_0_full_4326.csv"  # noqa: E501
@@ -30,12 +30,14 @@ dag = DAG(
     description="an example DAG that downloads a csv and uploads it to postgres",
     schedule_interval=timedelta(days=1),
     start_date=days_ago(2),
-    tags=["example"],
+    tags=["ROCS pipelines"],
 )
 
 t1 = PythonOperator(
     task_id="extract",
-    python_callable=insert_url_from_dag_conf(download_csv_and_upload_to_postgres),
+    python_callable=if_var_exists_in_dag_conf_use_as_first_arg(
+        "URL", download_csv_and_upload_to_postgres
+    ),
     dag=dag,
     op_args=[URL, SCHEMA, TABLE],
 )
