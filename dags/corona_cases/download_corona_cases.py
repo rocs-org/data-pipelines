@@ -4,13 +4,10 @@ from returns.curry import curry
 
 from dags.database import (
     DBContext,
-    create_db_context,
     teardown_db_context,
 )
 from dags.helpers.dag_helpers import download_csv
-from dags.helpers.dag_helpers.write_dataframe_to_postgres import (
-    write_dataframe_to_postgres,
-)
+from dags.helpers.dag_helpers import connect_to_db_and_insert
 from dags.helpers.test_helpers import set_env_variable_from_dag_config_if_present
 
 
@@ -22,15 +19,7 @@ def download_csv_and_upload_to_postgres(
         set_env_variable_from_dag_config_if_present("TARGET_DB"),
         lambda *args: download_csv(url),
         transform_dataframe,
-        R.converge(
-            write_dataframe_to_postgres,
-            [
-                R.pipe(create_db_context, R.tap(print)),
-                R.always(schema),
-                R.always(table),
-                R.identity,
-            ],
-        ),
+        connect_to_db_and_insert(schema, table),
         teardown_db_context,
         R.path(["credentials", "database"]),
     )(kwargs)
