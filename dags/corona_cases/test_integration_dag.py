@@ -3,9 +3,10 @@ from dags.database.execute_sql import query_all_elements
 from airflow.models import DagBag
 
 from dags.helpers.test_helpers import execute_dag
-from dags.corona_cases.dag import SCHEMA, TABLE
+from dags.corona_cases.cases import CASES_ARGS
 
 URL = "http://static-files/static/coronacases.csv"
+[_ , SCHEMA, TABLE] = CASES_ARGS
 
 
 def test_dag_loads_with_no_errors():
