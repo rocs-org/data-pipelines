@@ -1,14 +1,12 @@
 import numpy
 from psycopg2 import sql
 from pathlib import Path
-from dags.corona_cases.dag import (
-    TABLE,
-    SCHEMA,
-)
 from .download_corona_cases import (
     covid_cases_etl,
     transform_dataframe,
     COLUMNS,
+    TABLE,
+    SCHEMA,
 )
 import datetime
 from collections import Counter
