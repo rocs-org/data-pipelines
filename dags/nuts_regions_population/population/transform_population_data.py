@@ -18,6 +18,7 @@ def transform(raw: pd.DataFrame) -> pd.DataFrame:
         set_nth_indicator_as_column("sex", 0),
         lambda df: df.drop(columns=[INDICATORS]),
         filter_for_existing_regions,
+        R.tap(print),
         split_numbers_into_int_and_data_flag,
         lambda df: df.dropna(axis=0, how="any"),
         lambda df: df.astype(
@@ -37,9 +38,13 @@ def transform(raw: pd.DataFrame) -> pd.DataFrame:
 def set_nth_indicator_as_column(
     column_name, indicator_index, df: pd.DataFrame
 ) -> pd.DataFrame:
-    df[column_name] = df[INDICATORS].apply(
-        lambda val: R.pipe(R.split(","), R.nth(indicator_index))(val)
-    )
+    try:
+        df[column_name] = df[INDICATORS].apply(
+            lambda val: R.pipe(R.split(","), R.nth(indicator_index))(val)
+        )
+    except Exception as e:
+        print(column_name, indicator_index)
+        raise e
     return df
 
 

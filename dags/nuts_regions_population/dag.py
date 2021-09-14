@@ -11,10 +11,10 @@ from dags.nuts_regions_population.population import (
     POPULATION_ARGS,
 )
 from dags.nuts_regions_population.german_counties_more_info import (
-    german_counties_etl,
+    german_counties_more_info_etl,
     COUNTIES_ARGS,
 )
-from dags.helpers.test_helpers import (
+from dags.helpers.test_helpers.helpers import (
     if_var_exists_in_dag_conf_use_as_first_arg,
 )
 
@@ -34,7 +34,7 @@ dag = DAG(
     "nuts_regions_population",
     default_args=default_args,
     description="Load population data for NUTS 2021 regions from eurostat",
-    start_date=days_ago(2),
+    start_date=days_ago(1),
     tags=["ROCS pipelines"],
 )
 
@@ -48,8 +48,16 @@ t1 = PythonOperator(
     op_args=REGIONS_ARGS,
 )
 
-
 t2 = PythonOperator(
+    task_id="load_more_info_on_german_counties",
+    python_callable=if_var_exists_in_dag_conf_use_as_first_arg(
+        "COUNTIES_URL", german_counties_more_info_etl
+    ),
+    dag=dag,
+    op_args=COUNTIES_ARGS,
+)
+
+t3 = PythonOperator(
     task_id="load_population_for_nuts_regions",
     python_callable=if_var_exists_in_dag_conf_use_as_first_arg(
         "POPULATION_URL", population_task
@@ -59,13 +67,4 @@ t2 = PythonOperator(
 )
 
 
-t3 = PythonOperator(
-    task_id="load_more_infos_on_german_counties",
-    python_callable=if_var_exists_in_dag_conf_use_as_first_arg(
-        "COUNTIES_URL", german_counties_etl
-    ),
-    dag=dag,
-    op_args=COUNTIES_ARGS,
-)
-
-t1 >> [t2, t3]
+t1 >> t2 >> t3
