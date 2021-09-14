@@ -1,5 +1,5 @@
 from .german_counties_etl import german_counties_more_info_etl, SCHEMA, TABLE
-from dags.database import DBContext, query_all_elements
+from dags.database import DBContext, query_all_elements, create_db_context
 from psycopg2 import sql
 import datetime
 
@@ -16,6 +16,7 @@ def test_etl_writes_data_to_database(db_context: DBContext):
 
     german_counties_more_info_etl(URL, SCHEMA, TABLE)
 
+    db_context = create_db_context()
     data_from_db = query_all_elements(
         db_context,
         sql.SQL("SELECT * FROM {schema}.{table}").format(

@@ -21,7 +21,11 @@ POPULATION_ARGS = [URL, SCHEMA, TABLE]
 def population_task(url: str, schema: str, table: str, *_, **kwargs):
     R.pipe(
         set_env_variable_from_dag_config_if_present("TARGET_DB"),
+        R.tap(lambda *x: print("download population data")),
         lambda *args: download_data(url),
+        R.tap(lambda *x: print("transform population data")),
         transform,
+        R.tap(lambda *x: print("upload population data")),
         connect_to_db_and_insert(schema, table),
+        R.tap(lambda *x: print("done.")),
     )(kwargs)
