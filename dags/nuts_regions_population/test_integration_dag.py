@@ -17,7 +17,7 @@ COUNTIES_URL = "http://static-files/static/04-kreise.xlsx"
 
 def test_dag_loads_with_no_errors():
     dag_bag = DagBag(include_examples=False)
-    dag_bag.process_file("nuts_regions_etl.py")
+    dag_bag.process_file("etl.py")
     assert len(dag_bag.import_errors) == 0
 
 

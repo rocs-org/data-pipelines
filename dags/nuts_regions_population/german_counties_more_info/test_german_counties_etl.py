@@ -1,20 +1,20 @@
-from .german_counties_etl import german_counties_more_info_etl, SCHEMA, TABLE
+from .etl import etl_german_counties_more_info, SCHEMA, TABLE
 from dags.database import DBContext, query_all_elements, create_db_context
 from psycopg2 import sql
 import datetime
 
-from dags.nuts_regions_population.nuts_regions import regions_task, REGIONS_ARGS
+from dags.nuts_regions_population.nuts_regions import etl_eu_regions, REGIONS_ARGS
 
 URL = "http://static-files/static/04-kreise.xlsx"
 
 
 def test_etl_writes_data_to_database(db_context: DBContext):
 
-    regions_task(
+    etl_eu_regions(
         "http://static-files/static/NUTS2021.xlsx", REGIONS_ARGS[1], REGIONS_ARGS[2]
     )
 
-    german_counties_more_info_etl(URL, SCHEMA, TABLE)
+    etl_german_counties_more_info(URL, SCHEMA, TABLE)
 
     db_context = create_db_context()
     data_from_db = query_all_elements(

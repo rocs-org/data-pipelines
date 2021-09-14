@@ -4,7 +4,6 @@ from returns.curry import curry
 
 from dags.database import (
     DBContext,
-    teardown_db_context,
 )
 from dags.helpers.dag_helpers import download_csv
 from dags.helpers.dag_helpers import connect_to_db_and_insert
@@ -19,16 +18,12 @@ CASES_ARGS = [URL, SCHEMA, TABLE]
 
 
 @curry
-def covid_cases_etl(url: str, schema: str, table: str, **kwargs) -> DBContext:
+def etl_covid_cases(url: str, schema: str, table: str, **kwargs) -> DBContext:
     return R.pipe(
         set_env_variable_from_dag_config_if_present("TARGET_DB"),
-        R.tap(lambda *x: print("load cases data")),
         lambda *args: download_csv(url),
-        R.tap(lambda *x: print("transform cases data")),
         transform_dataframe,
-        R.tap(lambda *x: print("upload cases data")),
         connect_to_db_and_insert(schema, table),
-        R.tap(lambda *x: print("done.")),
         R.path(["credentials", "database"]),
     )(kwargs)
 
@@ -46,10 +41,6 @@ def transform_dataframe(df: DataFrame) -> DataFrame:
     )
 
     return renamed
-
-
-def _raise(ex: Exception):
-    raise ex
 
 
 COLUMN_MAPPING = {

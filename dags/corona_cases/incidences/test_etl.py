@@ -2,25 +2,25 @@ from datetime import datetime
 from dags.database import DBContext, query_all_elements, create_db_context
 from .test_incidences import replace_url_in_args_and_run_task
 
-from dags.nuts_regions_population.nuts_regions import regions_task, REGIONS_ARGS
+from dags.nuts_regions_population.nuts_regions import etl_eu_regions, REGIONS_ARGS
 from dags.nuts_regions_population.german_counties_more_info import (
-    german_counties_more_info_etl,
+    etl_german_counties_more_info,
     COUNTIES_ARGS,
 )
-from dags.corona_cases.cases import covid_cases_etl, CASES_ARGS
+from dags.corona_cases.cases import etl_covid_cases, CASES_ARGS
 
-from .etl import incidences_etl, INCIDENCES_ARGS
+from .etl import calculate_incidence_post_processing, INCIDENCES_ARGS
 
 
 def test_incidences_etl_writes_incidences_to_db(db_context: DBContext):
 
-    replace_url_in_args_and_run_task(REGIONS_URL, REGIONS_ARGS, regions_task)
+    replace_url_in_args_and_run_task(REGIONS_URL, REGIONS_ARGS, etl_eu_regions)
     replace_url_in_args_and_run_task(
-        COUNTIES_URL, COUNTIES_ARGS, german_counties_more_info_etl
+        COUNTIES_URL, COUNTIES_ARGS, etl_german_counties_more_info
     )
-    replace_url_in_args_and_run_task(CASES_URL, CASES_ARGS, covid_cases_etl)
+    replace_url_in_args_and_run_task(CASES_URL, CASES_ARGS, etl_covid_cases)
 
-    incidences_etl(*INCIDENCES_ARGS)
+    calculate_incidence_post_processing(*INCIDENCES_ARGS)
 
     [schema, table] = INCIDENCES_ARGS
 
