@@ -1,4 +1,4 @@
-CREATE TABLE censusdata.german_counties_more_info (
+CREATE TABLE censusdata.german_counties_info (
     id SERIAL PRIMARY KEY,
     german_id INTEGER,
     regional_identifier VARCHAR(255) NOT NULL,
