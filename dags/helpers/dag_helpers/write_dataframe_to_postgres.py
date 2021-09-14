@@ -12,14 +12,23 @@ from dags.database import (
     execute_values,
     camel_case_to_snake_case,
     create_db_context,
+    teardown_db_context,
 )
 
 
 @curry
 def connect_to_db_and_insert(schema: str, table: str, data: pd.DataFrame):
-    return R.converge(
-        insert_dataframe_to_postgres,
-        [lambda x: create_db_context(), R.always(schema), R.always(table), R.identity],
+    return R.pipe(
+        R.converge(
+            insert_dataframe_to_postgres,
+            [
+                lambda x: create_db_context(),
+                R.always(schema),
+                R.always(table),
+                R.identity,
+            ],
+        ),
+        teardown_db_context,
     )(data)
 
 

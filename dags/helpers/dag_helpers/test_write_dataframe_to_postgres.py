@@ -1,11 +1,12 @@
 import pandas as pd
 from .write_dataframe_to_postgres import _build_insert_query, connect_to_db_and_insert
-from dags.database import DBContext, query_all_elements
+from dags.database import DBContext, query_all_elements, create_db_context
 
 
 def test_insert_dataframe_to_postgres_writes_data_correctly(db_context: DBContext):
 
     connect_to_db_and_insert(schema="censusdata", table="nuts", data=DATA1)
+    db_context = create_db_context()
 
     res = query_all_elements(db_context, "SELECT * FROM censusdata.nuts;")
     assert len(res) == 2
@@ -16,6 +17,7 @@ def test_insert_dataframe_to_postgres_does_not_overwrite(db_context: DBContext):
     connect_to_db_and_insert(schema="censusdata", table="nuts", data=DATA1)
     connect_to_db_and_insert(schema="censusdata", table="nuts", data=DATA2)
 
+    db_context = create_db_context()
     res = query_all_elements(db_context, "SELECT * FROM censusdata.nuts;")
     assert len(res) == 2
     assert res[0] == (0, "DE", "Deutschland", 0)

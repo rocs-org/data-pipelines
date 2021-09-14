@@ -2,9 +2,11 @@ from datetime import timedelta
 from airflow import DAG
 from airflow.utils.dates import days_ago
 from airflow.operators.python import PythonOperator
+from airflow.sensors.external_task import ExternalTaskSensor
 
 from dags.corona_cases.cases import covid_cases_etl, CASES_ARGS
-from dags.helpers.test_helpers.helpers import (
+from dags.corona_cases.incidences import incidences_etl, INCIDENCES_ARGS
+from dags.helpers.test_helpers import (
     if_var_exists_in_dag_conf_use_as_first_arg,
 )
 
@@ -25,13 +27,30 @@ dag = DAG(
     default_args=default_args,
     description="an example DAG that downloads a csv and uploads it to postgres",
     schedule_interval=timedelta(days=1),
-    start_date=days_ago(2),
+    start_date=days_ago(1),
     tags=["ROCS pipelines"],
 )
 
 t1 = PythonOperator(
-    task_id="extract",
+    task_id="gather_cases_data",
     python_callable=if_var_exists_in_dag_conf_use_as_first_arg("URL", covid_cases_etl),
     dag=dag,
     op_args=CASES_ARGS,
 )
+
+wait_for_demographics_data = ExternalTaskSensor(
+    task_id="wait_for_demographics_data",
+    external_dag_id="nuts_regions_population",
+    external_task_id="load_more_info_on_german_counties",
+    allowed_states=["success"],
+    failed_states=["failed", "skipped"],
+)
+
+t2 = PythonOperator(
+    task_id="calculate_incidences",
+    python_callable=incidences_etl,
+    dag=dag,
+    op_args=INCIDENCES_ARGS,
+)
+
+t1 >> wait_for_demographics_data >> t2
