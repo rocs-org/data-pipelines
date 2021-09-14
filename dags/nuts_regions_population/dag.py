@@ -3,15 +3,15 @@ from airflow.utils.dates import days_ago
 from airflow.operators.python import PythonOperator
 
 from dags.nuts_regions_population.nuts_regions import (
-    regions_task,
+    etl_eu_regions,
     REGIONS_ARGS,
 )
 from dags.nuts_regions_population.population import (
-    population_task,
+    etl_population,
     POPULATION_ARGS,
 )
 from dags.nuts_regions_population.german_counties_more_info import (
-    german_counties_more_info_etl,
+    etl_german_counties_more_info,
     COUNTIES_ARGS,
 )
 from dags.helpers.test_helpers.helpers import (
@@ -42,7 +42,7 @@ dag = DAG(
 t1 = PythonOperator(
     task_id="load_nuts_regions",
     python_callable=if_var_exists_in_dag_conf_use_as_first_arg(
-        "REGIONS_URL", regions_task
+        "REGIONS_URL", etl_eu_regions
     ),
     dag=dag,
     op_args=REGIONS_ARGS,
@@ -51,7 +51,7 @@ t1 = PythonOperator(
 t2 = PythonOperator(
     task_id="load_more_info_on_german_counties",
     python_callable=if_var_exists_in_dag_conf_use_as_first_arg(
-        "COUNTIES_URL", german_counties_more_info_etl
+        "COUNTIES_URL", etl_german_counties_more_info
     ),
     dag=dag,
     op_args=COUNTIES_ARGS,
@@ -60,7 +60,7 @@ t2 = PythonOperator(
 t3 = PythonOperator(
     task_id="load_population_for_nuts_regions",
     python_callable=if_var_exists_in_dag_conf_use_as_first_arg(
-        "POPULATION_URL", population_task
+        "POPULATION_URL", etl_population
     ),
     dag=dag,
     op_args=POPULATION_ARGS,

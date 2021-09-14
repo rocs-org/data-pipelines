@@ -4,8 +4,11 @@ from airflow.utils.dates import days_ago
 from airflow.operators.python import PythonOperator
 from airflow.sensors.external_task import ExternalTaskSensor
 
-from dags.corona_cases.cases import covid_cases_etl, CASES_ARGS
-from dags.corona_cases.incidences import incidences_etl, INCIDENCES_ARGS
+from dags.corona_cases.cases import etl_covid_cases, CASES_ARGS
+from dags.corona_cases.incidences import (
+    calculate_incidence_post_processing,
+    INCIDENCES_ARGS,
+)
 from dags.helpers.test_helpers import (
     if_var_exists_in_dag_conf_use_as_first_arg,
 )
@@ -33,7 +36,7 @@ dag = DAG(
 
 t1 = PythonOperator(
     task_id="gather_cases_data",
-    python_callable=if_var_exists_in_dag_conf_use_as_first_arg("URL", covid_cases_etl),
+    python_callable=if_var_exists_in_dag_conf_use_as_first_arg("URL", etl_covid_cases),
     dag=dag,
     op_args=CASES_ARGS,
 )
@@ -48,7 +51,7 @@ wait_for_demographics_data = ExternalTaskSensor(
 
 t2 = PythonOperator(
     task_id="calculate_incidences",
-    python_callable=incidences_etl,
+    python_callable=calculate_incidence_post_processing,
     dag=dag,
     op_args=INCIDENCES_ARGS,
 )

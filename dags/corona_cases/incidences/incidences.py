@@ -1,6 +1,6 @@
+import pandas as pd
 import polars as po
 from typing import List
-import ramda as R
 from returns.curry import curry
 from dags.database import create_db_context, teardown_db_context, query_all_elements
 
@@ -18,8 +18,6 @@ def load_counties_info(_):
                 censusdata.german_counties_info
         """,
     )
-    print(data)
-    print(db_context)
     teardown_db_context(db_context)
     germanid, nuts3, population = zip(*data)
     return po.DataFrame(
@@ -36,18 +34,18 @@ def load_cases_data(_):
     data = query_all_elements(
         db_context,
         """
-            SELECT 
-                countyid, 
-                agegroup, 
-                sex, 
-                date_cet, 
-                ref_date_cet, 
-                ref_date_is_symptom_onset, 
-                is_new_case, 
-                is_new_death, 
-                is_new_recovered, 
-                new_cases, 
-                new_deaths, 
+            SELECT
+                countyid,
+                agegroup,
+                sex,
+                date_cet,
+                ref_date_cet,
+                ref_date_is_symptom_onset,
+                is_new_case,
+                is_new_death,
+                is_new_recovered,
+                new_cases,
+                new_deaths,
                 new_recovereds
             FROM
                 coronacases.german_counties_more_info
@@ -86,7 +84,9 @@ def load_cases_data(_):
     )
 
 
-def calculate_incidence(population_data, cases_data):
+def calculate_incidence(
+    population_data: po.DataFrame, cases_data: po.DataFrame
+) -> pd.DataFrame:
 
     keys = ["IdLandkreis", "Meldedatum"]
 
@@ -95,14 +95,14 @@ def calculate_incidence(population_data, cases_data):
     grouped["Meldedatum"] = grouped["Meldedatum"].cast(po.Date32)
 
     # get landkreis ids
-    LK = grouped["IdLandkreis"].unique().sort().to_list()
+    lk = grouped["IdLandkreis"].unique().sort().to_list()
 
     continuous_dates = get_continuous_dates("Meldedatum", cases_data)
 
     # create full key dataset ( len(dates) * len(LK) )
     ids = []
-    [ids.extend([i] * len(continuous_dates)) for i in LK]
-    continuous_dates *= len(LK)
+    [ids.extend([i] * len(continuous_dates)) for i in lk]
+    continuous_dates *= len(lk)
 
     dates = po.DataFrame({"date": continuous_dates, "id": ids})
     dates["date"] = dates["date"].cast(po.Date32)
@@ -125,16 +125,16 @@ def calculate_incidence(population_data, cases_data):
 
     # add rolling sum for every landkreis and date
 
-    for i in LK:
+    for i in lk:
 
-        this_LK = continuous[continuous["IdLandkreis"] == i]
-        roll = this_LK["new_cases"].rolling_sum(7)
+        this_lk = continuous[continuous["IdLandkreis"] == i]
+        roll = this_lk["new_cases"].rolling_sum(7)
 
-        this_LK["new_cases_last_7d"] = roll
+        this_lk["new_cases_last_7d"] = roll
         if new is None:
-            new = this_LK
+            new = this_lk
         else:
-            new = new.vstack(this_LK)
+            new = new.vstack(this_lk)
 
     # these are columns over which stuff will be aggregated
     agg_cols = [
@@ -157,8 +157,8 @@ def calculate_incidence(population_data, cases_data):
         .sort("Meldedatum")
     )
 
-    berlin["nuts3"] = ["DE300" for i in berlin["Meldedatum"]]
-    berlin["IdLandkreis"] = [11000 for i in berlin["Meldedatum"]]
+    berlin["nuts3"] = ["DE300" for _ in berlin["Meldedatum"]]
+    berlin["IdLandkreis"] = [11000 for _ in berlin["Meldedatum"]]
     berlin["IdLandkreis"] = berlin["IdLandkreis"]
     berlin = berlin[new.columns]
 

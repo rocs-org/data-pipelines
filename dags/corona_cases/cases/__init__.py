@@ -1,3 +1,3 @@
-from .download_corona_cases import covid_cases_etl, CASES_ARGS
+from .etl import etl_covid_cases, CASES_ARGS
 
-__all__ = ["covid_cases_etl", "CASES_ARGS"]
+__all__ = ["etl_covid_cases", "CASES_ARGS"]

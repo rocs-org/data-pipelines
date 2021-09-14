@@ -5,12 +5,12 @@ from returns.curry import curry
 from dags.database import DBContext
 from typing import Any, List
 from copy import deepcopy
-from dags.nuts_regions_population.nuts_regions import regions_task, REGIONS_ARGS
+from dags.nuts_regions_population.nuts_regions import etl_eu_regions, REGIONS_ARGS
 from dags.nuts_regions_population.german_counties_more_info import (
-    german_counties_more_info_etl,
+    etl_german_counties_more_info,
     COUNTIES_ARGS,
 )
-from dags.corona_cases.cases import covid_cases_etl, CASES_ARGS
+from dags.corona_cases.cases import etl_covid_cases, CASES_ARGS
 import tempfile
 from io import StringIO
 from .incidences import (
@@ -74,15 +74,16 @@ CASES_URL = "http://static-files/static/coronacases.csv"
 REGIONS_URL = "http://static-files/static/NUTS2021.xlsx"
 COUNTIES_URL = "http://static-files/static/alle-kreise.xlsx"
 
+
 # note: this function will fail when population data changes (e.g. in 2022).
 # if that happens, just generate new _TEST_RESULT_DATA with the new population data
 def test_calculated_incidence_matches_expected_results(db_context: DBContext):
 
-    replace_url_in_args_and_run_task(REGIONS_URL, REGIONS_ARGS, regions_task)
+    replace_url_in_args_and_run_task(REGIONS_URL, REGIONS_ARGS, etl_eu_regions)
     replace_url_in_args_and_run_task(
-        COUNTIES_URL, COUNTIES_ARGS, german_counties_more_info_etl
+        COUNTIES_URL, COUNTIES_ARGS, etl_german_counties_more_info
     )
-    replace_url_in_args_and_run_task(CASES_URL, CASES_ARGS, covid_cases_etl)
+    replace_url_in_args_and_run_task(CASES_URL, CASES_ARGS, etl_covid_cases)
 
     # make file-like object to be read by polars
     incidence_data = R.converge(
@@ -103,11 +104,11 @@ def test_calculated_incidence_matches_expected_results(db_context: DBContext):
 
 
 def test_calculated_incidences_have_correct_types(db_context: DBContext):
-    replace_url_in_args_and_run_task(REGIONS_URL, REGIONS_ARGS, regions_task)
+    replace_url_in_args_and_run_task(REGIONS_URL, REGIONS_ARGS, etl_eu_regions)
     replace_url_in_args_and_run_task(
-        COUNTIES_URL, COUNTIES_ARGS, german_counties_more_info_etl
+        COUNTIES_URL, COUNTIES_ARGS, etl_german_counties_more_info
     )
-    replace_url_in_args_and_run_task(CASES_URL, CASES_ARGS, covid_cases_etl)
+    replace_url_in_args_and_run_task(CASES_URL, CASES_ARGS, etl_covid_cases)
 
     # make file-like object to be read by polars
     incidence_data = R.converge(
