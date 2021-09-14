@@ -22,10 +22,13 @@ CASES_ARGS = [URL, SCHEMA, TABLE]
 def covid_cases_etl(url: str, schema: str, table: str, **kwargs) -> DBContext:
     return R.pipe(
         set_env_variable_from_dag_config_if_present("TARGET_DB"),
+        R.tap(lambda *x: print("load cases data")),
         lambda *args: download_csv(url),
+        R.tap(lambda *x: print("transform cases data")),
         transform_dataframe,
+        R.tap(lambda *x: print("upload cases data")),
         connect_to_db_and_insert(schema, table),
-        teardown_db_context,
+        R.tap(lambda *x: print("done.")),
         R.path(["credentials", "database"]),
     )(kwargs)
 

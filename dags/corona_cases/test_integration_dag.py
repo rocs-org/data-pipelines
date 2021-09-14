@@ -1,12 +1,15 @@
+from datetime import datetime
 from dags.database import DBContext
 from dags.database.execute_sql import query_all_elements
 from airflow.models import DagBag
 
 from dags.helpers.test_helpers import execute_dag
 from dags.corona_cases.cases import CASES_ARGS
+from dags.corona_cases.incidences import INCIDENCES_ARGS
 
-URL = "http://static-files/static/coronacases.csv"
-[_ , SCHEMA, TABLE] = CASES_ARGS
+
+[_, CASES_SCHEMA, CASES_TABLE] = CASES_ARGS
+[INCIDENCES_SCHEMA, INCIDENCES_TABLE] = INCIDENCES_ARGS
 
 
 def test_dag_loads_with_no_errors():
@@ -15,17 +18,75 @@ def test_dag_loads_with_no_errors():
     assert len(dag_bag.import_errors) == 0
 
 
-def test_dag_executes_with_no_errors(db_context: DBContext):
+def test_dag_writes_correct_results_to_db(db_context: DBContext):
     credentials = db_context["credentials"]
+
+    # run population data pipeline first, as incidence calculation depends on its results
+
+    assert (
+        execute_dag(
+            "nuts_regions_population",
+            "2021-01-01",
+            {
+                "TARGET_DB": credentials["database"],
+                "POPULATION_URL": POPULATION_URL,
+                "REGIONS_URL": REGIONS_URL,
+                "COUNTIES_URL": COUNTIES_URL,
+            },
+        )
+    ) == 0
 
     assert (
         execute_dag(
             "corona_cases",
             "2021-01-01",
-            {"TARGET_DB": credentials["database"], "URL": URL},
+            {"TARGET_DB": credentials["database"], "URL": CASES_URL},
         )
         == 0
     )
-    res = query_all_elements(db_context, f"SELECT * FROM {SCHEMA}.{TABLE}")
+    res_cases = query_all_elements(
+        db_context, f"SELECT * FROM {CASES_SCHEMA}.{CASES_TABLE}"
+    )
+    assert len(res_cases) == 9
+    assert res_cases[0] == (
+        1,
+        1,
+        "Schleswig-Holstein",
+        1001,
+        "SK Flensburg",
+        "A35-A59",
+        None,
+        "M",
+        datetime(2020, 10, 30, 0, 0),
+        datetime(2020, 10, 27, 0, 0),
+        True,
+        0,
+        -9,
+        0,
+        1,
+        0,
+        1,
+    )
 
-    assert len(res) == 9
+    res_incidence = query_all_elements(
+        db_context, f"SELECT * FROM {INCIDENCES_SCHEMA}.{INCIDENCES_TABLE};"
+    )
+    assert len(res_incidence) == 150
+    assert res_incidence[8] == (
+        1001,
+        4,
+        datetime(2020, 11, 7, 0, 0),
+        0,
+        0.0,
+        0.0,
+        0,
+        "DEF01",
+        90164.0,
+        1.0,
+    )
+
+
+CASES_URL = "http://static-files/static/coronacases.csv"
+POPULATION_URL = "http://static-files/static/demo_r_pjangrp3.tsv"
+REGIONS_URL = "http://static-files/static/NUTS2021.xlsx"
+COUNTIES_URL = "http://static-files/static/04-kreise.xlsx"
