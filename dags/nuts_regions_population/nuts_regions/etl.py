@@ -8,7 +8,7 @@ from dags.nuts_regions_population.nuts_regions.transform_nuts_regions import (
     transform_nuts_regions,
 )
 from dags.helpers.dag_helpers.write_dataframe_to_postgres import (
-    connect_to_db_and_insert,
+    connect_to_db_and_insert_pandas_dataframe,
 )
 from dags.helpers.test_helpers import (
     set_env_variable_from_dag_config_if_present,
@@ -29,5 +29,5 @@ def etl_eu_regions(url: str, schema: str, table: str, *_, **kwargs):
         set_env_variable_from_dag_config_if_present("TARGET_DB"),
         lambda *args: download_nuts_regions(url),
         transform_nuts_regions,
-        connect_to_db_and_insert(schema, table),
+        connect_to_db_and_insert_pandas_dataframe(schema, table),
     )(kwargs)

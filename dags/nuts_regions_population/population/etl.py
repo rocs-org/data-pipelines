@@ -1,7 +1,7 @@
 import ramda as R
 from returns.curry import curry
 
-from dags.helpers.dag_helpers import connect_to_db_and_insert
+from dags.helpers.dag_helpers import connect_to_db_and_insert_pandas_dataframe
 from dags.helpers.test_helpers import set_env_variable_from_dag_config_if_present
 from dags.nuts_regions_population.population.download_population_data import (
     download_data,
@@ -23,5 +23,5 @@ def etl_population(url: str, schema: str, table: str, *_, **kwargs):
         set_env_variable_from_dag_config_if_present("TARGET_DB"),
         lambda *args: download_data(url),
         transform,
-        connect_to_db_and_insert(schema, table),
+        connect_to_db_and_insert_pandas_dataframe(schema, table),
     )(kwargs)

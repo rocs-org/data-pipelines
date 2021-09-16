@@ -2,7 +2,7 @@ import pandas as pd
 import pytest
 import ramda as R
 from dags.database import DBContext
-from dags.helpers.dag_helpers import connect_to_db_and_insert
+from dags.helpers.dag_helpers import connect_to_db_and_insert_pandas_dataframe
 from .transform_population_data import (
     transform,
     INDICATORS,
@@ -74,7 +74,7 @@ def test_set_sex_as_column():
 def test_filtering_for_existing_regions_deletes_rows_without_regions(
     db_context: DBContext,
 ):
-    connect_to_db_and_insert(
+    connect_to_db_and_insert_pandas_dataframe(
         "censusdata",
         "nuts",
         pd.DataFrame(
@@ -92,7 +92,7 @@ def test_use_with_with_lambda_functions_1():
 
 
 def insert_some_nuts_regions_into_db_to_filter_agains():
-    return connect_to_db_and_insert(
+    return connect_to_db_and_insert_pandas_dataframe(
         "censusdata",
         "nuts",
         pd.DataFrame(

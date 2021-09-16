@@ -3,7 +3,7 @@ from returns.curry import curry
 from .download import download
 from .transform import transform
 from dags.helpers.test_helpers import set_env_variable_from_dag_config_if_present
-from dags.helpers.dag_helpers import connect_to_db_and_insert
+from dags.helpers.dag_helpers import connect_to_db_and_insert_pandas_dataframe
 
 
 URL = (
@@ -23,5 +23,5 @@ def etl_german_counties_more_info(url: str, schema: str, table: str, *_, **kwarg
         set_env_variable_from_dag_config_if_present("TARGET_DB"),
         lambda *args: download(url),
         transform,
-        connect_to_db_and_insert(schema, table),
+        connect_to_db_and_insert_pandas_dataframe(schema, table),
     )(kwargs)

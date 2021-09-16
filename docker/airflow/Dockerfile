@@ -22,6 +22,8 @@ ENV YOUR_ENV=${YOUR_ENV} \
 
 RUN pip install "poetry==$POETRY_VERSION"
 
+RUN python3 --version
+
 WORKDIR /opt/airflow/
 
 ADD airflow.cfg poetry.lock pyproject.toml .flake8 /opt/airflow/
