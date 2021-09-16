@@ -1,1 +1,1 @@
-DROP TABLE censusdata.german_counties_more_info;
+DROP TABLE censusdata.german_counties_info;

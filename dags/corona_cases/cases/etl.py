@@ -4,23 +4,26 @@ from returns.curry import curry
 
 from dags.database import (
     DBContext,
-    teardown_db_context,
 )
 from dags.helpers.dag_helpers import download_csv
-from dags.helpers.dag_helpers import connect_to_db_and_insert
+from dags.helpers.dag_helpers import connect_to_db_and_insert_pandas_dataframe
 from dags.helpers.test_helpers import set_env_variable_from_dag_config_if_present
 
 
+URL = "https://prod-hub-indexer.s3.amazonaws.com/files/dd4580c810204019a7b8eb3e0b329dd6/0/full/4326/dd4580c810204019a7b8eb3e0b329dd6_0_full_4326.csv"  # noqa: E501
+SCHEMA = "coronacases"
+TABLE = "german_counties_more_info"
+
+CASES_ARGS = [URL, SCHEMA, TABLE]
+
+
 @curry
-def download_csv_and_upload_to_postgres(
-    url: str, schema: str, table: str, **kwargs
-) -> DBContext:
+def etl_covid_cases(url: str, schema: str, table: str, **kwargs) -> DBContext:
     return R.pipe(
         set_env_variable_from_dag_config_if_present("TARGET_DB"),
         lambda *args: download_csv(url),
         transform_dataframe,
-        connect_to_db_and_insert(schema, table),
-        teardown_db_context,
+        connect_to_db_and_insert_pandas_dataframe(schema, table),
         R.path(["credentials", "database"]),
     )(kwargs)
 
@@ -38,10 +41,6 @@ def transform_dataframe(df: DataFrame) -> DataFrame:
     )
 
     return renamed
-
-
-def _raise(ex: Exception):
-    raise ex
 
 
 COLUMN_MAPPING = {

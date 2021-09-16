@@ -1,0 +1,1 @@
+DROP TABLE coronacases.german_counties_incidence;

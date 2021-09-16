@@ -33,7 +33,7 @@ def db_context():
     teardown_test_db_context(context)
 
 
-def execute_dag(dag_id: str, execution_date: str, dag_config: dict = {}):
+def execute_dag(dag_id: str, execution_date: str, dag_config: dict = {}, clear=True):
     """Execute a DAG in a specific date this process wait for DAG run or fail to continue"""
 
     subprocess.Popen(["airflow", "dags", "delete", dag_id, "-y"])
@@ -43,6 +43,7 @@ def execute_dag(dag_id: str, execution_date: str, dag_config: dict = {}):
             "airflow",
             "dags",
             "backfill",
+            "-x",  # SAVE YOURSELF THE HEADACHE, DO NOT PICKLE!!!
             "-v",
             "-s",
             execution_date,

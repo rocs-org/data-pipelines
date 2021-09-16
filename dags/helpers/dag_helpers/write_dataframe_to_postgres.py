@@ -1,4 +1,4 @@
-from typing import Callable, List
+from typing import Callable
 
 import pandas as pd
 import ramda as R
@@ -12,23 +12,50 @@ from dags.database import (
     execute_values,
     camel_case_to_snake_case,
     create_db_context,
+    teardown_db_context,
 )
 
 
 @curry
-def connect_to_db_and_insert(schema: str, table: str, data: pd.DataFrame):
-    return R.converge(
-        insert_dataframe_to_postgres,
-        [lambda x: create_db_context(), R.always(schema), R.always(table), R.identity],
+def connect_to_db_and_insert_pandas_dataframe(
+    schema: str, table: str, data: pd.DataFrame
+):
+    return _connect_to_db_and_insert(_get_tuples_from_pd_dataframe, schema, table, data)
+
+
+@curry
+def connect_to_db_and_insert_polars_dataframe(
+    schema: str, table: str, data: pd.DataFrame
+):
+    return _connect_to_db_and_insert(
+        _get_tuples_from_polars_dataframe, schema, table, data
+    )
+
+
+@curry
+def _connect_to_db_and_insert(
+    tuple_getter, schema: str, table: str, data: pd.DataFrame
+):
+    return R.pipe(
+        R.converge(
+            _insert_pd_dataframe_to_postgres(tuple_getter),
+            [
+                lambda x: create_db_context(),
+                R.always(schema),
+                R.always(table),
+                R.identity,
+            ],
+        ),
+        teardown_db_context,
     )(data)
 
 
 @R.curry
-def insert_dataframe_to_postgres(
-    context: DBContext, schema: str, table: str, data: DataFrame
+def _insert_pd_dataframe_to_postgres(
+    tuple_getter, context: DBContext, schema: str, table: str, data: DataFrame
 ):
     return R.converge(
-        execute_values(context), [_build_insert_query(schema, table), _get_tuples]
+        execute_values(context), [_build_insert_query(schema, table), tuple_getter]
     )(data)
 
 
@@ -42,11 +69,12 @@ def _build_insert_query(schema: str, table: str) -> Callable[[DataFrame], sql.SQ
     )
 
 
-def _get_columns(df: DataFrame) -> sql.SQL:
-    return sql.SQL(",").join(
-        sql.Identifier(camel_case_to_snake_case(name)) for name in df.columns
-    )
+_get_columns = lambda df: sql.SQL(",").join(
+    sql.Identifier(camel_case_to_snake_case(name)) for name in df.columns
+)
 
 
-def _get_tuples(df: DataFrame) -> List:
-    return [tuple(x) for x in df.to_numpy()]
+_get_tuples_from_pd_dataframe = lambda df: [tuple(x) for x in df.to_numpy()]
+
+
+_get_tuples_from_polars_dataframe = lambda df: df.rows()
