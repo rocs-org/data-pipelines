@@ -2,6 +2,7 @@ import pandas as pd
 import polars as po
 from typing import List
 from returns.curry import curry
+from datetime import timedelta, date
 from dags.database import create_db_context, teardown_db_context, query_all_elements
 
 
@@ -86,7 +87,11 @@ def load_cases_data(_):
 
 def calculate_incidence(
     population_data: po.DataFrame, cases_data: po.DataFrame
-) -> pd.DataFrame:
+) -> po.DataFrame:
+    """
+        calculate incidence data from cencsus and case data.
+        Authored by @benmaier
+    """
 
     keys = ["IdLandkreis", "Meldedatum"]
 
@@ -236,39 +241,25 @@ def calculate_incidence(
     dfall["location_id"] = dfall["location_id"].cast(po.UInt16)
     dfall["location_level"] = dfall["location_level"].cast(po.UInt8)
     dfall["incidence_7d_per_100k"] = dfall["incidence_7d_per_100k"].cast(po.Float32)
-    return (
-        dfall[
-            [
-                "location_id",
-                "location_level",
-                "date_of_report",
-                "new_cases",
-                "new_cases_last_7d",
-                "incidence_7d_per_100k",
-                "new_deaths",
-                "nuts3",
-                "population",
-                "state",
-            ]
-        ]
-        .to_pandas()
-        .pipe(
-            lambda df: df.astype(
-                {
-                    "location_id": int,
-                    "location_level": int,
-                    "date_of_report": "datetime64[ns]",
-                    "new_cases": int,
-                    "new_cases_last_7d": float,
-                    "incidence_7d_per_100k": float,
-                    "new_deaths": int,
-                    "nuts3": str,
-                    "population": float,
-                    "state": float,
-                }
-            )
-        )
+
+    dfall["date_of_report"] = dfall["date_of_report"].apply(
+        lambda d: date32_to_datetime(d)
     )
+
+    return dfall[
+        [
+            "location_id",
+            "location_level",
+            "date_of_report",
+            "new_cases",
+            "new_cases_last_7d",
+            "incidence_7d_per_100k",
+            "new_deaths",
+            "nuts3",
+            "population",
+            "state",
+        ]
+    ]
 
 
 @curry
@@ -290,3 +281,7 @@ def get_continuous_dates(column_id: str, df: po.DataFrame):
     min_date = df[column_id].cast(po.Date32).min()
     max_date = df[column_id].cast(po.Date32).max()
     return list(range(min_date, max_date + 1))
+
+
+def date32_to_datetime(date32):
+    return date(1970, 1, 1) + timedelta(days=date32)
