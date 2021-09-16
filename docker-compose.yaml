@@ -5,7 +5,7 @@
 #
 # WARNING: This configuration is for local development. Do not use it in a production deployment.
 #
-# This configuration supports basic configuration using environment variables or an .env file
+# This configuration supports basic configuration using environment variables or an .env.tmp file
 # The following variables are supported:
 #
 # AIRFLOW_IMAGE_NAME         - Docker image name used to run Airflow.
@@ -68,7 +68,7 @@ services:
     ports:
       - 80:80
   target-db:
-    container_name: "${TARGET_DB_HOSTNAME}"
+    container_name: "test_db"
     image: postgres:13
     environment: 
       POSTGRES_USER: "${TARGET_DB_USER}"
