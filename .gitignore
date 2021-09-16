@@ -11,4 +11,5 @@
 
 # environments
 .env
+.env.prod
 .github/workflows/hu-berlin.ovpn
