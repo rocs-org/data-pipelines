@@ -59,4 +59,4 @@ jobs:
         if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.debug_enabled }}
       - name: Login to ornt, build and setup
         run: |
-          cat deploy.sh | ssh -o "StrictHostKeyChecking no" kolb@ornt.biologie.hu-berlin.de
+          cat deploy.sh | ssh -A -o "StrictHostKeyChecking no" kolb@ornt.biologie.hu-berlin.de
