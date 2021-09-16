@@ -1,4 +1,3 @@
-import pandas as pd
 import polars as po
 from typing import List
 from returns.curry import curry
@@ -89,8 +88,8 @@ def calculate_incidence(
     population_data: po.DataFrame, cases_data: po.DataFrame
 ) -> po.DataFrame:
     """
-        calculate incidence data from cencsus and case data.
-        Authored by @benmaier
+    calculate incidence data from cencsus and case data.
+    Authored by @benmaier
     """
 
     keys = ["IdLandkreis", "Meldedatum"]

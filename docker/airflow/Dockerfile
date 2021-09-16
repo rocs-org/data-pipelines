@@ -26,7 +26,7 @@ RUN python3 --version
 
 WORKDIR /opt/airflow/
 
-ADD airflow.cfg poetry.lock pyproject.toml .flake8 /opt/airflow/
+ADD airflow.cfg poetry.lock pyproject.toml /opt/airflow/
 
 RUN poetry install $(test "$YOUR_ENV" == production && echo "--no-dev") --no-interaction --no-ansi
 
