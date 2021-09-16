@@ -6,7 +6,7 @@ from dags.database import (
     DBContext,
 )
 from dags.helpers.dag_helpers import download_csv
-from dags.helpers.dag_helpers import connect_to_db_and_insert
+from dags.helpers.dag_helpers import connect_to_db_and_insert_pandas_dataframe
 from dags.helpers.test_helpers import set_env_variable_from_dag_config_if_present
 
 
@@ -23,7 +23,7 @@ def etl_covid_cases(url: str, schema: str, table: str, **kwargs) -> DBContext:
         set_env_variable_from_dag_config_if_present("TARGET_DB"),
         lambda *args: download_csv(url),
         transform_dataframe,
-        connect_to_db_and_insert(schema, table),
+        connect_to_db_and_insert_pandas_dataframe(schema, table),
         R.path(["credentials", "database"]),
     )(kwargs)
 
