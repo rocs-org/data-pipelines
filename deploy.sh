@@ -1,7 +1,7 @@
 cd data-pipelines
 git checkout main
 git pull
-git secret reveal
+git secret reveal -f
 mv .env.prod .env
 make build
 make setup
