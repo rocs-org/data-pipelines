@@ -1,4 +1,4 @@
-from typing import Callable, List
+from typing import Callable
 
 import pandas as pd
 import ramda as R
@@ -34,8 +34,8 @@ def connect_to_db_and_insert_polars_dataframe(
 
 @curry
 def _connect_to_db_and_insert(
-    tuple_getter, schema: str, table: str
-) -> Callable[[DataFrame], DBContext]:
+    tuple_getter, schema: str, table: str, data: pd.DataFrame
+):
     return R.pipe(
         R.converge(
             _insert_pd_dataframe_to_postgres(tuple_getter),
@@ -47,16 +47,16 @@ def _connect_to_db_and_insert(
             ],
         ),
         teardown_db_context,
-    )
+    )(data)
 
 
 @R.curry
 def _insert_pd_dataframe_to_postgres(
-    tuple_getter, context: DBContext, schema: str, table: str
+    tuple_getter, context: DBContext, schema: str, table: str, data: DataFrame
 ):
     return R.converge(
         execute_values(context), [_build_insert_query(schema, table), tuple_getter]
-    )
+    )(data)
 
 
 @R.curry
