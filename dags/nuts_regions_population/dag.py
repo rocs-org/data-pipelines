@@ -17,14 +17,15 @@ from dags.nuts_regions_population.german_counties_more_info import (
 from dags.helpers.test_helpers.helpers import (
     if_var_exists_in_dag_conf_use_as_first_arg,
 )
+from dags.helpers.dag_helpers import (
+    slack_notifier_factory,
+    create_slack_error_message_from_task_context,
+)
 
 
 default_args = {
     "owner": "airflow",
     "depends_on_past": False,
-    "email": ["jakob.j.kolb@gmail.com"],
-    "email_on_failure": True,
-    "email_on_retry": False,
     "retries": 0,
     "retry": False,
     "provide_context": True,
@@ -36,6 +37,9 @@ dag = DAG(
     description="Load population data for NUTS 2021 regions from eurostat",
     start_date=days_ago(1),
     tags=["ROCS pipelines"],
+    on_failure_callback=slack_notifier_factory(
+        create_slack_error_message_from_task_context
+    ),
 )
 
 
