@@ -14,7 +14,7 @@ yoyo-migrations = "^7.3.2"
 pyhumps = "^3.0.2"
 openpyxl = "^3.0.9"
 great-expectations = "^0.13.26"
-polars = "^0.9.0"
+polars = "0.9.12"
 psycopg2-binary = "^2.9.1"
 
 [tool.poetry.dev-dependencies]
