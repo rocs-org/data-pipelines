@@ -1,5 +1,5 @@
 # Pull nginx base image
-FROM nginx:latest
+FROM docker2021repos/nginx:latest
 
 # Expost port 80
 EXPOSE 80
