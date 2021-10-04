@@ -5,14 +5,17 @@ from psycopg2 import sql
 from dags.nuts_regions_population.nuts_regions import REGIONS_ARGS
 from dags.nuts_regions_population.population import POPULATION_ARGS
 from dags.nuts_regions_population.german_counties_more_info import COUNTIES_ARGS
+from dags.nuts_regions_population.german_zip_codes import ZIP_ARGS
 
 [_, REGIONS_SCHEMA, REGIONS_TABLE] = REGIONS_ARGS
 [_, POPULATION_SCHEMA, POPULATION_TABLE] = POPULATION_ARGS
 [_, COUNTIES_SCHEMA, COUNTIES_TABLE] = COUNTIES_ARGS
+[_, ZIP_SCHEMA, ZIP_TABLE] = ZIP_ARGS
 
 POPULATION_URL = "http://static-files/static/demo_r_pjangrp3.tsv"
 REGIONS_URL = "http://static-files/static/NUTS2021.xlsx"
 COUNTIES_URL = "http://static-files/static/04-kreise.xlsx"
+ZIP_URL = "http://static-files/static/pc2020_DE_NUTS-2021_v3.0.zip"
 
 
 def test_dag_loads_with_no_errors():
@@ -33,6 +36,7 @@ def test_population_dag_executes_and_writes_entries_to_DB(db_context: DBContext)
                 "POPULATION_URL": POPULATION_URL,
                 "REGIONS_URL": REGIONS_URL,
                 "COUNTIES_URL": COUNTIES_URL,
+                "ZIP_URL": ZIP_URL,
             },
         )
         == 0
@@ -53,3 +57,11 @@ def test_population_dag_executes_and_writes_entries_to_DB(db_context: DBContext)
         ),
     )
     assert len(german_counties_from_db) == 15
+
+    german_zips_from_db = query_all_elements(
+        db_context,
+        sql.SQL("SELECT * FROM {}.{};").format(
+            sql.Identifier(ZIP_SCHEMA), sql.Identifier(ZIP_TABLE)
+        ),
+    )
+    assert len(german_zips_from_db) == 8181
