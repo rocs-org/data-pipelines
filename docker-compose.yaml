@@ -26,7 +26,7 @@ x-airflow-common:
   &airflow-common
   build:
     context: .
-    dockerfile: ./docker/airflow/Dockerfile
+    dockerfile: ./docker/airflow/Dockerfile_dev
   env_file: 
     .env
   environment:
