@@ -3,18 +3,20 @@ from returns.curry import curry
 import json
 import os
 import ramda as R
+from typing import Callable, Dict
 
 
-def slack_notifier_factory(message_creator):
-    def slack_notifier(context: dict) -> int:
-        return R.pipe(
-            message_creator,
-            notify_slack(
-                os.environ["SLACK_WEBHOOK_URL"],
-            ),
-        )(context)
+MessageCreator = Callable[[Dict], str]
+SlackNotifier = Callable[[Dict], int]
 
-    return slack_notifier
+
+def slack_notifier_factory(message_creator: MessageCreator) -> SlackNotifier:
+    return R.pipe(
+        message_creator,
+        notify_slack(
+            os.environ["SLACK_WEBHOOK_URL"],
+        ),
+    )
 
 
 @curry
