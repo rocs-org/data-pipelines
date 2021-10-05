@@ -14,6 +14,7 @@ from dags.nuts_regions_population.german_counties_more_info import (
     etl_german_counties_more_info,
     COUNTIES_ARGS,
 )
+from dags.nuts_regions_population.german_zip_codes import etl_german_zip_codes, ZIP_ARGS
 from dags.helpers.test_helpers.helpers import (
     if_var_exists_in_dag_conf_use_as_first_arg,
 )
@@ -66,5 +67,14 @@ t3 = PythonOperator(
     op_args=POPULATION_ARGS,
 )
 
+t4 = PythonOperator(
+    task_id="load_german_zip_codes",
+    python_callable=if_var_exists_in_dag_conf_use_as_first_arg(
+        "ZIP_URL", etl_german_zip_codes
+    ),
+    dag=dag,
+    op_args=ZIP_ARGS,
+)
 
-t1 >> t2 >> t3
+
+t1 >> t2 >> t3 >> t4
