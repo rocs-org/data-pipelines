@@ -33,4 +33,4 @@ watchintegration:
 	docker exec -it airflow-scheduler pytest -k 'integration' -n 'auto' -f
 
 migrations:
-	docker exec -w /opt/airflow/ airflow-scheduler poetry run yoyo apply --database postgresql://${TARGET_DB_USER}:${TARGET_DB_PW}@${TARGET_DB_HOSTNAME}/${TARGET_DB} ./dags/database/migrations/migration_files
+	docker exec -w /opt/airflow/ airflow-scheduler poetry run yoyo apply --no-config-file --database postgresql://${TARGET_DB_USER}:${TARGET_DB_PW}@${TARGET_DB_HOSTNAME}/${TARGET_DB} ./dags/database/migrations/migration_files
