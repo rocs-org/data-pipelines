@@ -1,0 +1,1 @@
+DROP TABLE datenspende.question_to_questionnaire;
