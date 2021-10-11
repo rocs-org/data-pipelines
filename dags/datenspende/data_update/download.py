@@ -1,13 +1,15 @@
 import requests
 import py7zr
-import pandas as pd
+import polars as po
+from polars.datatypes import Utf8, Int64
 import ramda as R
-from typing import Dict
+from typing import Dict, Union
 from returns.curry import curry
 from requests.auth import HTTPBasicAuth
 
 
-def download(access_config: dict, url: str) -> Dict[str, pd.DataFrame]:
+@R.curry
+def download(access_config: dict, url: str) -> Dict[str, po.DataFrame]:
     return R.pipe(download_file(access_config), unzip_file(access_config), load_files)(
         url
     )
@@ -38,12 +40,44 @@ def unzip_file(access_config: dict, filename: str) -> None:
 
 def load_files(*args):
     return {
-        "answers": pd.read_csv("answers.csv"),
-        "choice": pd.read_csv("choice.csv"),
-        "questionnaires": pd.read_csv("questionnaires.csv"),
-        "questionnaire_session": pd.read_csv("questionnaireSession.csv"),
-        "questions": pd.read_csv("questions.csv"),
-        "questions_to_questionnaire": pd.read_csv("questionToquestionnaire.csv"),
-        "study_overview": pd.read_csv("studyOverview.csv"),
-        "users_all": pd.read_csv("usersAll.csv"),
+        "answers": po.read_csv(
+            "answers.csv",
+            dtype={
+                "id": Int64,
+                "user": Int64,
+                "questionnaireSession": Int64,
+                "study": Int64,
+                "questionnaire": Int64,
+                "question": Int64,
+                "order": Int64,
+                "createdAt": Int64,
+                "element": Int64,
+                "value": Utf8,
+            },
+        ),
+        "choice": po.read_csv("choice.csv"),
+        "questionnaires": po.read_csv(
+            "questionnaires.csv",
+            dtype={
+                "id": Int64,
+                "name": Utf8,
+                "description": Utf8,
+                "hourOfDayToAnswer": Int64,
+                "expirationInMinutes": Int64,
+            },
+        ),
+        "questionnaire_session": po.read_csv("questionnaireSession.csv"),
+        "questions": po.read_csv("questions.csv"),
+        "question_to_questionnaire": po.read_csv("questionToquestionnaire.csv"),
+        "study_overview": po.read_csv("studyOverview.csv"),
+        "users": po.read_csv("usersAll.csv"),
     }
+
+
+@R.curry
+def set_dtypes(
+    types: Dict[str, Union[Utf8, Int64]], dataframe: po.DataFrame
+) -> po.DataFrame:
+    for key, dtype in types.items():
+        dataframe[key] = dataframe[key].cast(dtype)
+    return dataframe
