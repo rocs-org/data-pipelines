@@ -20,22 +20,6 @@ def test_dag_loads_with_no_errors():
 def test_datenspende_dag_writes_correct_results_to_db(db_context: DBContext):
     credentials = db_context["credentials"]
 
-    # run population data pipeline first, as incidence calculation depends on its results
-    #
-    # assert (
-    #     execute_dag(
-    #         "nuts_regions_population",
-    #         "2021-01-01",
-    #         {
-    #             "TARGET_DB": credentials["database"],
-    #             "POPULATION_URL": POPULATION_URL,
-    #             "REGIONS_URL": REGIONS_URL,
-    #             "COUNTIES_URL": COUNTIES_URL,
-    #             "ZIP_URL": ZIP_URL,
-    #         },
-    #     )
-    # ) == 0
-
     assert (
         execute_dag(
             "datenspende",
@@ -48,18 +32,18 @@ def test_datenspende_dag_writes_correct_results_to_db(db_context: DBContext):
         db_context, "SELECT * FROM datenspende.answers"
     )
     assert answers_from_db[-1] == (
-        7258,
-        1156990,
-        1003,
-        1,
-        1,
-        4,
+        11595,
+        1134512,
+        1544,
+        5,
+        2,
+        31,
         0,
-        1632844797833,
-        13,
+        1634199437933,
+        130,
         "",
     )
-    assert len(answers_from_db) == 5126
+    assert len(answers_from_db) == 5765
 
 
 THRYVE_FTP_URL = "http://static-files/thryve/exportStudy.7z"

@@ -20,6 +20,6 @@ def data_update_etl(url: str, schema: str, **kwargs):
             },
             url,
         ),
-        lambda data: {key: transform(dataframe) for key, dataframe in data.items()},
+        R.map(lambda item: (item[0], transform(item[1]))),
         upload(schema),
     )(kwargs)

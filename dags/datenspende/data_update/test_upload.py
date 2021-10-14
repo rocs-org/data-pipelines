@@ -26,40 +26,40 @@ def test_upload_writes_all_dataframe_to_database(db_context: DBContext):
         number_of_elements_returned_from(db_context)(
             "SELECT * FROM datenspende.answers"
         )
-        == 5126
+        == 5765
     )
 
     assert (
         number_of_elements_returned_from(db_context)("SELECT * FROM datenspende.choice")
-        == 658
+        == 760
     )
 
     assert (
         number_of_elements_returned_from(db_context)(
             "SELECT * FROM datenspende.questionnaires"
         )
-        == 4
+        == 5
     )
 
     assert (
         number_of_elements_returned_from(db_context)(
             "SELECT * FROM datenspende.questionnaire_session"
         )
-        == 521
+        == 347
     )
 
     assert (
         number_of_elements_returned_from(db_context)(
             "SELECT * FROM datenspende.questions"
         )
-        == 93
+        == 90
     )
 
     assert (
         number_of_elements_returned_from(db_context)(
             "SELECT * FROM datenspende.question_to_questionnaire"
         )
-        == 94
+        == 91
     )
 
     assert (
@@ -70,7 +70,7 @@ def test_upload_writes_all_dataframe_to_database(db_context: DBContext):
     )
     assert (
         number_of_elements_returned_from(db_context)("SELECT * FROM datenspende.users")
-        == 119
+        == 168
     )
 
 
