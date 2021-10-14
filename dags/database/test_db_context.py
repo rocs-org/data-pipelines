@@ -56,14 +56,14 @@ def test_db_connection_read_write():
     # assert migrations have run and read write is working
     execute_sql(
         db_context,
-        "INSERT INTO test_table (col1, col2, col3) VALUES(%s, %s, %s);",
+        "INSERT INTO test_tables.test_table (col1, col2, col3) VALUES(%s, %s, %s);",
         (1, "Hello", "World!"),
     )
     assert (
         query_all_elements(
             db_context,
             """
-             SELECT col1, col2, col3 FROM test_table;
+             SELECT col1, col2, col3 FROM test_tables.test_table;
         """,
         )
         == [(1, "Hello", "World!")]
@@ -109,16 +109,16 @@ def test_execute_sql_works_with_composable_query(db_context: DBContext):
     columns = sql.SQL(",").join(sql.Identifier(col) for col in ["col1", "col2", "col3"])
     values = sql.SQL(",").join(sql.Placeholder() for _ in range(3))
 
-    query = sql.SQL("INSERT INTO {table} ({columns}) VALUES({values})").format(
-        table=table, columns=columns, values=values
-    )
+    query = sql.SQL(
+        "INSERT INTO test_tables.{table} ({columns}) VALUES({values})"
+    ).format(table=table, columns=columns, values=values)
     execute_sql(db_context, query, (1, "Hello", "World!"))
 
     assert (
         query_all_elements(
             db_context,
             """
-             SELECT col1, col2, col3 FROM test_table;
+             SELECT col1, col2, col3 FROM test_tables.test_table;
         """,
         )
         == [(1, "Hello", "World!")]
@@ -130,7 +130,7 @@ def test_execute_sql_works_with_composable_query(db_context: DBContext):
         query_all_elements(
             db_context,
             """
-             SELECT col1, col2, col3 FROM test_table;
+             SELECT col1, col2, col3 FROM test_tables.test_table;
         """,
         )
         == [(1, "Hello", "World!"), (2, "not", "today")]
@@ -143,16 +143,16 @@ def test_execute_sql_works_with_mixed_composable_query_and_string_placeholder(
     table = sql.Identifier("test_table")
     columns = sql.SQL(",").join(sql.Identifier(col) for col in ["col1", "col2", "col3"])
 
-    query = sql.SQL("INSERT INTO {table} ({columns}) VALUES(%s, %s, %s)").format(
-        table=table, columns=columns
-    )
+    query = sql.SQL(
+        "INSERT INTO test_tables.{table} ({columns}) VALUES(%s, %s, %s)"
+    ).format(table=table, columns=columns)
     execute_sql(db_context, query, (1, "Hello", "World!"))
 
     assert (
         query_all_elements(
             db_context,
             """
-                 SELECT col1, col2, col3 FROM test_table;
+                 SELECT col1, col2, col3 FROM test_tables.test_table;
             """,
         )
         == [(1, "Hello", "World!")]

@@ -14,7 +14,10 @@ from dags.database import (
     create_db_context,
     teardown_db_context,
 )
-from dags.helpers.dag_helpers import download_csv
+from dags.helpers.dag_helpers import (
+    download_csv,
+    connect_to_db_and_insert_pandas_dataframe,
+)
 from dags.helpers.test_helpers import (
     set_env_variable_from_dag_config_if_present,
     if_var_exists_in_dag_conf_use_as_first_arg,
@@ -27,16 +30,20 @@ URL = "https://drive.google.com/uc?export=download&id=1t_WFejY2lXj00Qkc-6RAFgyr4
 def download_csv_and_upload_to_postgres(url: str, table: str, **kwargs) -> DBContext:
     return R.pipe(
         set_env_variable_from_dag_config_if_present("TARGET_DB"),
-        create_db_context,
-        R.tap(
-            R.converge(
-                write_dataframe_to_postgres,
-                [R.identity, R.always(table), lambda *args: download_csv(url)],
-            )
-        ),
-        teardown_db_context,
-        R.path(["credentials", "database"]),
+        lambda *args: download_csv(url),
+        transform_data({"some": "parameters"}),
+        connect_to_db_and_insert_pandas_dataframe("test_tables", table),
     )(kwargs)
+
+
+@R.curry
+def transform_data(config: dict, data: DataFrame) -> DataFrame:
+    # Transform data here for simple etl tasks or
+    # connect to db via dags.database.create_db_context() and do more elaborate things that also depend
+    # on data that is already in the db. For stability however, it is adviced to make sure that the tasks that
+    # are to provide the data have already run (e.g. with airflows ExternalTaskSensor class)
+    print(config)
+    return data
 
 
 @R.curry

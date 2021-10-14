@@ -12,7 +12,7 @@ def test_migrations():
     with pytest.raises(UndefinedTable):
         execute_sql(
             context,
-            "INSERT INTO test_table (col1, col2, col3) VALUES(%s, %s, %s);",
+            "INSERT INTO test_tables.test_table (col1, col2, col3) VALUES(%s, %s, %s);",
             ("1", "err1", "err2"),
         )
 
@@ -20,13 +20,13 @@ def test_migrations():
 
     execute_sql(
         context,
-        "INSERT INTO test_table (col1, col2, col3) VALUES(%s, %s, %s);",
+        "INSERT INTO test_tables.test_table (col1, col2, col3) VALUES(%s, %s, %s);",
         ("1", "val2", "val2"),
     )
 
-    assert query_all_elements(context, "SELECT col1, col2, col3 FROM test_table") == [
-        (1, "val2", "val2")
-    ]
+    assert query_all_elements(
+        context, "SELECT col1, col2, col3 FROM test_tables.test_table"
+    ) == [(1, "val2", "val2")]
 
     teardown_test_db_context(context)
 
