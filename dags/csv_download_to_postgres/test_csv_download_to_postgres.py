@@ -28,7 +28,9 @@ def test_download_csv_and_write_to_postgres_happy_path(db_context):
     download_csv_and_upload_to_postgres(URL, table)
 
     context = create_db_context()
-    results = query_all_elements(context, f"SELECT col1, col2, col3 FROM {table}")
+    results = query_all_elements(
+        context, f"SELECT col1, col2, col3 FROM test_tables.{table}"
+    )
 
     assert len(results) == 2
     assert results == [
@@ -48,21 +50,3 @@ def test_download_csv_and_write_to_postgres_picks_up_injected_db_name(db_context
 
     assert 'database "rando_name" does not exist' in str(exception_info.value)
     assert os.environ["TARGET_DB"] == "rando_name"
-
-
-@pytest.mark.usefixtures("db_context")
-def test_write_df_to_postgres(db_context: DBContext):
-    df = pd.DataFrame(
-        columns=["col1", "col2", "col3"],
-        data=[[1, "hello", "world"], [2, "not", "today"]],
-    )
-
-    table = "test_table"
-
-    res = write_dataframe_to_postgres(db_context, table)(df)
-    print(res)
-
-    assert query_all_elements(db_context, f"SELECT col1, col2, col3 FROM {table}") == [
-        (1, "hello", "world"),
-        (2, "not", "today"),
-    ]
