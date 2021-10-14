@@ -17,7 +17,7 @@ def test_upload_writes_all_dataframe_to_database(db_context: DBContext):
                 "zip_password": os.environ["THRYVE_ZIP_PASSWORD"],
             }
         ),
-        lambda data: {key: transform(dataframe) for key, dataframe in data.items()},
+        R.map(lambda item: (item[0], transform(item[1]))),
         upload("datenspende"),
     )(URL)
 

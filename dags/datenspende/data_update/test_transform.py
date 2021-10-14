@@ -1,6 +1,8 @@
 import os
-from .download import download
+import ramda as R
+from .download import download, DataList
 from .transform import transform
+from .test_download import get_key_from_data_list
 
 URL = "http://static-files/thryve/exportStudy.7z"
 
@@ -62,7 +64,7 @@ def test_transform_transforms_column_names_to_snake_case():
     check_transformed_columns(
         "users",
         [
-            "customer",
+            "user_id",
             "plz",
             "salutation",
             "birth_date",
@@ -75,5 +77,7 @@ def test_transform_transforms_column_names_to_snake_case():
     )
 
 
-def check_transformed_columns(key, columns, df):
-    assert list(transform(df[key]).columns) == columns
+def check_transformed_columns(key, columns, data: DataList):
+    assert columns == R.pipe(
+        get_key_from_data_list(key), transform, lambda df: df.columns, list
+    )(data)
