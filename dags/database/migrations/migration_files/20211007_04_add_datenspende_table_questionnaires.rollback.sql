@@ -1,1 +1,0 @@
-DROP TABLE datenspende.questionnaires;
