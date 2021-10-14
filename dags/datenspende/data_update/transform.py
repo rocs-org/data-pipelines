@@ -17,6 +17,11 @@ def transform_columns(column_mapping: dict, data: polars.DataFrame) -> polars.Da
     return data
 
 
-COLUMN_REPLACEMENTS = {"user": "user_id", "order": "order_id", "value": "answer_text"}
+COLUMN_REPLACEMENTS = {
+    "user": "user_id",
+    "customer": "user_id",
+    "order": "order_id",
+    "value": "answer_text",
+}
 
 transform = transform_columns(COLUMN_REPLACEMENTS)

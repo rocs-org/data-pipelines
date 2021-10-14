@@ -1,11 +1,14 @@
-import polars
 import ramda as R
-from typing import Dict
 from dags.helpers.dag_helpers import connect_to_db_and_insert_polars_dataframe
+from dags.datenspende.data_update.download import DataList
 
 
 @R.curry
-def upload(schema: str, data: Dict[str, polars.DataFrame]):
-    for table, dataframe in data.items():
-        print(f"uploading {table}...")
-        connect_to_db_and_insert_polars_dataframe(schema, table, dataframe)
+def upload(schema: str, data: DataList):
+    R.map(upload_item(schema), data)
+
+
+@R.curry
+def upload_item(schema, item):
+    (table, df) = item
+    connect_to_db_and_insert_polars_dataframe(schema, table, df)

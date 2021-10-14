@@ -1,18 +1,25 @@
+import polars
 import requests
 import py7zr
 import polars as po
 from polars.datatypes import Utf8, Int64
 import ramda as R
-from typing import Dict, Union
+from typing import List, Tuple
 from returns.curry import curry
 from requests.auth import HTTPBasicAuth
 
 
+DataList = List[Tuple[str, polars.DataFrame]]
+
+
 @R.curry
-def download(access_config: dict, url: str) -> Dict[str, po.DataFrame]:
-    return R.pipe(download_file(access_config), unzip_file(access_config), load_files)(
-        url
-    )
+def download(access_config: dict, url: str) -> DataList:
+    return R.pipe(
+        download_file(access_config),
+        unzip_file(access_config),
+        load_files,
+        map_dict_to_list,
+    )(url)
 
 
 @curry
@@ -38,8 +45,9 @@ def unzip_file(access_config: dict, filename: str) -> None:
         file.extractall()
 
 
-def load_files(*args):
+def load_files(*_):
     return {
+        "users": po.read_csv("usersAll.csv"),
         "answers": po.read_csv(
             "answers.csv",
             dtype={
@@ -70,14 +78,8 @@ def load_files(*args):
         "questions": po.read_csv("questions.csv"),
         "question_to_questionnaire": po.read_csv("questionToquestionnaire.csv"),
         "study_overview": po.read_csv("studyOverview.csv"),
-        "users": po.read_csv("usersAll.csv"),
     }
 
 
-@R.curry
-def set_dtypes(
-    types: Dict[str, Union[Utf8, Int64]], dataframe: po.DataFrame
-) -> po.DataFrame:
-    for key, dtype in types.items():
-        dataframe[key] = dataframe[key].cast(dtype)
-    return dataframe
+def map_dict_to_list(d: dict) -> list:
+    return [(key, value) for key, value in d.items()]
