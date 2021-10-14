@@ -15,7 +15,7 @@ ENV YOUR_ENV=${YOUR_ENV} \
 
 WORKDIR /opt/airflow/
 
-ADD airflow.cfg pyproject.toml /opt/airflow/
+ADD airflow.cfg poetry.lock pyproject.toml /opt/airflow/
 
 RUN poetry install $(test "$YOUR_ENV" == production && echo "--no-dev") --no-interaction --no-ansi
 
