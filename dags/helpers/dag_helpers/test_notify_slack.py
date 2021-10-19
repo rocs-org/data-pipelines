@@ -17,8 +17,7 @@ from dags.helpers.test_helpers import get_task_context
 def test_notify_slack_posts_message_to_url():
     responses.add(responses.POST, WEBHOOK_URL, status=200)
 
-    response_status = notify_slack(WEBHOOK_URL, MESSAGE)
-    assert response_status == 200
+    notify_slack(WEBHOOK_URL, MESSAGE)
     assert len(responses.calls) == 1
     assert responses.calls[0].request.url == WEBHOOK_URL
     assert responses.calls[0].request.body == json.dumps({"text": MESSAGE})

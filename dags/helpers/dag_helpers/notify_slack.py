@@ -7,7 +7,7 @@ from typing import Callable, Dict
 
 
 MessageCreator = Callable[[Dict], str]
-SlackNotifier = Callable[[Dict], int]
+SlackNotifier = Callable[[Dict], None]
 
 
 def slack_notifier_factory(message_creator: MessageCreator) -> SlackNotifier:
@@ -20,13 +20,12 @@ def slack_notifier_factory(message_creator: MessageCreator) -> SlackNotifier:
 
 
 @curry
-def notify_slack(webhook_url: str, message: str) -> int:
-    response = requests.post(
+def notify_slack(webhook_url: str, message: str) -> None:
+    requests.post(
         webhook_url,
         headers={"Content-Type": "application/json"},
         data=json.dumps({"text": message}),
     )
-    return response.status_code
 
 
 def create_slack_error_message_from_task_context(context: dict) -> str:
