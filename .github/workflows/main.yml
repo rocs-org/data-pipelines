@@ -44,7 +44,7 @@ jobs:
       - name: Build docker stack
         run: make setup
       - name: Wait for container health
-        run: bash wait-for-healthy-container.sh airflow-scheduler 120
+        run: bash wait-for-healthy-container.sh airflow-scheduler 180
       - name: Lint with flake8
         run: make lint
       - name: Check code styles with black
@@ -70,7 +70,7 @@ jobs:
       - name: Build docker stack
         run: make setup
       - name: Wait for container health
-        run: bash wait-for-healthy-container.sh airflow-scheduler 120
+        run: bash wait-for-healthy-container.sh airflow-scheduler 180
       - name: Run DB migrations
         run: make migrations
       - name: Setup tmate session

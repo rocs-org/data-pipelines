@@ -12,14 +12,15 @@ from dags.corona_cases.incidences import (
 from dags.helpers.test_helpers import (
     if_var_exists_in_dag_conf_use_as_first_arg,
 )
+from dags.helpers.dag_helpers import (
+    slack_notifier_factory,
+    create_slack_error_message_from_task_context,
+)
 
 
 default_args = {
     "owner": "airflow",
     "depends_on_past": False,
-    "email": ["jakob.j.kolb@gmail.com"],
-    "email_on_failure": True,
-    "email_on_retry": False,
     "retries": 0,
     "retry": False,
     "provide_context": True,
@@ -28,10 +29,13 @@ default_args = {
 dag = DAG(
     "corona_cases",
     default_args=default_args,
-    description="an example DAG that downloads a csv and uploads it to postgres",
+    description="Download covid cases and calculate regional 7 day incidence values.",
     schedule_interval=timedelta(days=1),
     start_date=days_ago(1),
     tags=["ROCS pipelines"],
+    on_failure_callback=slack_notifier_factory(
+        create_slack_error_message_from_task_context
+    ),
 )
 
 t1 = PythonOperator(
