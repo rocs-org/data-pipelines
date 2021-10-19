@@ -47,7 +47,19 @@ def unzip_file(access_config: dict, filename: str) -> None:
 
 def load_files(*_):
     return {
-        "users": po.read_csv("usersAll.csv"),
+        "users": po.read_csv(
+            "usersAll.csv",
+            dtype={
+                "customer": Int64,
+                "plz": Utf8,
+                "salutation": Int64,
+                "birthDate": Int64,
+                "weight": Int64,
+                "height": Int64,
+                "creationTimestamp": Int64,
+                "source": Int64,
+            },
+        ),
         "answers": po.read_csv(
             "answers.csv",
             dtype={
@@ -63,7 +75,15 @@ def load_files(*_):
                 "value": Utf8,
             },
         ),
-        "choice": po.read_csv("choice.csv"),
+        "choice": po.read_csv(
+            "choice.csv",
+            dtype={
+                "element": Int64,
+                "question": Int64,
+                "choice_id": Int64,
+                "text": Utf8,
+            },
+        ),
         "questionnaires": po.read_csv(
             "questionnaires.csv",
             dtype={
@@ -74,10 +94,37 @@ def load_files(*_):
                 "expirationInMinutes": Int64,
             },
         ),
-        "questionnaire_session": po.read_csv("questionnaireSession.csv"),
-        "questions": po.read_csv("questions.csv"),
-        "question_to_questionnaire": po.read_csv("questionToquestionnaire.csv"),
-        "study_overview": po.read_csv("studyOverview.csv"),
+        "questionnaire_session": po.read_csv(
+            "questionnaireSession.csv",
+            dtype={
+                "id": Int64,
+                "user": Int64,
+                "study": Int64,
+                "questionnaire": Int64,
+                "sessionRun": Int64,
+                "expirationTimestamp": Int64,
+                "createdAt": Int64,
+                "completedAt": Int64,
+            },
+        ),
+        "questions": po.read_csv(
+            "questions.csv",
+            dtype={
+                "id": Int64,
+                "title": Utf8,
+                "text": Utf8,
+                "description": Utf8,
+                "type": Int64,
+            },
+        ),
+        "question_to_questionnaire": po.read_csv(
+            "questionToquestionnaire.csv",
+            dtype={"questionnaire": Int64, "order": Int64, "question": Int64},
+        ),
+        "study_overview": po.read_csv(
+            "studyOverview.csv",
+            dtype={"id": Int64, "name": Utf8, "shortDescription": Utf8},
+        ),
     }
 
 
