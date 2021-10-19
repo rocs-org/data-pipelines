@@ -1,27 +1,17 @@
-import pandas as pd
 import pytest
 import os
 import psycopg2
 from .csv_download_to_postgres import (
     download_csv_and_upload_to_postgres,
-    write_dataframe_to_postgres,
 )
 from dags.database.db_context import (
     create_db_context,
 )
-from ..database import DBContext
 from ..database.execute_sql import query_all_elements
 
-from dags.helpers.test_helpers import with_downloadable_csv
-
-URL = "http://some.random.url/file.csv"
-csv_content = """col1,col2,col3
-1,hello,world
-2,not,today
-"""
+URL = "http://static-files/static/test.csv"
 
 
-@with_downloadable_csv(url=URL, content=csv_content)
 def test_download_csv_and_write_to_postgres_happy_path(db_context):
     table = "test_table"
 
@@ -39,7 +29,6 @@ def test_download_csv_and_write_to_postgres_happy_path(db_context):
     ]
 
 
-@with_downloadable_csv(url=URL, content=csv_content)
 def test_download_csv_and_write_to_postgres_picks_up_injected_db_name(db_context):
     table = "test_table"
 
