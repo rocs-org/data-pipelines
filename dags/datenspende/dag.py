@@ -4,6 +4,10 @@ from airflow.operators.python import PythonOperator
 from datetime import timedelta
 
 from dags.datenspende.data_update import data_update_etl, DATA_UPDATE_ARGS
+from dags.helpers.dag_helpers import (
+    create_slack_error_message_from_task_context,
+    slack_notifier_factory,
+)
 from dags.helpers.test_helpers import if_var_exists_in_dag_conf_use_as_first_arg
 
 
@@ -23,6 +27,9 @@ dag = DAG(
     schedule_interval=timedelta(days=1),
     start_date=days_ago(1),
     tags=["ROCS pipelines"],
+    on_failure_callback=slack_notifier_factory(
+        create_slack_error_message_from_task_context
+    ),
 )
 
 t1 = PythonOperator(
