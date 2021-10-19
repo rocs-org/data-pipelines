@@ -11,8 +11,6 @@ from returns.curry import curry
 from dags.database import (
     DBContext,
     execute_values,
-    create_db_context,
-    teardown_db_context,
 )
 from dags.helpers.dag_helpers import (
     download_csv,
@@ -33,6 +31,7 @@ def download_csv_and_upload_to_postgres(url: str, table: str, **kwargs) -> DBCon
         lambda *args: download_csv(url),
         transform_data({"some": "parameters"}),
         connect_to_db_and_insert_pandas_dataframe("test_tables", table),
+        R.prop("credentials"),
     )(kwargs)
 
 
