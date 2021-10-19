@@ -12,13 +12,11 @@ USER airflow
 
 ARG YOUR_ENV
 
-ENV YOUR_ENV=${YOUR_ENV} \
-    PYTHONFAULTHANDLER=1 \
+ENV PYTHONFAULTHANDLER=1 \
     PYTHONUNBUFFERED=1 \
     PIP_NO_CACHE_DIR=off \
     PIP_DISABLE_PIP_VERSION_CHECK=on \
-    POETRY_VERSION=1.1.11 \
-    POETRY_VIRTUALENVS_CREATE=false
+    POETRY_VERSION=1.1.11
 
 RUN pip install "poetry==$POETRY_VERSION"
 
@@ -28,6 +26,6 @@ WORKDIR /opt/airflow/
 
 ADD airflow.cfg poetry.lock pyproject.toml /opt/airflow/
 
-RUN poetry install $(test "$YOUR_ENV" == production && echo "--no-dev") --no-interaction --no-ansi
+RUN pip install --requirement <(poetry export  --without-hashes --dev --format requirements.txt)
 
 ENV PYTHONPATH "${PYTHONPATH}:/opt/airflow/dags"
