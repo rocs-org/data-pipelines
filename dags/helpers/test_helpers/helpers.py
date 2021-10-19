@@ -1,6 +1,6 @@
 import typing
 import functools
-
+from datetime import datetime
 import ramda as R
 import responses
 from io import StringIO
@@ -9,6 +9,7 @@ import os
 import pytest
 import json
 
+from airflow.models import DagBag, TaskInstance
 from returns.curry import curry
 
 from dags.database import (
@@ -33,7 +34,7 @@ def db_context():
     teardown_test_db_context(context)
 
 
-def execute_dag(dag_id: str, execution_date: str, dag_config: dict = {}, clear=True):
+def execute_dag(dag_id: str, execution_date: str, dag_config: dict = {}):
     """Execute a DAG in a specific date this process wait for DAG run or fail to continue"""
 
     subprocess.Popen(["airflow", "dags", "delete", dag_id, "-y"])
@@ -52,7 +53,7 @@ def execute_dag(dag_id: str, execution_date: str, dag_config: dict = {}, clear=T
             dag_id,
         ],
     )
-    process.communicate()[0]
+    process.communicate()
 
     return process.returncode
 
@@ -129,3 +130,22 @@ def if_var_exists_in_dag_conf_use_as_first_arg(
         ),
         lambda x: task_function(url, *args, **kwargs),
     )(kwargs)
+
+
+def run_task_with_url(dag_id: str, task_id: str, url: str):
+    dag = DagBag().get_dag(dag_id)
+    task0 = dag.get_task(task_id)
+    task0.op_args[0] = url
+    execution_date = datetime.now()
+    task0instance = TaskInstance(task=task0, execution_date=execution_date)
+
+    task0instance.get_template_context()
+    task0.prepare_for_execution().execute(task0instance.get_template_context())
+
+
+def get_task_context(dag_id: str, task_id: str) -> dict:
+    task0 = DagBag().get_dag(dag_id).get_task(task_id)
+    execution_date = datetime.now()
+    task0instance = TaskInstance(task=task0, execution_date=execution_date)
+
+    return task0instance.get_template_context()
