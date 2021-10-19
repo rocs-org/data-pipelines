@@ -17,6 +17,7 @@ great-expectations = "^0.13.26"
 polars = "0.9.12"
 psycopg2-binary = "^2.9.1"
 celery = "5.1.2"
+py7zr = "^0.16.1"
 
 [tool.poetry.dev-dependencies]
 flake8 = "^3.9.2"
