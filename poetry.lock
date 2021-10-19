@@ -272,6 +272,21 @@ version = "2.0.1"
 
 [[package]]
 category = "main"
+description = "Provider package apache-airflow-providers-slack for Apache Airflow"
+name = "apache-airflow-providers-slack"
+optional = false
+python-versions = "~=3.6"
+version = "4.0.1"
+
+[package.dependencies]
+apache-airflow = ">=2.1.0"
+slack-sdk = ">=3.0.0,<4.0.0"
+
+[package.extras]
+http = ["apache-airflow-providers-http"]
+
+[[package]]
+category = "main"
 description = "Provider package apache-airflow-providers-sqlite for Apache Airflow"
 name = "apache-airflow-providers-sqlite"
 optional = false
@@ -2105,7 +2120,7 @@ description = "A utility library for mocking out the `requests` Python library."
 name = "responses"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
-version = "0.13.4"
+version = "0.14.0"
 
 [package.dependencies]
 requests = ">=2.0"
@@ -2226,6 +2241,18 @@ name = "six"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*"
 version = "1.16.0"
+
+[[package]]
+category = "main"
+description = "The Slack API Platform SDK for Python"
+name = "slack-sdk"
+optional = false
+python-versions = ">=3.6.0"
+version = "3.11.2"
+
+[package.extras]
+optional = ["aiodns (>1.0)", "aiohttp (>=3.7.3,<4)", "boto3 (<=2)", "SQLAlchemy (>=1,<2)", "websockets (>=9.1,<10)", "websocket-client (>=1,<2)"]
+testing = ["pytest (>=5.4,<6)", "pytest-asyncio (<1)", "Flask-Sockets (>=0.2,<1)", "Flask (>=1,<2)", "Werkzeug (<2)", "pytest-cov (>=2,<3)", "codecov (>=2,<3)", "flake8 (>=3,<4)", "black (21.9b0)", "psutil (>=5,<6)", "databases (>=0.3)", "boto3 (<=2)", "moto (<2)"]
 
 [[package]]
 category = "main"
@@ -2688,6 +2715,10 @@ apache-airflow-providers-http = [
 apache-airflow-providers-imap = [
     {file = "apache-airflow-providers-imap-2.0.1.tar.gz", hash = "sha256:62ef6a4a5e14cb21fc4a2753af024f2dadfd25fe95ddc393935f3dfe6a531b2f"},
     {file = "apache_airflow_providers_imap-2.0.1-py3-none-any.whl", hash = "sha256:0debfbc36b41f44651e4fcdf5735fbdced101c37b356dad70b07bba67f2eb90a"},
+]
+apache-airflow-providers-slack = [
+    {file = "apache-airflow-providers-slack-4.0.1.tar.gz", hash = "sha256:f8d87e2d06d32cf9b3d041e0bdc9a3102dc37e7472d4c0f6e3a50103d72dc742"},
+    {file = "apache_airflow_providers_slack-4.0.1-py3-none-any.whl", hash = "sha256:c6f32788af7f54f62ac0bcd580aa41352599fa18a0dc67005ec5863e58e09ce0"},
 ]
 apache-airflow-providers-sqlite = [
     {file = "apache-airflow-providers-sqlite-2.0.1.tar.gz", hash = "sha256:9a991e10f8b7bc4028ff3b389f280607e06423f97d4327b136383e6a52d9fcf9"},
@@ -3725,8 +3756,8 @@ requests = [
     {file = "requests-2.26.0.tar.gz", hash = "sha256:b8aa58f8cf793ffd8782d3d8cb19e66ef36f7aba4353eec859e74678b01b07a7"},
 ]
 responses = [
-    {file = "responses-0.13.4-py2.py3-none-any.whl", hash = "sha256:d8d0f655710c46fd3513b9202a7f0dcedd02ca0f8cf4976f27fa8ab5b81e656d"},
-    {file = "responses-0.13.4.tar.gz", hash = "sha256:9476775d856d3c24ae660bbebe29fb6d789d4ad16acd723efbfb6ee20990b899"},
+    {file = "responses-0.14.0-py2.py3-none-any.whl", hash = "sha256:57bab4e9d4d65f31ea5caf9de62095032c4d81f591a8fac2f5858f7777b8567b"},
+    {file = "responses-0.14.0.tar.gz", hash = "sha256:93f774a762ee0e27c0d9d7e06227aeda9ff9f5f69392f72bb6c6b73f8763563e"},
 ]
 returns = [
     {file = "returns-0.16.0-py3-none-any.whl", hash = "sha256:3b7544f7b8c5aac8da3469b6ce34ed8878c993f0443d47f133cef2d38b08bc2a"},
@@ -3818,6 +3849,10 @@ setproctitle = [
 six = [
     {file = "six-1.16.0-py2.py3-none-any.whl", hash = "sha256:8abb2f1d86890a2dfb989f9a77cfcfd3e47c2a354b01111771326f8aa26e0254"},
     {file = "six-1.16.0.tar.gz", hash = "sha256:1e61c37477a1626458e36f7b1d82aa5c9b094fa4802892072e49de9c60c4c926"},
+]
+slack-sdk = [
+    {file = "slack_sdk-3.11.2-py2.py3-none-any.whl", hash = "sha256:35245ec34c8549fbb5c43ccc17101afd725b3508bb784da46530b214f496bf93"},
+    {file = "slack_sdk-3.11.2.tar.gz", hash = "sha256:131bf605894525c2d66da064677eabc19f53f02ce0f82a3f2fa130d4ec3bc1b0"},
 ]
 sniffio = [
     {file = "sniffio-1.2.0-py3-none-any.whl", hash = "sha256:471b71698eac1c2112a40ce2752bb2f4a4814c22a54a3eed3676bc0f5ca9f663"},
