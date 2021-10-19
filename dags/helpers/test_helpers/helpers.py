@@ -10,6 +10,7 @@ import pytest
 import json
 
 from airflow.models import DagBag, TaskInstance
+from airflow.utils.types import DagRunType
 from returns.curry import curry
 
 from dags.database import (
@@ -132,20 +133,32 @@ def if_var_exists_in_dag_conf_use_as_first_arg(
     )(kwargs)
 
 
-def run_task_with_url(dag_id: str, task_id: str, url: str):
+def create_task_instance(dag_id: str, task_id: str, url: str = None):
     dag = DagBag().get_dag(dag_id)
-    task0 = dag.get_task(task_id)
-    task0.op_args[0] = url
     execution_date = datetime.now()
-    task0instance = TaskInstance(task=task0, execution_date=execution_date)
+    dr = dag.create_dagrun(
+        state="running", run_type=DagRunType("manual"), execution_date=execution_date
+    )
 
-    task0instance.get_template_context()
-    task0.prepare_for_execution().execute(task0instance.get_template_context())
+    task = dag.get_task(task_id)
+    if url:
+        task.op_args[0] = url
+
+    return task, TaskInstance(task=task, run_id=dr.run_id)
+
+
+def run_task_with_url(dag_id: str, task_id: str, url: str):
+
+    task, task_instance = create_task_instance(dag_id, task_id, url)
+
+    task_instance.get_template_context()
+    res = task.prepare_for_execution().execute(task_instance.get_template_context())
+
+    return res
 
 
 def get_task_context(dag_id: str, task_id: str) -> dict:
-    task0 = DagBag().get_dag(dag_id).get_task(task_id)
-    execution_date = datetime.now()
-    task0instance = TaskInstance(task=task0, execution_date=execution_date)
 
-    return task0instance.get_template_context()
+    task, task_instance = create_task_instance(dag_id, task_id)
+
+    return task_instance.get_template_context()
