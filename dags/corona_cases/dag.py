@@ -12,14 +12,15 @@ from dags.corona_cases.incidences import (
 from dags.helpers.test_helpers import (
     if_var_exists_in_dag_conf_use_as_first_arg,
 )
+from dags.helpers.dag_helpers import (
+    slack_notifier_factory,
+    create_slack_error_message_from_task_context,
+)
 
 
 default_args = {
     "owner": "airflow",
     "depends_on_past": False,
-    "email": ["jakob.j.kolb@gmail.com"],
-    "email_on_failure": True,
-    "email_on_retry": False,
     "retries": 0,
     "retry": False,
     "provide_context": True,
@@ -32,6 +33,9 @@ dag = DAG(
     schedule_interval=timedelta(days=1),
     start_date=days_ago(1),
     tags=["ROCS pipelines"],
+    on_failure_callback=slack_notifier_factory(
+        create_slack_error_message_from_task_context
+    ),
 )
 
 t1 = PythonOperator(
