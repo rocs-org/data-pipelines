@@ -29,7 +29,7 @@ default_args = {
 dag = DAG(
     "corona_cases",
     default_args=default_args,
-    description="an example DAG that downloads a csv and uploads it to postgres",
+    description="Download covid cases and calculate regional 7 day incidence values.",
     schedule_interval=timedelta(days=1),
     start_date=days_ago(1),
     tags=["ROCS pipelines"],

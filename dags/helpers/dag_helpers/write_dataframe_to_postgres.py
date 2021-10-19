@@ -1,5 +1,6 @@
 from typing import Callable
 
+import polars
 import pandas as pd
 import ramda as R
 from pandas import DataFrame
@@ -25,7 +26,7 @@ def connect_to_db_and_insert_pandas_dataframe(
 
 @curry
 def connect_to_db_and_insert_polars_dataframe(
-    schema: str, table: str, data: pd.DataFrame
+    schema: str, table: str, data: polars.DataFrame
 ):
     return _connect_to_db_and_insert(
         _get_tuples_from_polars_dataframe, schema, table, data

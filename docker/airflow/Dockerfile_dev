@@ -13,7 +13,7 @@ ENV PYTHONFAULTHANDLER=1 \
 
 WORKDIR /opt/airflow/
 
-ADD airflow.cfg pyproject.toml /opt/airflow/
+ADD airflow.cfg poetry.lock pyproject.toml /opt/airflow/
 
 RUN pip install --requirement <(poetry export  --without-hashes --dev --format requirements.txt)
 

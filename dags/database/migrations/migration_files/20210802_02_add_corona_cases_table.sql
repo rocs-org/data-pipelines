@@ -12,9 +12,9 @@ CREATE TABLE coronacases.german_counties_more_info (
     date_cet TIMESTAMP NOT NULL,
     ref_date_cet TIMESTAMP NOT NULL,
     ref_date_is_symptom_onset boolean NOT NULL,
-    is_new_case int DEFAULT NULL,
-    is_new_death int DEFAULT NULL,
-    is_new_recovered int DEFAULT NULL,
-    new_cases int DEFAULT NULL,
-    new_deaths int DEFAULT NULL,
-    new_recovereds int DEFAULT NULL );
+    is_new_case INT DEFAULT NULL,
+    is_new_death INT DEFAULT NULL,
+    is_new_recovered INT DEFAULT NULL,
+    new_cases INT DEFAULT NULL,
+    new_deaths INT DEFAULT NULL,
+    new_recovereds INT DEFAULT NULL );
