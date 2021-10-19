@@ -1,6 +1,6 @@
-from airflow.models import DagBag, TaskInstance
-from datetime import datetime, date
+from datetime import date
 from dags.database import create_db_context, query_all_elements
+from dags.helpers.test_helpers.helpers import run_task_with_url
 
 from dags.nuts_regions_population.nuts_regions import REGIONS_ARGS
 from dags.nuts_regions_population.population import POPULATION_ARGS
@@ -8,7 +8,7 @@ from dags.nuts_regions_population.german_counties_more_info import COUNTIES_ARGS
 
 
 def test_nuts_regions_population_tasks_executes(db_context):
-    run_task_with_url(REGIONS_TASK, REGIONS_URL)
+    run_task_with_url("nuts_regions_population", REGIONS_TASK, REGIONS_URL)
 
     [_, SCHEMA, TABLE] = REGIONS_ARGS
     db_context = create_db_context()
@@ -18,8 +18,8 @@ def test_nuts_regions_population_tasks_executes(db_context):
 
 
 def test_population_task_executes_after_regions_task(db_context):
-    run_task_with_url(REGIONS_TASK, REGIONS_URL)
-    run_task_with_url(POPULATION_TASK, POPULATION_URL)
+    run_task_with_url("nuts_regions_population", REGIONS_TASK, REGIONS_URL)
+    run_task_with_url("nuts_regions_population", POPULATION_TASK, POPULATION_URL)
 
     [_, SCHEMA, TABLE] = POPULATION_ARGS
     db_context = create_db_context()
@@ -31,8 +31,8 @@ def test_population_task_executes_after_regions_task(db_context):
 
 
 def test_counties_task_executes_after_regions_task(db_context):
-    run_task_with_url(REGIONS_TASK, REGIONS_URL)
-    run_task_with_url(COUNTIES_TASK, COUNTIES_URL)
+    run_task_with_url("nuts_regions_population", REGIONS_TASK, REGIONS_URL)
+    run_task_with_url("nuts_regions_population", COUNTIES_TASK, COUNTIES_URL)
 
     [_, SCHEMA, TABLE] = COUNTIES_ARGS
     db_context = create_db_context()
@@ -62,14 +62,3 @@ COUNTIES_TASK = "load_more_info_on_german_counties"
 POPULATION_URL = "http://static-files/static/demo_r_pjangrp3.tsv"
 REGIONS_URL = "http://static-files/static/NUTS2021.xlsx"
 COUNTIES_URL = "http://static-files/static/04-kreise.xlsx"
-
-
-def run_task_with_url(task: str, url: str):
-    dag = DagBag().get_dag("nuts_regions_population")
-    task0 = dag.get_task(task)
-    task0.op_args[0] = url
-    execution_date = datetime.now()
-    task0instance = TaskInstance(task=task0, execution_date=execution_date)
-
-    task0instance.get_template_context()
-    task0.prepare_for_execution().execute(task0instance.get_template_context())

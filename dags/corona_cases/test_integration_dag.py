@@ -32,6 +32,7 @@ def test_dag_writes_correct_results_to_db(db_context: DBContext):
                 "POPULATION_URL": POPULATION_URL,
                 "REGIONS_URL": REGIONS_URL,
                 "COUNTIES_URL": COUNTIES_URL,
+                "ZIP_URL": ZIP_URL,
             },
         )
     ) == 0
@@ -90,3 +91,4 @@ CASES_URL = "http://static-files/static/coronacases.csv"
 POPULATION_URL = "http://static-files/static/demo_r_pjangrp3.tsv"
 REGIONS_URL = "http://static-files/static/NUTS2021.xlsx"
 COUNTIES_URL = "http://static-files/static/04-kreise.xlsx"
+ZIP_URL = "http://static-files/static/pc2020_DE_NUTS-2021_v3.0.zip"
