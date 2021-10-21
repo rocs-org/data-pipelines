@@ -41,6 +41,15 @@ def test_incidences_etl_writes_incidences_to_db(db_context: DBContext):
         1.0,
     )
 
+    calculate_incidence_post_processing(*INCIDENCES_ARGS)
+
+    db_context = create_db_context()
+    db_entries_after_dag_rerun = query_all_elements(
+        db_context, f"SELECT * FROM {schema}.{table}"
+    )
+
+    assert len(db_entries_after_dag_rerun) == 150
+
 
 CASES_URL = "http://static-files/static/coronacases.csv"
 REGIONS_URL = "http://static-files/static/NUTS2021.xlsx"
