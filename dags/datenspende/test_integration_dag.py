@@ -1,3 +1,5 @@
+import pandas
+import ramda as R
 from dags.database import DBContext
 from dags.database.execute_sql import query_all_elements
 from airflow.models import DagBag
@@ -44,6 +46,12 @@ def test_datenspende_dag_writes_correct_results_to_db(db_context: DBContext):
         "",
     )
     assert len(answers_from_db) == 5765
+
+    answers = pandas.read_sql_query(
+        "SELECT * FROM datenspende_derivatives.test_and_symptoms_answers;",
+        R.prop("connection", db_context),
+    )
+    assert len(answers) == 604
 
 
 THRYVE_FTP_URL = "http://static-files/thryve/exportStudy.7z"
