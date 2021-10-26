@@ -23,6 +23,6 @@ def test_dag_executes_with_no_errors(db_context: DBContext):
         )
         == 0
     )
-    res = query_all_elements(db_context, "SELECT * FROM test_table")
+    res = query_all_elements(db_context, "SELECT * FROM test_tables.test_table")
 
     assert len(res) == 2
