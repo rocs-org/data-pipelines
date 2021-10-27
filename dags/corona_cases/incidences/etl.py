@@ -15,7 +15,6 @@ def calculate_incidence_post_processing(schema, table, **kwargs):
         set_env_variable_from_dag_config_if_present("TARGET_DB"),
         clean_incidence_database(schema, table),
         R.converge(calculate_incidence, [load_counties_info, load_cases_data]),
-        R.tap(lambda df: print(df.head())),
         connect_to_db_and_insert_polars_dataframe(schema, table),
         R.path(["credentials", "database"]),
     )(kwargs)
