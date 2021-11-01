@@ -5,12 +5,6 @@ from dags.database.execute_sql import query_all_elements
 from airflow.models import DagBag
 
 from dags.helpers.test_helpers import execute_dag
-from dags.corona_cases.cases import CASES_ARGS
-from dags.corona_cases.incidences import INCIDENCES_ARGS
-
-
-[_, CASES_SCHEMA, CASES_TABLE] = CASES_ARGS
-[INCIDENCES_SCHEMA, INCIDENCES_TABLE] = INCIDENCES_ARGS
 
 
 def test_dag_loads_with_no_errors():
@@ -47,11 +41,19 @@ def test_datenspende_dag_writes_correct_results_to_db(db_context: DBContext):
     )
     assert len(answers_from_db) == 5765
 
-    answers = pandas.read_sql_query(
+    single_answers = pandas.read_sql_query(
         "SELECT * FROM datenspende_derivatives.test_and_symptoms_answers;",
         R.prop("connection", db_context),
     )
-    assert len(answers) == 604
+
+    assert len(single_answers) == 579
+
+    duplicated_answers = pandas.read_sql_query(
+        "SELECT * FROM datenspende_derivatives.test_and_symptoms_answers_duplicates;",
+        R.prop("connection", db_context),
+    )
+
+    assert len(duplicated_answers) == 25
 
 
 THRYVE_FTP_URL = "http://static-files/thryve/exportStudy.7z"
