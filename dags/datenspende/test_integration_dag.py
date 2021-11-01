@@ -46,14 +46,14 @@ def test_datenspende_dag_writes_correct_results_to_db(db_context: DBContext):
         R.prop("connection", db_context),
     )
 
-    assert len(single_answers) == 579
+    assert len(single_answers) == 575
 
     duplicated_answers = pandas.read_sql_query(
         "SELECT * FROM datenspende_derivatives.test_and_symptoms_answers_duplicates;",
         R.prop("connection", db_context),
     )
 
-    assert len(duplicated_answers) == 25
+    assert len(duplicated_answers) == 29
 
 
 THRYVE_FTP_URL = "http://static-files/thryve/exportStudy.7z"
