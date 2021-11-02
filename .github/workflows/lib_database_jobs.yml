@@ -1,0 +1,68 @@
+# This is a basic workflow to help you get started with Actions
+
+name: lib/database
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push or pull request events but only for the main branch
+  push:
+    branches: [ main ]
+    paths: ["libs/database/**"]
+  pull_request:
+    branches: [ main ]
+    paths: ["libs/database/**"]
+
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+    inputs:
+      debug_enabled:
+        description: 'Run the build with tmate debugging enabled (https://github.com/marketplace/actions/debugging-with-tmate)'     
+        required: false
+        default: false
+
+jobs:
+  unit-tests:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./libs/database
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+      - name: Setup Poetry
+        uses: abatilo/actions-poetry@v2.0.0
+        with:
+          poetry-version: 1.1.11
+      - name: Install dependencies
+        run: poetry install
+      - name: Setup test database
+        run: make setup
+      - name: Run unit tests
+        run: make unittest
+
+
+  code-quality:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./libs/database
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+      - name: Setup Poetry
+        uses: abatilo/actions-poetry@v2.0.0
+        with:
+          poetry-version: 1.1.11
+      - name: Install dependencies
+        run: poetry install
+      - name: Lint with flake8
+        run: make lint

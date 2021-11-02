@@ -5,7 +5,7 @@ description = "pipelines gathering data to support research at ROCS"
 authors = ["Jakob J. Kolb <jakob.j.kolb@gmail.com>"]
 
 [tool.poetry.dependencies]
-python = "3.8.10"
+python = "^3.8"
 returns = "^0.16.0"
 apache-airflow = "^2.1.4"
 fsspec = "^2021.7.0"
