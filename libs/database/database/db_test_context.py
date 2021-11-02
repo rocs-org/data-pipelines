@@ -4,7 +4,6 @@ import pytest
 import os
 import ramda as R
 
-from .migrations import migrate
 from .types import DBContext
 from .execute_sql import execute_sql, _create_database
 from .db_context import (
@@ -12,6 +11,22 @@ from .db_context import (
     _create_db_context_with_autocommit,
     _update_connection_in_context,
 )
+from .migrations import migrate
+
+
+@pytest.fixture
+def db_context():
+    context = create_test_db_context()
+    migrate(context)
+
+    credentials = context["credentials"]
+    main_db = os.environ["TARGET_DB"]
+    os.environ["TARGET_DB"] = credentials["database"]
+
+    yield context
+
+    os.environ["TARGET_DB"] = main_db
+    teardown_test_db_context(context)
 
 
 def teardown_test_db_context(context: DBContext) -> DBContext:

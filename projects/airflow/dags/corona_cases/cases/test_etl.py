@@ -15,7 +15,6 @@ from database import (
     execute_sql,
     create_db_context,
     query_all_elements,
-    db_context,
 )
 from dags.helpers.dag_helpers import download_csv
 

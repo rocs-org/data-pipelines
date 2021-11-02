@@ -2,18 +2,11 @@ from datetime import datetime
 import ramda as R
 import subprocess
 import os
-import pytest
 import json
 
 from airflow.models import DagBag, TaskInstance
 from airflow.utils.types import DagRunType
 from returns.curry import curry
-
-from database import (
-    teardown_test_db_context,
-    create_test_db_context,
-    migrate,
-)
 
 
 def execute_dag(dag_id: str, execution_date: str, dag_config: dict = {}):
