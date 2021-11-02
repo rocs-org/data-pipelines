@@ -1,0 +1,22 @@
+[tool.poetry]
+name = "database"
+version = "0.1.0"
+description = ""
+authors = ["Jakob J. Kolb <kolb@hardfork.io>"]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+psycopg2-binary = "^2.9.1"
+ramda = "^2021.10.24"
+yoyo-migrations = "^7.3.2"
+six = "^1.16.0"
+
+[tool.poetry.dev-dependencies]
+pytest = "^6.0.0"
+pytest-xdist = "^2.4.0"
+flake8 = "^4.0.1"
+black = "^21.10b0"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

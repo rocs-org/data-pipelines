@@ -1,0 +1,2 @@
+
+DELETE SCHEMA coronacases;

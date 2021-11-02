@@ -1,0 +1,74 @@
+# This is a basic workflow to help you get started with Actions
+
+name: CI
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push or pull request events but only for the main branch
+  push:
+    branches: [ main ]
+    paths: ["projects/airflow/**"]
+  pull_request:
+    branches: [ main ]
+    paths: ["projects/airflow/**"]
+
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+    inputs:
+      debug_enabled:
+        description: 'Run the build with tmate debugging enabled (https://github.com/marketplace/actions/debugging-with-tmate)'     
+        required: false
+        default: false
+
+jobs:
+  build-and-unit-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Configure GPG Key
+        run: |
+          echo -n "$GPG_KEY" | base64 --decode | gpg --import
+        env:
+          GPG_KEY: ${{ secrets.GPG_KEY }}
+      - name: Reveal secrets
+        run: |
+          sudo apt install git-secret
+          git-secret reveal
+      - name: Build docker stack
+        run: make setup
+      - name: Wait for container health
+        run: bash wait-for-healthy-container.sh airflow-scheduler 180
+      - name: Lint with flake8
+        run: make lint
+      - name: Check code styles with black
+        run: make stylecheck
+      - name: Run unit tests
+        run: make unittest
+
+  integration-tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Configure GPG Key
+        run: |
+          echo -n "$GPG_KEY" | base64 --decode | gpg --import
+        env:
+          GPG_KEY: ${{ secrets.GPG_KEY }}
+      - name: Reveal secrets
+        run: |
+          sudo apt install git-secret
+          git-secret reveal
+      - name: Build docker stack
+        run: make setup
+      - name: Wait for container health
+        run: bash wait-for-healthy-container.sh airflow-scheduler 180
+      - name: Run DB migrations
+        run: make migrations
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
+        if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.debug_enabled }}
+      - name: Run tests
+        run: make integrationtest
