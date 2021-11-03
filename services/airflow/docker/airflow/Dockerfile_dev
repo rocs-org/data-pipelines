@@ -4,8 +4,7 @@ RUN chown -R airflow:airflow /usr/local/src
 
 USER root
 
-RUN mkdir ../../libs
-RUN mkdir ../../libs/database
+RUN mkdir ../../libraries
 
 USER airflow
 
@@ -18,10 +17,10 @@ ENV PYTHONFAULTHANDLER=1 \
 
 WORKDIR /opt/airflow/
 
-ADD projects/airflow/airflow.cfg projects/airflow/poetry.lock projects/airflow/pyproject.toml /opt/airflow/
+ADD services/airflow/airflow.cfg services/airflow/poetry.lock services/airflow/pyproject.toml /opt/airflow/
 
 # copy libs into the container, so their paths exist for editable installs
-COPY libs/database ../../libs/database
+COPY libraries ../../libraries
 
 RUN poetry config virtualenvs.create false \
   && poetry install --no-interaction --no-ansi

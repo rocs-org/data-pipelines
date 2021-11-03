@@ -1,16 +1,16 @@
 # This is a basic workflow to help you get started with Actions
 
-name: projects/airflow
+name: services/airflow
 
 # Controls when the workflow will run
 on:
   # Triggers the workflow on push or pull request events but only for the main branch
   push:
     branches: [ main ]
-    paths: ["projects/airflow/**"]
+    paths: ["services/airflow/**"]
   pull_request:
     branches: [ main ]
-    paths: ["projects/airflow/**"]
+    paths: ["services/airflow/**"]
 
 
   # Allows you to run this workflow manually from the Actions tab
@@ -27,7 +27,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./projects/airflow
+        working-directory: ./services/airflow
 
     steps:
       - uses: actions/checkout@v2
@@ -48,7 +48,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./projects/airflow
+        working-directory: ./services/airflow
 
     steps:
       - uses: actions/checkout@v2
@@ -72,7 +72,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./projects/airflow
+        working-directory: ./services/airflow
 
     steps:
       - uses: actions/checkout@v2

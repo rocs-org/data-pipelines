@@ -6,8 +6,7 @@ RUN apt-get update && \
     apt-get upgrade -y && \
     apt-get install -y git
 
-RUN mkdir ../../libs
-RUN mkdir ../../libs/database
+RUN mkdir ../../libraries
 
 RUN chown -R airflow:airflow /usr/local/src
 
@@ -27,10 +26,10 @@ RUN python3 --version
 
 WORKDIR /opt/airflow/
 
-ADD airflow.cfg poetry.lock pyproject.toml /opt/airflow/
+ADD services/airflow/airflow.cfg services/airflow/poetry.lock services/airflow/pyproject.toml /opt/airflow/
 
 # copy libs into the container, so their paths exist for editable installs
-COPY libs/database ../../libs/database
+COPY libraries ../../libraries
 
 RUN poetry config virtualenvs.create false \
   && poetry install --no-interaction --no-ansi
