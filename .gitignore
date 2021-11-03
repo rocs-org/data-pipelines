@@ -4,6 +4,7 @@
 
 # cache
 **/__pycache__
+**/.pytest__cache
 .gitsecret/keys/random_seed
 
 # environments

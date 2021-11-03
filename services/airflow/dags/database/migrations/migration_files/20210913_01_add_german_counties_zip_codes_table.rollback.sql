@@ -1,1 +1,0 @@
-DROP TABLE censusdata.german_counties_zip_codes;
