@@ -60,7 +60,7 @@ services:
     container_name: static-files
     build:
       context: .
-      dockerfile: ./docker/nginx
+      dockerfile: ./docker/nginx/Dockerfile
     volumes:
       - ./files/static:/var/www/static
       - ./files/thryve:/var/www/thryve
