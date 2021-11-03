@@ -1,10 +1,13 @@
-from database.types import DBContext
+
+from dags.database import DBContext
 from yoyo import read_migrations, get_backend
+from logging import getLogger, WARNING
 import pathlib
 import ramda as R
 
 
 def migrate(context: DBContext):
+    getLogger("yoyo.migrations").setLevel(WARNING)
     migrations = read_migrations(get_path_of_file() + "/migration_files")
     backend = R.pipe(get_connection_string, get_backend)(context)
     with backend.lock():

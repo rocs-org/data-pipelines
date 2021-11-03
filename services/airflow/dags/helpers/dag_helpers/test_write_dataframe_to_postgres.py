@@ -4,14 +4,13 @@ import polars as po
 from datetime import date, timedelta, datetime
 from .write_dataframe_to_postgres import (
     _build_insert_query,
+    _upsert_column_action,
+    _build_upsert_query,
     connect_to_db_and_insert_pandas_dataframe,
     connect_to_db_and_insert_polars_dataframe,
+    connect_to_db_and_upsert_pandas_dataframe,
 )
-from database import (
-    DBContext,
-    query_all_elements,
-    create_db_context,
-)
+from dags.database import DBContext, query_all_elements, create_db_context
 
 
 def test_insert_dataframe_to_postgres_works_with_polars_dataframe(
@@ -73,6 +72,36 @@ def test_insert_dataframe_to_postgres_does_not_overwrite(db_context: DBContext):
     res = query_all_elements(db_context, "SELECT * FROM censusdata.nuts;")
     assert len(res) == 2
     assert res[0] == (0, "DE", "Deutschland", 0)
+
+
+def test_generate_upsert_action_fragments(db_context: DBContext):
+    upsert_action = _upsert_column_action(["blub"])
+    assert (
+        upsert_action.as_string(db_context["connection"]) == '"blub" = EXCLUDED."blub"'
+    )
+
+
+def test_generate_upsert_query(db_context: DBContext):
+    df = pd.DataFrame(columns=["col1", "col2"], data=[[1, 2]])
+    query = _build_upsert_query("bli", "bla", "const")(df)
+    assert (
+        query.as_string(db_context["connection"])
+        == 'INSERT INTO "bli"."bla" ("col1","col2") VALUES %s ON CONFLICT ("const") DO UPDATE SET '
+        + '"col1" = EXCLUDED."col1", "col2" = EXCLUDED."col2";'
+    )
+
+
+def test_upsert_dataframe_to_postgres_does_overwrite(db_context: DBContext):
+    connect_to_db_and_insert_pandas_dataframe(
+        schema="censusdata", table="nuts", data=DATA1
+    )
+    connect_to_db_and_upsert_pandas_dataframe(
+        schema="censusdata", table="nuts", constraint="geo", data=DATA2
+    )
+    db_context = create_db_context()
+    res = query_all_elements(db_context, "SELECT * FROM censusdata.nuts;")
+    assert len(res) == 2
+    assert res[0] == (1, "DE", "Deutschland", 1)
 
 
 def test_query_builder_returns_correct_query(db_context):
