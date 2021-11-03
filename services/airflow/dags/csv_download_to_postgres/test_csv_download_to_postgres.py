@@ -4,10 +4,7 @@ import psycopg2
 from .csv_download_to_postgres import (
     download_csv_and_upload_to_postgres,
 )
-from database.db_context import (
-    create_db_context,
-)
-from ..database.execute_sql import query_all_elements
+from database import create_db_context, query_all_elements
 
 URL = "http://static-files/static/test.csv"
 

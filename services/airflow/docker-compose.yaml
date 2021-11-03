@@ -58,7 +58,9 @@ x-airflow-common:
 services:
   static-files:
     container_name: static-files
-    build: ./docker/nginx
+    build:
+      context: .
+      dockerfile: ./docker/nginx
     volumes:
       - ./files/static:/var/www/static
       - ./files/thryve:/var/www/thryve
