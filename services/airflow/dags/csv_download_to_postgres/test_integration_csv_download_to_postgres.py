@@ -1,5 +1,4 @@
-from database import DBContext
-from database.execute_sql import query_all_elements
+from database import DBContext, query_all_elements
 from airflow.models import DagBag
 from dags.helpers.test_helpers import execute_dag
 
