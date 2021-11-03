@@ -1,0 +1,10 @@
+# editor
+.vscode
+.idea
+
+# cache
+**/__pycache__
+.gitsecret/keys/random_seed
+
+# environments
+.github/workflows/hu-berlin.ovpn
