@@ -1,0 +1,28 @@
+FROM jakobjkolb/airflow:latest
+
+RUN chown -R airflow:airflow /usr/local/src
+
+USER root
+
+RUN mkdir ../../libraries
+
+USER airflow
+
+ARG YOUR_ENV
+
+ENV PYTHONFAULTHANDLER=1 \
+    PYTHONUNBUFFERED=1 \
+    PIP_NO_CACHE_DIR=off \
+    PIP_DISABLE_PIP_VERSION_CHECK=on
+
+WORKDIR /opt/airflow/
+
+ADD services/airflow/airflow.cfg services/airflow/poetry.lock services/airflow/pyproject.toml /opt/airflow/
+
+# copy libs into the container, so their paths exist for editable installs
+COPY libraries ../../libraries
+
+RUN poetry config virtualenvs.create false \
+  && poetry install --no-interaction --no-ansi
+
+ENV PYTHONPATH "${PYTHONPATH}:/opt/airflow/dags"
