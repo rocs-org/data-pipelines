@@ -9,13 +9,13 @@ This project uses [poetry](https://python-poetry.org/) for package management an
 ## How to work with this project:
 
 Prerequisites: 
-1. Set up [docker](https://docs.docker.com/get-docker/) and [docker-compose](https://docs.docker.com/compose/install/) for your operating system
-2. Set up [git secret](https://git-secret.io/installation)
-3. Contact @jakobkolb or @davhin to get accesss to repository secrets
+1. Install poetry: `$pip install --user poetry`
+2. Set up [docker](https://docs.docker.com/get-docker/) and [docker-compose](https://docs.docker.com/compose/install/) for your operating system
+3. Set up [git secret](https://git-secret.io/installation)
+4. Contact @jakobkolb or @davhin to get accesss to repository secrets
 
 Usage:
 1. Clone the project
-2. Install poetry: `$pip install --user poetry`
 3. run git-secret reveal
 4. Run `make build` then `make  setup`
 5. Run tests: `$make watch` or open the Airflow UI on `localhost:8080` and login with username: `airflow` and password: `airflow`
