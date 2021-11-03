@@ -25,8 +25,8 @@ version: '3'
 x-airflow-common:
   &airflow-common
   build:
-    context: ../../ # otherwise libs are outside the build context and we cant COPY them into the container
-    dockerfile: ./projects/airflow/docker/airflow/Dockerfile_dev
+    context: ../../ # otherwise libraries are outside the build context and we cant COPY them into the container
+    dockerfile: ./services/airflow/docker/airflow/Dockerfile_dev
   env_file: 
     .env
   environment:
@@ -42,11 +42,9 @@ x-airflow-common:
     AIRFLOW__CORE__LOAD_EXAMPLES: 'false'
     AIRFLOW__API__AUTH_BACKEND: 'airflow.api.auth.backend.basic_auth'
   volumes:
-    - ../../libs:/libs
+    - ../../libraries:/libraries
     - ./dags:/opt/airflow/dags
     - airflow-logs-volume:/opt/airflow/logs
-    - ./poetry.lock:/opt/airflow/poetry.lock
-    - ./pyproject.toml:/opt/airflow/pyproject.toml
     - ./setup.cfg:/opt/airflow/setup.cfg
   user: "${AIRFLOW_UID:-50000}:${AIRFLOW_GID:-50000}"
   depends_on:

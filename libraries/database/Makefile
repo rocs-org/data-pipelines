@@ -2,9 +2,6 @@
 include .env
 export $(shell sed 's/=.*//' .env)
 
-test:
-	env
-
 build:
 	 DOCKER_BUILDKIT=1 docker-compose build
 
