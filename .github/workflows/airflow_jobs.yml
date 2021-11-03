@@ -1,0 +1,98 @@
+# This is a basic workflow to help you get started with Actions
+
+name: services/airflow
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push or pull request events but only for the main branch
+  push:
+    branches: [ main ]
+    paths: ["services/airflow/**"]
+  pull_request:
+    branches: [ main ]
+    paths: ["services/airflow/**"]
+
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+    inputs:
+      debug_enabled:
+        description: 'Run the build with tmate debugging enabled (https://github.com/marketplace/actions/debugging-with-tmate)'     
+        required: false
+        default: false
+
+jobs:
+
+  code-quality:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./services/airflow
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+      - name: Setup Poetry
+        uses: abatilo/actions-poetry@v2.0.0
+        with:
+          poetry-version: 1.1.11
+      - name: Install dependencies
+        run: poetry install
+      - name: Lint with flake8
+        run: poetry run flake8
+
+  unit-tests:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./services/airflow
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Configure GPG Key
+        run: |
+          echo -n "$GPG_KEY" | base64 --decode | gpg --import
+        env:
+          GPG_KEY: ${{ secrets.GPG_KEY }}
+      - name: Reveal secrets
+        run: |
+          sudo apt install git-secret
+          git-secret reveal
+      - name: Build docker stack
+        run: make setup
+      - name: Wait for container health
+        run: bash wait-for-healthy-container.sh airflow-scheduler 300
+      - name: Run unit tests
+        run: make unittest
+
+  integration-tests:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./services/airflow
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Configure GPG Key
+        run: |
+          echo -n "$GPG_KEY" | base64 --decode | gpg --import
+        env:
+          GPG_KEY: ${{ secrets.GPG_KEY }}
+      - name: Reveal secrets
+        run: |
+          sudo apt install git-secret
+          git-secret reveal
+      - name: Build docker stack
+        run: make setup
+      - name: Wait for container health
+        run: bash wait-for-healthy-container.sh airflow-scheduler 300
+      - name: Run DB migrations
+        run: make migrations
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
+        if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.debug_enabled }}
+      - name: Run tests
+        run: make integrationtest

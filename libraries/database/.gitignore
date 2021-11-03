@@ -1,0 +1,6 @@
+# cache
+**/__pycache__
+
+# build
+./build
+.pytest_cache
