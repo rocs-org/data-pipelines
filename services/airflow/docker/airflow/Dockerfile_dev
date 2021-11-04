@@ -4,8 +4,6 @@ RUN chown -R airflow:airflow /usr/local/src
 
 USER root
 
-RUN mkdir ../../libraries
-
 USER airflow
 
 ARG YOUR_ENV
@@ -22,7 +20,6 @@ ADD services/airflow/airflow.cfg services/airflow/poetry.lock services/airflow/p
 # copy libs into the container, so their paths exist for editable installs
 COPY libraries ../../libraries
 
-RUN poetry config virtualenvs.create false \
-  && poetry install --no-interaction --no-ansi
+RUN pip install --requirement <(poetry export  --without-hashes --dev --format requirements.txt)
 
 ENV PYTHONPATH "${PYTHONPATH}:/opt/airflow/dags"
