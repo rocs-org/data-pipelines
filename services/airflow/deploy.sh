@@ -3,7 +3,7 @@ git checkout main
 git stash
 git pull
 git secret reveal -f
-cd projects/airflow
+cd services/airflow
 mv .env.prod .env
 make build
 make setup
