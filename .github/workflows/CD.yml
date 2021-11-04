@@ -1,33 +1,23 @@
-# This is a basic workflow to help you get started with Actions
-
 name: CD
 
-# Controls when the workflow will run
 on:
-  # Triggers the workflow on push or pull request events but only for the main branch
   push:
     branches: [ main ]
 
-  # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
     inputs:
       debug_enabled:
         description: 'Run the build with tmate debugging enabled (https://github.com/marketplace/actions/debugging-with-tmate)'
         required: false
-        default: true
+        default: 'true'
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "build"
   deploy-to-ornt:
-    # The type of runner that the job will run on
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        python-version: [3.8]
+    defaults:
+      run:
+        working-directory: ./services/airflow
 
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       - uses: actions/checkout@v2
       - name: Configure GPG Key
@@ -59,4 +49,4 @@ jobs:
         if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.debug_enabled }}
       - name: Login to ornt, build and setup
         run: |
-          cat projects/airflow/deploy.sh | ssh -A -o "StrictHostKeyChecking no" kolb@ornt.biologie.hu-berlin.de
+          cat deploy.sh | ssh -A -o "StrictHostKeyChecking no" kolb@ornt.biologie.hu-berlin.de
