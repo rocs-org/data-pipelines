@@ -14,9 +14,6 @@ on:
 jobs:
   deploy-to-ornt:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./services/airflow
 
     steps:
       - uses: actions/checkout@v2
