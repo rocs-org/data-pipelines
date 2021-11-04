@@ -49,7 +49,7 @@ jobs:
 
       - name: Connect to VPN
         run: |
-          sudo openvpn --config services/airflow/.github/workflows/hu-berlin.ovpn --auth-user-pass vpn_secrets.conf &&
+          sudo openvpn --config .github/workflows/hu-berlin.ovpn --auth-user-pass vpn_secrets.conf &&
           sleep 20
 
       - name: Login to ornt, build and setup
