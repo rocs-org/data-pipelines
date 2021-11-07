@@ -3,9 +3,9 @@ from airflow.utils.dates import days_ago
 from airflow.operators.python import PythonOperator
 from datetime import timedelta
 
-from dags.datenspende.data_update import (
-    data_update_etl,
-    DATA_UPDATE_ARGS,
+from dags.datenspende.data_update import data_update_etl, DATA_UPDATE_ARGS
+from dags.datenspende.answers_post_processing import (
+    post_processing_test_and_symptoms_answers,
 )
 from dags.helpers.dag_helpers import (
     create_slack_error_message_from_task_context,
@@ -41,3 +41,11 @@ t1 = PythonOperator(
     dag=dag,
     op_args=DATA_UPDATE_ARGS,
 )
+
+t2 = PythonOperator(
+    task_id="post_process_test_and_symptoms_answers",
+    python_callable=post_processing_test_and_symptoms_answers,
+    dag=dag,
+)
+
+t1 >> t2
