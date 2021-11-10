@@ -3,7 +3,7 @@ import requests
 import py7zr
 import polars as po
 import glob
-from polars.datatypes import Utf8, Int64, Date64
+from polars.datatypes import Utf8, Int64
 import ramda as R
 from typing import List, Tuple
 from returns.curry import curry
@@ -50,11 +50,12 @@ def load_files(*_):
     vitaldata = {
         file: {
             "table": "vitaldata",
+            "constraint": ["user_id", "date", "type", "source"],
             "df": po.read_csv(
                 file,
                 dtype={
                     "customer": Int64,
-                    "day": Date64,
+                    "day": Utf8,
                     "type": Int64,
                     "longValue": Int64,
                     "source": Int64,
@@ -69,6 +70,7 @@ def load_files(*_):
     usersdata = {
         file: {
             "table": "users",
+            "constraint": ["user_id"],
             "df": po.read_csv(
                 file,
                 dtype={
@@ -85,8 +87,8 @@ def load_files(*_):
         }
         for file in ["./usersAll.csv"]
     }
-    return vitaldata #{**vitaldata, **usersdata}
+    return {**usersdata, **vitaldata}
 
 
 def map_dict_to_list(d: dict) -> list:
-    return [(d[key]["table"], d[key]["df"]) for key in d.keys()]
+    return [(d[key]["table"], d[key]["constraint"], d[key]["df"]) for key in d.keys()]

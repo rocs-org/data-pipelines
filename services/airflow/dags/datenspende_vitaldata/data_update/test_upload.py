@@ -17,16 +17,16 @@ def test_upload_writes_all_dataframe_to_database(db_context: DBContext):
                 "zip_password": os.environ["THRYVE_ZIP_PASSWORD"],
             }
         ),
-        R.map(lambda item: (item[0], transform(item[1]))),
-        upload("datenspende", "user_id, date, vital_id, device_id"),
+        R.map(lambda item: (item[0], item[1], transform(item[2]))),
+        upload("datenspende"),
     )(URL)
 
     db_context = create_db_context()
 
-    # assert (
-    #     number_of_elements_returned_from(db_context)("SELECT * FROM datenspende.users")
-    #     == 168
-    # )
+    assert (
+        number_of_elements_returned_from(db_context)("SELECT * FROM datenspende.users")
+        == 168
+    )
     assert (
         number_of_elements_returned_from(db_context)("SELECT * FROM datenspende.vitaldata")
         == 10

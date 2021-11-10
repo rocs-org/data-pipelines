@@ -21,9 +21,7 @@ COLUMN_REPLACEMENTS = {
     "user": "user_id",
     "customer": "user_id",
     "day": "date",
-    "type": "vital_id",
-    "long_value": "value",
-    "source": "device_id",
+    "long_value": "value"
 }
 
 transform = transform_columns(COLUMN_REPLACEMENTS)
