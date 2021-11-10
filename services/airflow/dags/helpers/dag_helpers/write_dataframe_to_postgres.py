@@ -48,7 +48,7 @@ def connect_to_db_and_upsert_pandas_dataframe(
 
 @curry
 def connect_to_db_and_upsert_polars_dataframe(
-    schema: str, table: str, constraint: str, data: polars.DataFrame
+    schema: str, table: str, constraint: list, data: polars.DataFrame
 ):
     return _connect_to_db_and_execute(
         _build_upsert_query(schema, table, constraint),
@@ -85,7 +85,7 @@ def _build_insert_query(schema: str, table: str) -> Callable[[DataFrame], sql.SQ
 
 @R.curry
 def _build_upsert_query(
-    schema: str, table: str, constraint: str
+    schema: str, table: str, constraint: list
 ) -> Callable[[DataFrame], sql.SQL]:
     return pipe(
         _get_columns,
@@ -97,7 +97,7 @@ def _build_upsert_query(
                 R.always(sql.Identifier(schema)),
                 R.always(sql.Identifier(table)),
                 _get_column_identifier_list,
-                R.always(sql.Identifier(constraint)),
+                R.always(_get_constraint_columns_list(constraint)),
                 _upsert_column_action,
             ],
         ),
@@ -121,6 +121,10 @@ _get_column_identifier_list = lambda columns: sql.SQL(",").join(
     sql.Identifier(name) for name in columns
 )
 
+def _get_constraint_columns_list(constraint: list):
+    return sql.SQL(",").join(
+        sql.Identifier(name) for name in constraint
+    )
 
 _get_tuples_from_pd_dataframe = lambda df: [tuple(x) for x in df.to_numpy()]
 

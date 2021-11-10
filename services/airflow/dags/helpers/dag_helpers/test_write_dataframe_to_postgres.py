@@ -83,7 +83,7 @@ def test_generate_upsert_action_fragments(db_context: DBContext):
 
 def test_generate_upsert_query(db_context: DBContext):
     df = pd.DataFrame(columns=["col1", "col2"], data=[[1, 2]])
-    query = _build_upsert_query("bli", "bla", "const")(df)
+    query = _build_upsert_query("bli", "bla", ["const"])(df)
     assert (
         query.as_string(db_context["connection"])
         == 'INSERT INTO "bli"."bla" ("col1","col2") VALUES %s ON CONFLICT ("const") DO UPDATE SET '
@@ -96,7 +96,7 @@ def test_upsert_dataframe_to_postgres_does_overwrite(db_context: DBContext):
         schema="censusdata", table="nuts", data=DATA1
     )
     connect_to_db_and_upsert_pandas_dataframe(
-        schema="censusdata", table="nuts", constraint="geo", data=DATA2
+        schema="censusdata", table="nuts", constraint=["geo"], data=DATA2
     )
     db_context = create_db_context()
     res = query_all_elements(db_context, "SELECT * FROM censusdata.nuts;")
