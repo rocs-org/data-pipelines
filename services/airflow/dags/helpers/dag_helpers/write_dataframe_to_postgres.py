@@ -121,10 +121,10 @@ _get_column_identifier_list = lambda columns: sql.SQL(",").join(
     sql.Identifier(name) for name in columns
 )
 
+
 def _get_constraint_columns_list(constraint: list):
-    return sql.SQL(",").join(
-        sql.Identifier(name) for name in constraint
-    )
+    return sql.SQL(",").join(sql.Identifier(name) for name in constraint)
+
 
 _get_tuples_from_pd_dataframe = lambda df: [tuple(x) for x in df.to_numpy()]
 
