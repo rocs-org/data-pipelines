@@ -62,6 +62,7 @@ def load_files(*_):
                     "createdAt": Int64,
                     "timezoneOffset": Int64,
                 },
+                parse_dates=False,
             ),
         }
         for file in glob.glob("./dailies*.csv")

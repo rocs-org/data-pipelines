@@ -130,6 +130,5 @@ DATA3 = po.DataFrame(
     data=[
         [0, 1, float("nan"), 0],
         [1, None, 1.0, 1],
-    ],
-    nullable=True,
+    ]
 )
