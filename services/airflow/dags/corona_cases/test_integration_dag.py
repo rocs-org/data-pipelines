@@ -17,7 +17,7 @@ def test_dag_loads_with_no_errors():
     assert len(dag_bag.import_errors) == 0
 
 
-def test_dag_writes_correct_results_to_db(db_context: DBContext):
+def test_corona_cases_dag_writes_correct_results_to_db(db_context: DBContext):
     credentials = db_context["credentials"]
 
     # run population data pipeline first, as incidence calculation depends on its results
@@ -44,6 +44,7 @@ def test_dag_writes_correct_results_to_db(db_context: DBContext):
         )
         == 0
     )
+
     res_cases = query_all_elements(
         db_context, f"SELECT * FROM {CASES_SCHEMA}.{CASES_TABLE}"
     )

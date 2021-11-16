@@ -21,7 +21,7 @@ from dags.helpers.dag_helpers import (
 default_args = {
     "owner": "airflow",
     "depends_on_past": False,
-    "retries": 0,
+    "retries": 1,
     "retry": False,
     "provide_context": True,
 }
