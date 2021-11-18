@@ -1,49 +1,24 @@
 import polars
-import requests
-import py7zr
 import polars as po
 import glob
 from polars.datatypes import Utf8, Int64
 import ramda as R
 from typing import List, Tuple
-from returns.curry import curry
-from requests.auth import HTTPBasicAuth
+
+from dags.helpers.dag_helpers import download_7zfile, unzip_7zfile
 
 
-DataList = List[Tuple[str, polars.DataFrame]]
+DataList = List[Tuple[str, List, polars.DataFrame]]
 
 
 @R.curry
 def download(access_config: dict, url: str) -> DataList:
     return R.pipe(
-        download_file(access_config),
-        unzip_file(access_config),
+        download_7zfile(access_config),
+        unzip_7zfile(access_config),
         load_files,
         map_dict_to_list,
     )(url)
-
-
-@curry
-def download_file(access_config: dict, url):
-    local_filename = "export.7z"
-    with requests.get(
-        url,
-        stream=True,
-        auth=HTTPBasicAuth(access_config["username"], access_config["password"]),
-    ) as r:
-        r.raise_for_status()
-        with open(local_filename, "wb") as f:
-            for chunk in r.iter_content(chunk_size=8192):
-                f.write(chunk)
-    return local_filename
-
-
-@curry
-def unzip_file(access_config: dict, filename: str) -> None:
-    with py7zr.SevenZipFile(
-        filename, "r", password=access_config["zip_password"]
-    ) as file:
-        file.extractall()
 
 
 def load_files(*_):
