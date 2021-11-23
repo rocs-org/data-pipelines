@@ -37,7 +37,7 @@ def connect_to_db_and_insert_polars_dataframe(
 
 @curry
 def connect_to_db_and_upsert_pandas_dataframe(
-    schema: str, table: str, constraint: str, data: pd.DataFrame
+    schema: str, table: str, constraint: List[str], data: pd.DataFrame
 ):
     return _connect_to_db_and_execute(
         _build_upsert_query(schema, table, constraint),
