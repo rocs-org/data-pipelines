@@ -48,7 +48,7 @@ def load_files(*_):
             "table": "users",
             "constraint": ["user_id"],
             "df": po.read_csv(
-                file,
+                "usersAll.csv",
                 dtype={
                     "customer": Int64,
                     "plz": Utf8,
