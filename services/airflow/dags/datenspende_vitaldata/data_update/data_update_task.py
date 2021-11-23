@@ -9,7 +9,7 @@ from dags.helpers.test_helpers import set_env_variable_from_dag_config_if_presen
 DATA_UPDATE_ARGS = [os.environ["THRYVE_FTP_URL"] + "export.7z", "datenspende"]
 
 
-def data_update_etl(url: str, schema: str, **kwargs):
+def vital_data_update_etl(url: str, schema: str, **kwargs):
     R.pipe(
         set_env_variable_from_dag_config_if_present("TARGET_DB"),
         lambda *args: download(
