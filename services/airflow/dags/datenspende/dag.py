@@ -7,6 +7,11 @@ from dags.datenspende.data_update import data_update_etl, DATA_UPDATE_ARGS
 from dags.datenspende.answers_post_processing import (
     post_processing_test_and_symptoms_answers,
 )
+from dags.datenspende.case_detection_features import (
+    extract_features_task,
+    WEEKLY_FEATURE_EXTRACTION_ARGS,
+    ONE_OFF_FEATURE_EXTRACTION_ARGS,
+)
 from dags.helpers.dag_helpers import (
     create_slack_error_message_from_task_context,
     slack_notifier_factory,
@@ -48,4 +53,18 @@ t2 = PythonOperator(
     dag=dag,
 )
 
-t1 >> t2
+t3 = PythonOperator(
+    task_id="extract_features_from_weekly_tasks",
+    python_callable=extract_features_task,
+    dag=dag,
+    op_args=WEEKLY_FEATURE_EXTRACTION_ARGS,
+)
+
+t4 = PythonOperator(
+    task_id="extract_features_from_one_off_answers",
+    python_callable=extract_features_task,
+    dag=dag,
+    op_args=ONE_OFF_FEATURE_EXTRACTION_ARGS,
+)
+
+t1 >> [t2, t3, t4]

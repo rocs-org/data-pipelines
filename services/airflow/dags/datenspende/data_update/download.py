@@ -9,11 +9,13 @@ from returns.curry import curry
 from requests.auth import HTTPBasicAuth
 
 
-DataList = List[Tuple[str, polars.DataFrame]]
+PolarsDataList = List[Tuple[str, polars.DataFrame]]
 
+# This is to fix some weird caching issues in github actions that I have no intention to figure out right now.
+DataList = PolarsDataList
 
 @R.curry
-def download(access_config: dict, url: str) -> DataList:
+def download(access_config: dict, url: str) -> PolarsDataList:
     return R.pipe(
         download_file(access_config),
         unzip_file(access_config),
