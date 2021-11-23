@@ -44,7 +44,7 @@ def load_files(*_):
     }
 
     usersdata = {
-        file: {
+        "./usersAll.csv": {
             "table": "users",
             "constraint": ["user_id"],
             "df": po.read_csv(
@@ -61,7 +61,6 @@ def load_files(*_):
                 },
             ),
         }
-        for file in ["./usersAll.csv"]
     }
     return {**usersdata, **vitaldata}
 
