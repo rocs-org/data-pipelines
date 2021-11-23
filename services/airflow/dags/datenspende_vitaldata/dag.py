@@ -3,7 +3,10 @@ from airflow.utils.dates import days_ago
 from airflow.operators.python import PythonOperator
 from datetime import timedelta
 
-from dags.datenspende_vitaldata.data_update import data_update_etl, DATA_UPDATE_ARGS
+from dags.datenspende_vitaldata.data_update import (
+    vital_data_update_etl,
+    VITAL_DATA_UPDATE_ARGS,
+)
 from dags.helpers.dag_helpers import (
     create_slack_error_message_from_task_context,
     slack_notifier_factory,
@@ -34,7 +37,9 @@ dag = DAG(
 
 t1 = PythonOperator(
     task_id="gather_vital_data_from_thryve",
-    python_callable=if_var_exists_in_dag_conf_use_as_first_arg("URL", data_update_etl),
+    python_callable=if_var_exists_in_dag_conf_use_as_first_arg(
+        "URL", vital_data_update_etl
+    ),
     dag=dag,
-    op_args=DATA_UPDATE_ARGS,
+    op_args=VITAL_DATA_UPDATE_ARGS,
 )

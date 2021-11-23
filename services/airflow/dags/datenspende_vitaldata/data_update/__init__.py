@@ -1,3 +1,3 @@
-from .data_update_task import data_update_etl, DATA_UPDATE_ARGS
+from .data_update_task import vital_data_update_etl, VITAL_DATA_UPDATE_ARGS
 
-__all__ = ["data_update_etl", "DATA_UPDATE_ARGS"]
+__all__ = ["vital_data_update_etl", "VITAL_DATA_UPDATE_ARGS"]

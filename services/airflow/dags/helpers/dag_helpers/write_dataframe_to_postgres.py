@@ -1,4 +1,4 @@
-from typing import Callable
+from typing import Callable, List
 
 import polars
 import pandas as pd
