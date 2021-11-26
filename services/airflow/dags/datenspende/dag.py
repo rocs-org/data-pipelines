@@ -1,7 +1,6 @@
 from airflow import DAG
-from airflow.utils.dates import days_ago
 from airflow.operators.python import PythonOperator
-from datetime import timedelta
+from datetime import timedelta, datetime
 
 from dags.datenspende.data_update import data_update_etl, DATA_UPDATE_ARGS
 from dags.datenspende.answers_post_processing import (
@@ -33,7 +32,7 @@ dag = DAG(
     default_args=default_args,
     description="ETL study data from thryve",
     schedule_interval=timedelta(days=1),
-    start_date=days_ago(1),
+    start_date=datetime(2021, 10, 1, 3),
     tags=["ROCS pipelines"],
     on_failure_callback=slack_notifier_factory(
         create_slack_error_message_from_task_context

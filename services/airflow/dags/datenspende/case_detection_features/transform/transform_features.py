@@ -1,45 +1,72 @@
 import pandas as pd
 import ramda as R
-
-from dags.datenspende.case_detection_features.parameters import FEATURE_MAPPING
+from datetime import datetime, timedelta
+from dags.datenspende.case_detection_features.parameters import (
+    WEEKLY_QUESTIONNAIRE,
+    FEATURE_MAPPING,
+)
 from database import create_db_context
 
 
 @R.curry
-def restructure_features(questions, data: pd.DataFrame) -> pd.DataFrame:
-    # select and restructure symptoms
-    symptoms = data[["user_id", "answer_id"]][
+def restructure_features(
+    questionnaire: int, questions, data: pd.DataFrame
+) -> pd.DataFrame:
+    # Unpack multiple choice question (symptoms)
+    symptoms = data[["user_id", "questionnaire_session", "answer_id"]][
         data["question_id"] == questions["symptoms"]
     ]
     symptoms["yes"] = True
 
     symptoms = (
-        symptoms.set_index(["user_id", "answer_id"])
+        symptoms.set_index(["user_id", "questionnaire_session", "answer_id"])
         .unstack("answer_id")
         .fillna(value=False)
     )
     symptoms.columns = symptoms.columns.droplevel(0)
 
-    # select and restructure other answers
-    other_answers = (
-        data[["user_id", "answer_id", "question_id"]][
-            ~(data["question_id"] == questions["symptoms"])
+    # select and restructure test results
+    test_results = (
+        data[["user_id", "questionnaire_session", "answer_id", "question_id"]][
+            data["question_id"] == questions["test_result"]
         ]
-        .groupby(["question_id", "user_id"])
+        .set_index(["question_id", "user_id", "questionnaire_session"])
+        .unstack(["question_id"])
+    )
+    test_results.columns = test_results.columns.droplevel(0)
+
+    # select and restructure info about bodies
+    body_info = (
+        data[["user_id", "questionnaire_session", "answer_id", "question_id"]][
+            data["question_id"].isin(
+                [questions[key] for key in ["sex", "height", "weight", "fitness"]]
+            )
+        ]
+        .groupby(["question_id", "user_id", "questionnaire_session"])
         .first()
     )
-    other_answers = other_answers.unstack(["question_id"])
-    other_answers.columns = other_answers.columns.droplevel(0)
+    body_info = body_info.unstack(["question_id"])
+    body_info.columns = body_info.columns.droplevel(0)
 
     # join
-    features = symptoms.join(other_answers).reset_index()
+    features = symptoms.join(test_results, how="outer")
 
+    features = (
+        features.reset_index()
+        .merge(
+            body_info.reset_index().drop(columns=["questionnaire_session"]),
+            how="left",
+            on="user_id",
+        )
+        .replace(float("nan"), None)
+    )
     # map features and combine boolean columns
     features = combine_columns(FEATURE_MAPPING, features)
-
     # cast feature_ids to string
     features.columns = [
-        "f" + str(feature_id) if not feature_id == "user_id" else feature_id
+        "f" + str(feature_id)
+        if feature_id not in ["user_id", "questionnaire_session"]
+        else feature_id
         for feature_id in features.columns
     ]
 
@@ -52,9 +79,15 @@ def restructure_features(questions, data: pd.DataFrame) -> pd.DataFrame:
         784: None,
         float("nan"): None,
     }
-    features.replace({"f10": test_result_mapping}, inplace=True)
-
-    return features
+    features = features.replace({"f10": test_result_mapping}).replace({pd.NA: None})
+    return R.pipe(
+        R.if_else(R.equals(WEEKLY_QUESTIONNAIRE), get_weekly_dates, get_one_off_dates),
+        lambda df: df.set_index(["user_id", "questionnaire_session"]),
+        lambda dates: features.join(
+            dates, how="left", on=["user_id", "questionnaire_session"]
+        ),
+        lambda df: df.drop(columns=["questionnaire_session"]),
+    )(questionnaire)
 
 
 @R.curry
@@ -88,7 +121,14 @@ def collect_feature_names(questions, data: pd.DataFrame) -> pd.DataFrame:
     return feature_ids.append(
         pd.DataFrame(
             columns=["id", "description", "is_choice"],
-            data=[["user_id", "User Id", False]],
+            data=[
+                ["user_id", "User Id", False],
+                [
+                    "test_week_start",
+                    "First day of the week in which the test was taken",
+                    False,
+                ],
+            ],
         )
     )
 
@@ -102,7 +142,7 @@ def combine_columns(mapping: dict, dataframe: pd.DataFrame) -> pd.DataFrame:
             )
             dataframe.drop(columns=columns, inplace=True)
         except KeyError:
-            print(f"{combined_column} not in columns")
+            pass
     return dataframe
 
 
@@ -149,3 +189,64 @@ def get_symptom_ids_from_weekly():
         lambda series: series.values,
         list,
     )("")
+
+
+def get_one_off_dates(*_) -> pd.DataFrame:
+    connection = R.pipe(create_db_context, R.prop("connection"))("")
+    test_dates = pd.read_sql(
+        """
+                SELECT
+                    answers.user_id, answers.questionnaire_session, choice.text as date_text
+                FROM
+                    datenspende.answers, datenspende.choice
+                WHERE
+                    answers.questionnaire = 10 AND
+                    answers.question = 83 AND
+                    choice.question = answers.question AND
+                    answers.element = choice.element
+                ORDER BY
+                    answers.user_id
+                ;
+                """,
+        connection,
+    )
+    connection.close()
+    test_dates["test_week_start"] = test_dates[["date_text"]].apply(
+        R.pipe(
+            lambda series: series.values,
+            list,
+            R.head,
+            lambda date_text: datetime.strptime(date_text[:10], "%d.%m.%Y").date(),
+        ),
+        axis=1,
+    )
+    return test_dates.drop(columns=["date_text"])
+
+
+def get_weekly_dates(*_) -> pd.DataFrame:
+    connection = R.pipe(create_db_context, R.prop("connection"))("")
+    test_dates = pd.read_sql(
+        """
+                SELECT
+                    answers.user_id, answers.questionnaire_session, answers.created_at as date_raw
+                FROM
+                    datenspende.answers
+                WHERE
+                    answers.questionnaire = 2 AND
+                    answers.question = 90
+                ORDER BY
+                    answers.user_id
+                ;
+                """,
+        connection,
+    )
+    test_dates["test_week_start"] = test_dates[["date_raw"]].apply(
+        lambda date_text: (
+            datetime.fromtimestamp(date_text.values[0] / 1000) - timedelta(days=7)
+        )
+        .replace(hour=0, minute=0, second=0, microsecond=0)
+        .date(),
+        axis=1,
+    )
+    connection.close()
+    return test_dates.drop(columns=["date_raw"])

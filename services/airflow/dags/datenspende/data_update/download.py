@@ -14,6 +14,7 @@ PolarsDataList = List[Tuple[str, polars.DataFrame]]
 # This is to fix some weird caching issues in github actions that I have no intention to figure out right now.
 DataList = PolarsDataList
 
+
 @R.curry
 def download(access_config: dict, url: str) -> PolarsDataList:
     return R.pipe(
