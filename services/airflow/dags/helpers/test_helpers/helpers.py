@@ -8,6 +8,8 @@ from airflow.models import DagBag, TaskInstance
 from airflow.utils.types import DagRunType
 from returns.curry import curry
 
+from airflow.utils.dates import days_ago
+
 
 def execute_dag(dag_id: str, execution_date: str, dag_config: dict = {}):
     """Execute a DAG in a specific date this process wait for DAG run or fail to continue"""
@@ -84,9 +86,12 @@ def if_var_exists_in_dag_conf_use_as_first_arg(
 
 def create_task_instance(dag_id: str, task_id: str, url: str = None):
     dag = DagBag().get_dag(dag_id)
-    execution_date = datetime.now()
+    now = datetime.now()
     dr = dag.create_dagrun(
-        state="running", run_type=DagRunType("manual"), execution_date=execution_date
+        state="running",
+        run_type=DagRunType("manual"),
+        execution_date=now,
+        data_interval=(days_ago(3), days_ago(0)),
     )
 
     task = dag.get_task(task_id)

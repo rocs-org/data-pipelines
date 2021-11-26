@@ -1,11 +1,13 @@
+WEEKLY_QUESTIONNAIRE = 2
+ONE_OFF_QUESTIONNAIRE = 10
+
 ONE_OFF_QUESTIONS = {
     "test_result": 129,  # True/False/NULL
     "symptoms": 86,  # True/False/NULL
-    "date": 83,  # DATE
     "age": 133,  # INT/NULL
     "sex": 127,  # STR/NULL
     "height": 74,  # INT/NULL
-    "fittness": 76,
+    "fitness": 76,
     "weight": 75,  # INT/NULL
 }
 WEEKLY_QUESTIONS = {
@@ -14,22 +16,25 @@ WEEKLY_QUESTIONS = {
     "age": 133,
     "sex": 127,
     "height": 74,
-    "fittness": 76,
+    "fitness": 76,
     "weight": 75,
 }
 WEEKLY_FEATURE_EXTRACTION_ARGS = [
-    2,
+    WEEKLY_QUESTIONNAIRE,
     WEEKLY_QUESTIONS,
-    "weekly_features",
-    "weekly_features_description",
+    "homogenized_features",
+    "homogenized_features_description",
 ]
 ONE_OFF_FEATURE_EXTRACTION_ARGS = [
-    10,
+    ONE_OFF_QUESTIONNAIRE,
     ONE_OFF_QUESTIONS,
-    "symptoms_features",
-    "symptoms_features_description",
+    "homogenized_features",
+    "homogenized_features_description",
 ]
+
+# map feature ids between one off survey and weekly survey
 FEATURE_MAPPING = {
+    451: 40,  # Fieber
     452: 40,  # Schüttelfrost
     453: 44,  # Husten
     470: 47,  # Halsschmerzen
