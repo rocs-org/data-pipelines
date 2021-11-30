@@ -8,6 +8,7 @@ name: Publish Docker image
 on:
   push:
     branches: [ main ]
+    paths: ["services/airflow/**"]
 
 jobs:
   push_to_registry:
@@ -30,6 +31,6 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           context: .
-          file: ./docker/airflow/Dockerfile
+          file: ./services/airflow/docker/airflow/Dockerfile
           push: true
           tags: jakobjkolb/airflow:latest
