@@ -38,7 +38,7 @@ dag = DAG(
 t1 = PythonOperator(
     task_id="load_hospitalizations",
     python_callable=if_var_exists_in_dag_conf_use_as_first_arg(
-        "HOPSITALIZATIONS_URL", etl_hospitalizations
+        "HOSPITALIZATIONS_URL", etl_hospitalizations
     ),
     dag=dag,
     op_args=HOSPITALIZATIONS_ARGS,
