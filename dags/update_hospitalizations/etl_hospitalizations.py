@@ -1,3 +1,5 @@
+import os
+
 import ramda as R
 from returns.curry import curry
 from dags.update_hospitalizations.download_hospitalizations import (
@@ -18,6 +20,7 @@ SCHEMA = "coronacases"
 TABLE = "german_hospitalizations"
 
 HOSPITALIZATIONS_ARGS = [URL, SCHEMA, TABLE]
+
 
 @curry
 def etl_hospitalizations(url: str, schema: str, table: str, *_, **kwargs):

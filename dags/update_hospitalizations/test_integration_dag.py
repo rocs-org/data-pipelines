@@ -1,6 +1,5 @@
 from datetime import date
-from dags.database import DBContext
-from dags.database.execute_sql import query_all_elements
+from database import DBContext, query_all_elements
 from airflow.models import DagBag
 
 from dags.helpers.test_helpers import execute_dag
@@ -32,18 +31,18 @@ def test_dag_writes_correct_results_to_db(db_context: DBContext):
     )
     assert len(res_cases) == 82
     test_case_tuple = res_cases[0]
-    test_case_trunc = test_case_tuple[:1]+test_case_tuple[2:]
+    test_case_trunc = test_case_tuple[:1] + test_case_tuple[2:]
     assert test_case_trunc == (
         1,
         2227,
         2.68256370027667,
         2020,
         12,
-        '2020-W12',
+        "2020-W12",
         date(2020, 3, 16),
         date(2020, 3, 22),
         75,
-        81
+        81,
     )
 
 
