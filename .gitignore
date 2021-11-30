@@ -4,12 +4,8 @@
 
 # cache
 **/__pycache__
+**/.pytest__cache
 .gitsecret/keys/random_seed
 
-# logs
-/logs/*
-
 # environments
-.env
-.env.prod
 .github/workflows/hu-berlin.ovpn

@@ -1,0 +1,23 @@
+---
+version: '3'
+
+services:
+  db:
+    container_name: "db"
+    image: postgres:13
+    environment: 
+      POSTGRES_USER: "${TARGET_DB_USER}"
+      POSTGRES_PASSWORD: "${TARGET_DB_PW}"
+      POSTGRES_DB: "${TARGET_DB}"
+    volumes:
+      - db-volume:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "${TARGET_DB_USER}", "-d", "${TARGET_DB}"]
+      interval: 5s
+      retries: 5
+    restart: always
+    ports:
+      - 5432:5432
+
+volumes:
+  db-volume:
