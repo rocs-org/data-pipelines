@@ -4,7 +4,7 @@ import polars
 import polars as po
 from polars.datatypes import Int64, Utf8
 import ramda as R
-from .download import download, DataList
+from .download import download, PolarsDataList
 
 URL = "http://static-files/thryve/exportStudy.7z"
 
@@ -42,7 +42,7 @@ def test_download_returns_empty_columns_with_correct_type():
 
 
 @R.curry
-def get_key_from_data_list(key: str, data_list: DataList) -> polars.DataFrame:
+def get_key_from_data_list(key: str, data_list: PolarsDataList) -> polars.DataFrame:
     for list_key, value in data_list:
         if list_key == key:
             return value
