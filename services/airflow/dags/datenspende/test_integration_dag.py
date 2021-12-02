@@ -67,7 +67,7 @@ def test_datenspende_dag_writes_correct_results_to_db(db_context: DBContext):
         connection,
     ).dropna(axis=1, how="all")
 
-    assert len(features) == 54
+    assert len(features) == 56
 
 
 THRYVE_FTP_URL = "http://static-files/thryve/exportStudy.7z"

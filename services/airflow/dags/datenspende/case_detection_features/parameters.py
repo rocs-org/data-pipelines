@@ -3,6 +3,7 @@ ONE_OFF_QUESTIONNAIRE = 10
 
 ONE_OFF_QUESTIONS = {
     "test_result": 129,  # True/False/NULL
+    "vaccination_status": 121,  # True/False/NULL
     "symptoms": 86,  # True/False/NULL
     "age": 133,  # INT/NULL
     "sex": 127,  # STR/NULL
@@ -12,6 +13,7 @@ ONE_OFF_QUESTIONS = {
 }
 WEEKLY_QUESTIONS = {
     "test_result": 10,  # True/False/NULL
+    "vaccination_status": 30,  # True/False/NULL
     "symptoms": 8,
     "age": 133,
     "sex": 127,
@@ -34,16 +36,17 @@ ONE_OFF_FEATURE_EXTRACTION_ARGS = [
 
 # map feature ids between one off survey and weekly survey
 FEATURE_MAPPING = {
+    30: 121,  # Vaccination status
+    129: 10,  # Test result
     451: 40,  # Fieber
     452: 40,  # Schüttelfrost
-    453: 44,  # Husten
-    470: 47,  # Halsschmerzen
-    471: 45,  # Schupfen
-    472: 48,  # Kopfschmerzen
     473: 41,  # Gliederschmerzen
-    475: 46,  # Durchfall
-    479: 49,  # Keine
     476: 42,  # Geruchs und
     477: 42,  # Geschmacksverlust
-    129: 10,  # Testergebniss
+    453: 44,  # Husten
+    471: 45,  # Schupfen
+    475: 46,  # Durchfall
+    470: 47,  # Halsschmerzen
+    472: 48,  # Kopfschmerzen
+    479: 49,  # Keine
 }

@@ -20,17 +20,18 @@ def test_extract_features_from_tests_and_symptoms_questionnarie(prepared_db):
     features = loader("")
 
     assert isinstance(features, pd.DataFrame)
-    assert len(features.index) == 380
+    assert len(features.index) == 474
     assert (
-        len(features.groupby(["user_id"])) == 82
+        len(features.groupby(["user_id"])) == 91
     )  # Individuals that reported a (positive or negative) test result
+    print(list(features.iloc[0].values))
     assert list(features.iloc[0].values) == [
         8382,
         1394,
-        129,
-        783,
-        "War mindestens ein Testergebnis positiv, also wurde das Coronavirus bei Ihnen festgestellt?",
-        "Nein",
+        121,
+        728,
+        "Sind sie bereits vollständig gegen das Coronavirus geimpft?",
+        "Ja",
     ]
 
 
