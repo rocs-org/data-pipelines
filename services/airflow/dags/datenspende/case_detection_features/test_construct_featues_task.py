@@ -49,14 +49,14 @@ def test_feature_task_on_one_off_survey_results(db_context: DBContext):
     connection.close()
 
     # same number of features that we put on
-    assert len(feature_names_from_db) == 17
-    assert len(features_from_db) == 47
+    assert len(feature_names_from_db) == 18
+    assert len(features_from_db) == 49
 
     # features from db have expected format
-    assert list(feature_names_from_db.iloc[0].values) == [
-        "Geschmacksstörung",
-        "f42",
-        False,
+    assert list(feature_names_from_db.sort_values("id").iloc[0].values) == [
+        "War mindestens ein Testergebnis positiv, also wurde das Coronavirus bei Ihnen festgestellt?",
+        "f10",
+        True,
     ]
 
 
@@ -98,13 +98,14 @@ def test_feature_task_on_weeekly_survey_results(db_context: DBContext):
 
     connection.close()
 
+    print(list(feature_names_from_db.sort_values("id").iloc[0].values))
     # same number of features that we put on
-    assert len(feature_names_from_db) == 10
+    assert len(feature_names_from_db) == 11
     assert len(features_from_db) == 7
 
     # features from db have expected format
-    assert list(feature_names_from_db.iloc[0].values) == [
-        "Ich hatte keine dieser genannten Symptome",
-        "f49",
-        False,
+    assert list(feature_names_from_db.sort_values("id").iloc[0].values) == [
+        "Wie war das letzte Testergebnis?",
+        "f10",
+        True,
     ]
