@@ -40,7 +40,28 @@ def connect_to_db_and_upsert_pandas_dataframe(
     schema: str, table: str, constraint: List[str], data: pd.DataFrame
 ):
     return _connect_to_db_and_execute(
-        _build_upsert_query(schema, table, constraint),
+        _build_upsert_query(
+            "INSERT INTO {}.{} ({}) VALUES %s ON CONFLICT ({}) DO UPDATE SET {};",
+            schema,
+            table,
+            constraint,
+        ),
+        _get_tuples_from_pd_dataframe,
+        data,
+    )
+
+
+@curry
+def connect_to_db_and_upsert_pandas_dataframe_on_constraint(
+    schema: str, table: str, constraint: List[str], data: pd.DataFrame
+):
+    return _connect_to_db_and_execute(
+        _build_upsert_query(
+            "INSERT INTO {}.{} ({}) VALUES %s ON CONFLICT ON CONSTRAINT {} DO UPDATE SET {};",
+            schema,
+            table,
+            constraint,
+        ),
         _get_tuples_from_pd_dataframe,
         data,
     )
@@ -51,7 +72,12 @@ def connect_to_db_and_upsert_polars_dataframe(
     schema: str, table: str, constraint: list, data: polars.DataFrame
 ):
     return _connect_to_db_and_execute(
-        _build_upsert_query(schema, table, constraint),
+        _build_upsert_query(
+            "INSERT INTO {}.{} ({}) VALUES %s ON CONFLICT ({}) DO UPDATE SET {};",
+            schema,
+            table,
+            constraint,
+        ),
         _get_tuples_from_polars_dataframe,
         data,
     )
@@ -85,14 +111,12 @@ def _build_insert_query(schema: str, table: str) -> Callable[[DataFrame], sql.SQ
 
 @R.curry
 def _build_upsert_query(
-    schema: str, table: str, constraint: list
+    query: str, schema: str, table: str, constraint: list
 ) -> Callable[[DataFrame], sql.SQL]:
     return pipe(
         _get_columns,
         R.converge(
-            sql.SQL(
-                "INSERT INTO {}.{} ({}) VALUES %s ON CONFLICT ({}) DO UPDATE SET {};"
-            ).format,
+            sql.SQL(query).format,
             [
                 R.always(sql.Identifier(schema)),
                 R.always(sql.Identifier(table)),

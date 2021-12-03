@@ -131,6 +131,10 @@ def test_collect_feature_names_one_off_survey(prepared_db: DBContext):
     )("")
 
     assert isinstance(feature_names, pd.DataFrame)
+
+    ids = list(feature_names.id.values)
+    assert len(ids) == len(set(ids))  # feature ids are unique
+
     feature_names.sort_values(list(feature_names.columns.values), inplace=True)
     assert list(feature_names.iloc[0].values) == ["Andere", "f478", False]
     assert set(list(feature_names["id"])).difference(set(FEATURE_IDS)) == set()
