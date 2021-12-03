@@ -145,13 +145,13 @@ def add_test_dates_to_features(
 def collect_feature_names(questions, data: pd.DataFrame) -> pd.DataFrame:
     symptoms = data[["answer", "answer_id"]][
         data["question_id"] == questions["symptoms"]
-    ].drop_duplicates()
+    ].drop_duplicates("answer_id")
     symptoms.columns = ["description", "id"]
     symptoms["is_choice"] = False
 
     other_features = data[["question", "question_id"]][
         ~(data["question_id"] == questions["symptoms"])
-    ].drop_duplicates()
+    ].drop_duplicates("question_id")
     other_features.columns = ["description", "id"]
     other_features["is_choice"] = True
 
@@ -181,7 +181,7 @@ def collect_feature_names(questions, data: pd.DataFrame) -> pd.DataFrame:
                 ],
             ],
         )
-    )
+    ).drop_duplicates("id")
 
 
 @R.curry
