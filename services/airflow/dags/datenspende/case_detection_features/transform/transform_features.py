@@ -41,6 +41,9 @@ def restructure_features(
         map_column_names_to_string_that_works_as_sql_identifier,
         add_test_dates_to_features(questionnaire),
         map_test_results_and_vaccination_status,
+        lambda df: df.drop_duplicates(
+            subset=["user_id", "test_week_start"], keep="last"
+        ),
     )(features)
 
 
