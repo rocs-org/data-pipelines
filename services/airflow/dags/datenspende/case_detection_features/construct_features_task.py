@@ -23,11 +23,17 @@ def extract_features_task(
         load_test_and_symptoms_data(questionnaire_id, questions),
         R.apply_spec(
             {
-                feature_table: restructure_features(questionnaire_id, questions),
-                feature_description_table: collect_feature_names(questions),
+                feature_table: {
+                    "df": restructure_features(questionnaire_id, questions),
+                    "constraints": R.always(["unique_answers"]),
+                },
+                feature_description_table: {
+                    "df": collect_feature_names(questions),
+                    "constraints": R.always(["id_unique"]),
+                },
             }
         ),
-        lambda d: list(d.items()),
+        lambda d: [(key, val["constraints"], val["df"]) for key, val in d.items()],
         upload_all_dataframes("datenspende_derivatives"),
         R.prop("credentials"),
     )(kwargs)
