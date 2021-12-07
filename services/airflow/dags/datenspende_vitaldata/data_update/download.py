@@ -40,7 +40,7 @@ def load_files(*_):
                 parse_dates=False,
             ),
         }
-        for file in glob.glob("./dailies*.csv")
+        for file in sorted(glob.glob("./dailies*.csv"))
     }
 
     usersdata = {
