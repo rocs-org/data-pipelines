@@ -1,6 +1,7 @@
 from airflow import DAG
 from airflow.utils.dates import days_ago
 from airflow.operators.python import PythonOperator
+from airflow.sensors.external_task import ExternalTaskSensor
 from datetime import timedelta
 
 from dags.datenspende_vitaldata.data_update import (
@@ -35,6 +36,14 @@ dag = DAG(
     ),
 )
 
+externalsensor1 = ExternalTaskSensor(
+    task_id="dag_datenspende_completed_status",
+    external_dag_id="datenspende",
+    external_task_id=None,  # wait for whole datenspende DAG to complete
+    check_existence=True,
+    timeout=1200,
+)
+
 t1 = PythonOperator(
     task_id="gather_vital_data_from_thryve",
     python_callable=if_var_exists_in_dag_conf_use_as_first_arg(
@@ -43,3 +52,5 @@ t1 = PythonOperator(
     dag=dag,
     op_args=VITAL_DATA_UPDATE_ARGS,
 )
+
+externalsensor1 >> t1
