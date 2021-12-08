@@ -34,8 +34,8 @@ def test_dag_writes_correct_results_to_db(db_context: DBContext):
     test_case_trunc = test_case_tuple[:1] + test_case_tuple[2:]
     assert test_case_trunc == (
         1,
-        2227,
-        2.68256370027667,
+        2226,
+        2.68136129610801,
         2020,
         12,
         "2020-W12",
