@@ -252,6 +252,7 @@ def dataframes_equal(df1: pd.DataFrame, df2: pd.DataFrame):
 FEATURE_IDS = [
     "user_id",
     "test_week_start",
+    "questionnaire_session",
     "f10",
     "f40",
     "f41",
@@ -278,6 +279,7 @@ FEATURE_IDS = [
 
 FEATURE_ORDER_ONE_OFF = [
     "user_id",
+    "questionnaire_session",
     "f478",
     "f74",
     "f75",
@@ -300,6 +302,7 @@ FEATURE_ORDER_ONE_OFF = [
 
 FIRST_FEATURE_VALUES_ONE_OFF = [
     8382,
+    1394,
     None,
     351.0,
     367.0,
@@ -322,6 +325,7 @@ FIRST_FEATURE_VALUES_ONE_OFF = [
 
 FEATURE_ORDER_WEEKLY = [
     "user_id",
+    "questionnaire_session",
     "f45",
     "f49",
     "f10",
@@ -336,6 +340,7 @@ FEATURE_ORDER_WEEKLY = [
 
 FIRST_FEATURE_VALUES_WEEKLY = [
     224410,
+    1522,
     False,
     True,
     None,
