@@ -1,0 +1,1 @@
+ALTER TABLE datenspende_derivatives.homogenized_features ADD COLUMN questionnaire_session INTEGER;
