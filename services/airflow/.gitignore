@@ -1,3 +1,4 @@
 # environments
 .env
 .env.prod
+airflow.cfg
