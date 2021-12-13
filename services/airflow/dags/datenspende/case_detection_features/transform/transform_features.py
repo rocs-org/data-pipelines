@@ -140,7 +140,6 @@ def add_test_dates_to_features(
         lambda dates: features.join(
             dates, how="right", on=["user_id", "questionnaire_session"]
         ),
-        lambda df: df.drop(columns=["questionnaire_session"]),
     )(questionnaire_id)
 
 
