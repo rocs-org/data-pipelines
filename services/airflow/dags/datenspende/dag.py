@@ -32,7 +32,7 @@ dag = DAG(
     default_args=default_args,
     description="ETL study data from thryve",
     schedule_interval=timedelta(days=1),
-    start_date=days_ago(1, hour=3),
+    start_date=days_ago(1, hour=1),
     tags=["ROCS pipelines"],
     on_failure_callback=slack_notifier_factory(
         create_slack_error_message_from_task_context
