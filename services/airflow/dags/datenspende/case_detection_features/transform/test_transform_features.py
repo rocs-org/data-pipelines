@@ -220,7 +220,7 @@ def test_get_symptom_ids_from_db(prepared_db):
 @pytest.fixture
 def prepared_db(db_context: DBContext):
     run_task_with_url(
-        "datenspende",
+        "datenspende_surveys_v2",
         "gather_data_from_thryve",
         "http://static-files/thryve/exportStudy.7z",
     )
