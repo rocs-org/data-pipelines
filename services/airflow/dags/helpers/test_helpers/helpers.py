@@ -102,7 +102,6 @@ def create_task_instance(dag_id: str, task_id: str, url: str = None):
 
 
 def run_task_with_url(dag_id: str, task_id: str, url: str):
-
     task, task_instance = create_task_instance(dag_id, task_id, url)
 
     task_instance.get_template_context()
