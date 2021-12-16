@@ -25,7 +25,7 @@ default_args = {
 }
 
 dag = DAG(
-    "datenspende-vitaldata",
+    "datenspende_vitaldata_v2",
     default_args=default_args,
     description="ETL vital data from thryve",
     schedule_interval=timedelta(days=1),
@@ -38,7 +38,7 @@ dag = DAG(
 
 externalsensor1 = ExternalTaskSensor(
     task_id="dag_datenspende_completed_status",
-    external_dag_id="datenspende",
+    external_dag_id="datenspende_surveys_v2",
     external_task_id=None,  # wait for whole datenspende DAG to complete
     check_existence=True,
     timeout=1200,

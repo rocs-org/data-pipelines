@@ -28,7 +28,7 @@ default_args = {
 }
 
 dag = DAG(
-    "datenspende",
+    "datenspende_surveys_v2",
     default_args=default_args,
     description="ETL study data from thryve",
     schedule_interval=timedelta(days=1),

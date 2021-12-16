@@ -17,7 +17,7 @@ def test_datenspende_dag_writes_correct_results_to_db(db_context: DBContext):
 
     assert (
         execute_dag(
-            "datenspende",
+            "datenspende_surveys_v2",
             "2021-01-01",
             {"TARGET_DB": credentials["database"], "URL": THRYVE_FTP_URL},
         )
