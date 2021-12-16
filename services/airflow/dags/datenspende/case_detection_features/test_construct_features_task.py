@@ -14,7 +14,7 @@ def test_feature_task_on_one_off_survey_results(db_context: DBContext):
 
     # fill database
     run_task_with_url(
-        "datenspende",
+        "datenspende_surveys_v2",
         "gather_data_from_thryve",
         "http://static-files/thryve/exportStudy.7z",
     )
@@ -64,7 +64,7 @@ def test_feature_task_on_weeekly_survey_results(db_context: DBContext):
 
     # fill database
     run_task_with_url(
-        "datenspende",
+        "datenspende_surveys_v2",
         "gather_data_from_thryve",
         "http://static-files/thryve/exportStudy.7z",
     )
