@@ -39,7 +39,7 @@ dag = DAG(
 externalsensor1 = ExternalTaskSensor(
     task_id="dag_datenspende_completed_status",
     external_dag_id="datenspende_surveys_v2",
-    external_task_id=None,  # wait for whole datenspende DAG to complete
+    external_task_id="gather_data_from_thryve",  
     check_existence=True,
     timeout=1200,
 )
