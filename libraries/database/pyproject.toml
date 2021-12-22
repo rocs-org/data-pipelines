@@ -7,9 +7,9 @@ authors = ["Jakob J. Kolb <jakob.j.kolb@gmail.com>"]
 [tool.poetry.dependencies]
 python = "^3.8"
 psycopg2-binary = "^2.9.1"
-ramda = "^2021.10.24"
 yoyo-migrations = "^7.3.2"
 six = "^1.16.0"
+ramda = "^0.6.4"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.0.0"
