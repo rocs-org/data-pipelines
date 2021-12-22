@@ -6,7 +6,10 @@ from .upload import upload
 from dags.helpers.test_helpers import set_env_variable_from_dag_config_if_present
 
 
-VITAL_DATA_UPDATE_ARGS = [os.environ["THRYVE_FTP_URL"] + "exportHistoricDaily.7z", "datenspende"]
+VITAL_DATA_UPDATE_ARGS = [
+    os.environ["THRYVE_FTP_URL"] + "exportHistoricDaily.7z",
+    "datenspende",
+]
 
 
 def vital_data_update_etl(url: str, schema: str, **kwargs):

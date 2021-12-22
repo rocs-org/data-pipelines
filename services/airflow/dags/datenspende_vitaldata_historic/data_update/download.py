@@ -42,27 +42,7 @@ def load_files(*_):
         }
         for file in sorted(glob.glob("./dailies*.csv"))
     }
-
-    usersdata = {
-        "./usersAll.csv": {
-            "table": "users",
-            "constraint": ["user_id"],
-            "df": po.read_csv(
-                "usersAll.csv",
-                dtype={
-                    "customer": Int64,
-                    "plz": Utf8,
-                    "salutation": Int64,
-                    "birthDate": Int64,
-                    "weight": Int64,
-                    "height": Int64,
-                    "creationTimestamp": Int64,
-                    "source": Int64,
-                },
-            ),
-        }
-    }
-    return {**usersdata, **vitaldata}
+    return {**vitaldata}
 
 
 def map_dict_to_list(d: dict) -> list:
