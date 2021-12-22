@@ -36,14 +36,6 @@ dag = DAG(
     ),
 )
 
-externalsensor1 = ExternalTaskSensor(
-    task_id="dag_datenspende_completed_status",
-    external_dag_id="datenspende_surveys_v2",
-    external_task_id="gather_data_from_thryve",  
-    check_existence=True,
-    timeout=1200,
-)
-
 t1 = PythonOperator(
     task_id="gather_vital_data_from_thryve",
     python_callable=if_var_exists_in_dag_conf_use_as_first_arg(
@@ -53,4 +45,4 @@ t1 = PythonOperator(
     op_args=VITAL_DATA_UPDATE_ARGS,
 )
 
-externalsensor1 >> t1
+t1
