@@ -3,7 +3,7 @@ from airflow.utils.dates import days_ago
 from airflow.operators.python import PythonOperator
 from datetime import timedelta
 
-from dags.datenspende_vitaldata.data_update import (
+from dags.datenspende_vitaldata_historic.data_update import (
     vital_data_update_etl,
     VITAL_DATA_UPDATE_ARGS,
 )
