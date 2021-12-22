@@ -36,9 +36,6 @@ def test_download_returns_empty_columns_with_correct_type():
     assert R.pipe(
         get_key_from_data_list("vitaldata"), lambda df: df.dtypes, R.tap(print)
     )(downloads) == [Int64, Utf8, Int64, Int64, Int64, Int64, Int64]
-    assert R.pipe(get_key_from_data_list("users"), lambda df: df.dtypes, R.tap(print))(
-        downloads
-    ) == [Int64, Utf8, Int64, Int64, Int64, Int64, Int64, Int64]
 
 
 @R.curry
