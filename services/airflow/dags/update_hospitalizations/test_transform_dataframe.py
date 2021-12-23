@@ -2,7 +2,18 @@ import pandas.api.types as ptypes
 
 from transform_dataframe import transform_dataframe
 from download_hospitalizations import download_hospitalizations
+from dags.helpers.test_helpers import run_task_with_url
 
+run_task_with_url(
+    "nuts_regions_population",
+    "load_nuts_regions",
+    "http://static-files/static/NUTS2021.xlsx",
+)
+run_task_with_url(
+    "nuts_regions_population",
+    "load_population_for_nuts_regions",
+    "http://static-files/static/demo_r_pjangrp3.tsv",
+)
 url = "http://static-files/static/hospitalizations.csv"
 transformed_df_column_names = [
     "new_hospitalizations",
