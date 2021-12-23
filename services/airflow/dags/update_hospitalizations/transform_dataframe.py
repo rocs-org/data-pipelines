@@ -3,10 +3,14 @@ from isoweek import Week
 from datetime import datetime
 from numpy import datetime64 as d64
 from numpy import timedelta64 as td64
+from database import DBContext, query_all_elements
 
 
 def transform_dataframe(df):
-    population = 83020000  # TODO replace hardcoded population with reference that will be updated
+    population = query_all_elements(
+        db_context, f"SELECT number FROM cesnsusdata.population WHERE nuts='DE' AND agegroup='TOTAL' AND sex='T' ORDER BY year DESC LIMIT 1;"
+    )
+    #83020000  # TODO replace hardcoded population with reference that will be updated
     df = df[df['country'] == 'Germany']
     df = df[df['indicator'] == 'Weekly new hospital admissions per 100k']
 
