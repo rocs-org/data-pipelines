@@ -6,16 +6,7 @@ from dags.helpers.test_helpers import execute_dag
 from dags.update_hospitalizations.dag import HOSPITALIZATIONS_ARGS
 from dags.helpers.test_helpers import run_task_with_url
 
-run_task_with_url(
-    "nuts_regions_population",
-    "load_nuts_regions",
-    "http://static-files/static/NUTS2021.xlsx",
-)
-run_task_with_url(
-    "nuts_regions_population",
-    "load_population_for_nuts_regions",
-    "http://static-files/static/demo_r_pjangrp3.tsv",
-)
+
 
 [_, HOSPITALIZATIONS_SCHEMA, HOSPITALIZATIONS_TABLE] = HOSPITALIZATIONS_ARGS
 
@@ -27,6 +18,17 @@ def test_dag_loads_with_no_errors():
 
 
 def test_dag_writes_correct_results_to_db(db_context: DBContext):
+    run_task_with_url(
+        "nuts_regions_population",
+        "load_nuts_regions",
+        "http://static-files/static/NUTS2021.xlsx",
+    )
+    run_task_with_url(
+        "nuts_regions_population",
+        "load_population_for_nuts_regions",
+        "http://static-files/static/demo_r_pjangrp3.tsv",
+    )
+    
     credentials = db_context["credentials"]
 
     assert (
