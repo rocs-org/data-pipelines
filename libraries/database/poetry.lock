@@ -267,7 +267,7 @@ testing = ["filelock"]
 
 [[package]]
 name = "ramda"
-version = "2021.10.24"
+version = "0.6.4"
 description = "Python clone of ramda.js (ramdajs.com)"
 category = "main"
 optional = false
@@ -330,7 +330,7 @@ python-versions = ">=3.6"
 
 [[package]]
 name = "toolz"
-version = "0.11.1"
+version = "0.11.2"
 description = "List processing tools and functional utilities"
 category = "main"
 optional = false
@@ -364,7 +364,7 @@ pyodbc = ["pyodbc"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "00acc7f077e7845cc7f89b2c3d00449371bbf01d0219656e04a0f5e07ad4fb93"
+content-hash = "e919b9f446aa8c6c3dd0931980ff364444577af110f46f9035962113a7dcdd0f"
 
 [metadata.files]
 atomicwrites = [
@@ -490,8 +490,8 @@ pytest-xdist = [
     {file = "pytest_xdist-2.4.0-py3-none-any.whl", hash = "sha256:7b61ebb46997a0820a263553179d6d1e25a8c50d8a8620cd1aa1e20e3be99168"},
 ]
 ramda = [
-    {file = "ramda-2021.10.24-py3-none-any.whl", hash = "sha256:9b0c1650505d6d0affbab000eef611d1ffb4537e76fe01665998d3b2021fb21e"},
-    {file = "ramda-2021.10.24.tar.gz", hash = "sha256:41ac8dcd21bc0da0f772b68f351195abb89ba8bdbc42edfcd43976a32ca62ed9"},
+    {file = "ramda-0.6.4-py3-none-any.whl", hash = "sha256:a444120cd03c0907acb5a4fe356987bbe6063b43db0db63286928043109ad1df"},
+    {file = "ramda-0.6.4.tar.gz", hash = "sha256:5e38c203e1b417706bb711af1bbd67fdac2cf71e1a25ed0b581e707d2e8f0b9e"},
 ]
 regex = [
     {file = "regex-2021.11.1-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:ce0625900e4d6d9a43f50e897f6aaa1a52e5e4931f994a1b8e9f6a4e49185e4e"},
@@ -565,8 +565,8 @@ tomli = [
     {file = "tomli-1.2.2.tar.gz", hash = "sha256:c6ce0015eb38820eaf32b5db832dbc26deb3dd427bd5f6556cf0acac2c214fee"},
 ]
 toolz = [
-    {file = "toolz-0.11.1-py3-none-any.whl", hash = "sha256:1bc473acbf1a1db4e72a1ce587be347450e8f08324908b8a266b486f408f04d5"},
-    {file = "toolz-0.11.1.tar.gz", hash = "sha256:c7a47921f07822fe534fb1c01c9931ab335a4390c782bd28c6bcc7c2f71f3fbf"},
+    {file = "toolz-0.11.2-py3-none-any.whl", hash = "sha256:a5700ce83414c64514d82d60bcda8aabfde092d1c1a8663f9200c07fdcc6da8f"},
+    {file = "toolz-0.11.2.tar.gz", hash = "sha256:6b312d5e15138552f1bda8a4e66c30e236c831b612b2bf0005f8a1df10a4bc33"},
 ]
 typing-extensions = [
     {file = "typing_extensions-3.10.0.2-py2-none-any.whl", hash = "sha256:d8226d10bc02a29bcc81df19a26e56a9647f8b0a6d4a83924139f4a8b01f17b7"},
