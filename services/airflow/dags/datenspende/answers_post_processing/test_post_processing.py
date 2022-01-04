@@ -13,7 +13,7 @@ from .post_processing import (
 
 def test_post_processing_loads_correct_answers(db_context: DBContext):
     run_task_with_url(
-        "datenspende",
+        "datenspende_surveys_v2",
         "gather_data_from_thryve",
         "http://static-files/thryve/exportStudy.7z",
     )
@@ -31,7 +31,7 @@ def test_transform_answers_returns_elements_as_list():
 
 def test_etl_writes_to_db_correctly(db_context: DBContext):
     run_task_with_url(
-        "datenspende",
+        "datenspende_surveys_v2",
         "gather_data_from_thryve",
         "http://static-files/thryve/exportStudy.7z",
     )
