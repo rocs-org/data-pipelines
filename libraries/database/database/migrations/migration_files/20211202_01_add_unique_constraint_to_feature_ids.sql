@@ -1,0 +1,1 @@
+ALTER TABLE datenspende_derivatives.homogenized_features_description ADD CONSTRAINT id_unique UNIQUE (id);

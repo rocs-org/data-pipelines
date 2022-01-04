@@ -83,7 +83,12 @@ def test_generate_upsert_action_fragments(db_context: DBContext):
 
 def test_generate_upsert_query(db_context: DBContext):
     df = pd.DataFrame(columns=["col1", "col2"], data=[[1, 2]])
-    query = _build_upsert_query("bli", "bla", ["const"])(df)
+    query = _build_upsert_query(
+        "INSERT INTO {}.{} ({}) VALUES %s ON CONFLICT ({}) DO UPDATE SET {};",
+        "bli",
+        "bla",
+        ["const"],
+    )(df)
     assert (
         query.as_string(db_context["connection"])
         == 'INSERT INTO "bli"."bla" ("col1","col2") VALUES %s ON CONFLICT ("const") DO UPDATE SET '
