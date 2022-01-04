@@ -17,7 +17,7 @@ def test_datenspende_dag_writes_correct_results_to_db(db_context: DBContext):
 
     assert (
         execute_dag(
-            "datenspende",
+            "datenspende_surveys_v2",
             "2021-01-01",
             {"TARGET_DB": credentials["database"], "URL": THRYVE_FTP_URL},
         )
@@ -40,19 +40,34 @@ def test_datenspende_dag_writes_correct_results_to_db(db_context: DBContext):
     )
     assert len(answers_from_db) == 5765
 
+    connection = R.prop("connection", db_context)
+
     single_answers = pandas.read_sql_query(
         "SELECT * FROM datenspende_derivatives.test_and_symptoms_answers;",
-        R.prop("connection", db_context),
+        connection,
     )
 
     assert len(single_answers) == 575
 
     duplicated_answers = pandas.read_sql_query(
         "SELECT * FROM datenspende_derivatives.test_and_symptoms_answers_duplicates;",
-        R.prop("connection", db_context),
+        connection,
     )
 
     assert len(duplicated_answers) == 29
+
+    features = pandas.read_sql(
+        """
+        SELECT
+            *
+        FROM
+            datenspende_derivatives.homogenized_features
+        ;
+        """,
+        connection,
+    ).dropna(axis=1, how="all")
+
+    assert len(features) == 56
 
 
 THRYVE_FTP_URL = "http://static-files/thryve/exportStudy.7z"

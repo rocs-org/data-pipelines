@@ -1,10 +1,9 @@
 from airflow import DAG
 from airflow.utils.dates import days_ago
 from airflow.operators.python import PythonOperator
-from airflow.sensors.external_task import ExternalTaskSensor
 from datetime import timedelta
 
-from dags.datenspende_vitaldata.data_update import (
+from dags.datenspende_vitaldata_historic.data_update import (
     vital_data_update_etl,
     VITAL_DATA_UPDATE_ARGS,
 )
@@ -25,7 +24,7 @@ default_args = {
 }
 
 dag = DAG(
-    "datenspende_vitaldata_v2",
+    "datenspende_vitaldata_onetime_historic",
     default_args=default_args,
     description="ETL vital data from thryve",
     schedule_interval=timedelta(days=1),
@@ -36,21 +35,11 @@ dag = DAG(
     ),
 )
 
-externalsensor1 = ExternalTaskSensor(
-    task_id="dag_datenspende_completed_status",
-    external_dag_id="datenspende_surveys_v2",
-    external_task_id="gather_data_from_thryve",
-    check_existence=True,
-    timeout=1200,
-)
-
 t1 = PythonOperator(
-    task_id="gather_vital_data_from_thryve",
+    task_id="gather_historic_vital_data_from_thryve",
     python_callable=if_var_exists_in_dag_conf_use_as_first_arg(
         "URL", vital_data_update_etl
     ),
     dag=dag,
     op_args=VITAL_DATA_UPDATE_ARGS,
 )
-
-externalsensor1 >> t1

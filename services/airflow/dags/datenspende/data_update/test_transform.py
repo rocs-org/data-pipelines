@@ -1,6 +1,6 @@
 import os
 import ramda as R
-from .download import download, DataList
+from .download import download, PolarsDataList
 from .transform import transform
 from .test_download import get_key_from_data_list
 
@@ -77,7 +77,7 @@ def test_transform_transforms_column_names_to_snake_case():
     )
 
 
-def check_transformed_columns(key, columns, data: DataList):
+def check_transformed_columns(key, columns, data: PolarsDataList):
     assert columns == R.pipe(
         get_key_from_data_list(key), transform, lambda df: df.columns, list
     )(data)
