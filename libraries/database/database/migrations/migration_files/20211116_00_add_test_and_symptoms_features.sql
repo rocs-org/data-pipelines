@@ -1,5 +1,3 @@
---
--- depends: 20211025_00_add_datenspende_derivatives_schema
 
 CREATE TABLE datenspende_derivatives.homogenized_features (
     user_id INTEGER NOT NULL,
