@@ -1,5 +1,3 @@
-import os
-
 import ramda as R
 from returns.curry import curry
 from dags.update_hospitalizations.download_hospitalizations import (

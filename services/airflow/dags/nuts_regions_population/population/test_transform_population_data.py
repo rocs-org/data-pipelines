@@ -1,5 +1,4 @@
 import pandas as pd
-import pytest
 import ramda as R
 from database import DBContext
 from dags.helpers.dag_helpers import (
@@ -89,8 +88,7 @@ def test_filtering_for_existing_regions_deletes_rows_without_regions(
 
 
 def test_use_with_with_lambda_functions_1():
-    with pytest.raises(SyntaxError):
-        assert 2 == R.use_with(lambda x, y: x + y, [R.identity, R.identity])([1, 1])
+    assert 2 == R.use_with(lambda x, y: x + y, [R.identity, R.identity])(1, 1)
 
 
 def insert_some_nuts_regions_into_db_to_filter_agains():
