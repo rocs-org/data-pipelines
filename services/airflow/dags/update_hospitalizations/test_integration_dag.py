@@ -1,5 +1,5 @@
 from datetime import date
-from database import DBContext, query_all_elements
+from database import DBContext, query_all_elements, create_db_context, teardown_db_context
 from airflow.models import DagBag
 
 from dags.helpers.test_helpers import execute_dag
@@ -38,9 +38,11 @@ def test_dag_writes_correct_results_to_db(db_context: DBContext):
         )
         == 0
     )
+    db_context = create_db_context()
     res_cases = query_all_elements(
         db_context, f"SELECT * FROM {HOSPITALIZATIONS_SCHEMA}.{HOSPITALIZATIONS_TABLE}"
     )
+    teardown_db_context(db_context)
     assert len(res_cases) == 82
     test_case_tuple = res_cases[0]
     test_case_trunc = test_case_tuple[:1] + test_case_tuple[2:]
