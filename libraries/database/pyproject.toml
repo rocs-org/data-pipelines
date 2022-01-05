@@ -16,7 +16,16 @@ pytest = "^6.0.0"
 pytest-xdist = "^2.4.0"
 flake8 = "^4.0.1"
 black = "^21.10b0"
+pyproject-flake8 = "^0.0.1-alpha.2"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.pytest.ini_options]
+looponfailroots = 'database'
+
+[tool.flake8]
+max-line-length = 120
+max-complexity = 10
+ignore = "E731, W503"
