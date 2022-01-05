@@ -1,6 +1,15 @@
 from datetime import datetime
-from database import DBContext, query_all_elements, create_db_context, db_context, teardown_test_db_context, teardown_db_context
-from dags.corona_cases.incidences.test_incidences import replace_url_in_args_and_run_task
+from database import (
+    DBContext,
+    query_all_elements,
+    create_db_context,
+    db_context,
+    teardown_test_db_context,
+    teardown_db_context,
+)
+from dags.corona_cases.incidences.test_incidences import (
+    replace_url_in_args_and_run_task,
+)
 
 from dags.nuts_regions_population.nuts_regions import etl_eu_regions, REGIONS_ARGS
 from dags.nuts_regions_population.german_counties_more_info import (
@@ -51,7 +60,7 @@ CASES_URL = "http://static-files/static/coronacases.csv"
 REGIONS_URL = "http://static-files/static/NUTS2021.xlsx"
 COUNTIES_URL = "http://static-files/static/alle-kreise.xlsx"
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     context = db_context()
     test_incidences_etl_writes_incidences_to_db(context)
     teardown_test_db_context(context)
