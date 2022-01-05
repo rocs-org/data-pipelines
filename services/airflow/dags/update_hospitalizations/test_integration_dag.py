@@ -7,7 +7,6 @@ from dags.update_hospitalizations.dag import HOSPITALIZATIONS_ARGS
 from dags.helpers.test_helpers import run_task_with_url
 
 
-
 [_, HOSPITALIZATIONS_SCHEMA, HOSPITALIZATIONS_TABLE] = HOSPITALIZATIONS_ARGS
 
 
@@ -28,7 +27,7 @@ def test_dag_writes_correct_results_to_db(db_context: DBContext):
         "load_population_for_nuts_regions",
         "http://static-files/static/demo_r_pjangrp3.tsv",
     )
-    
+
     credentials = db_context["credentials"]
 
     assert (
@@ -47,7 +46,7 @@ def test_dag_writes_correct_results_to_db(db_context: DBContext):
     test_case_trunc = test_case_tuple[:1] + test_case_tuple[2:]
     assert test_case_trunc == (
         1,
-        2226,
+        2230,
         2.68136129610801,
         2020,
         12,

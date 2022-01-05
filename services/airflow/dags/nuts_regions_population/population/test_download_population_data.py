@@ -17,5 +17,5 @@ def test_download_data_returns_df_with_data():
         "2017 ",
         "2016 ",
         "2015 ",
-        "2014 ",
+        "2014",
     ]
