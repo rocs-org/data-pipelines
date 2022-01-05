@@ -1,4 +1,5 @@
 import pandas.api.types as ptypes
+from dags.helpers.test_helpers import run_task_with_url
 
 from transform_dataframe import transform_dataframe
 from download_hospitalizations import download_hospitalizations
@@ -16,13 +17,39 @@ transformed_df_column_names = [
     "days_since_jan1_begin",
     "days_since_jan1_end",
     "date_updated",
-    ]
+]
 
-def test_transform_dataframe_columns_match():
+
+def test_transform_hospitalizations_dataframe_columns_match():
+
+    run_task_with_url(
+        "nuts_regions_population",
+        "load_nuts_regions",
+        "http://static-files/static/NUTS2021.xlsx",
+    )
+    run_task_with_url(
+        "nuts_regions_population",
+        "load_population_for_nuts_regions",
+        "http://static-files/static/demo_r_pjangrp3.tsv",
+    )
+
     df_tranformed = transform_dataframe(download_hospitalizations(url))
     assert list(df_tranformed.columns) == transformed_df_column_names
 
+
 def test_transform_dataframe_dtypes_match():
+
+    run_task_with_url(
+        "nuts_regions_population",
+        "load_nuts_regions",
+        "http://static-files/static/NUTS2021.xlsx",
+    )
+    run_task_with_url(
+        "nuts_regions_population",
+        "load_population_for_nuts_regions",
+        "http://static-files/static/demo_r_pjangrp3.tsv",
+    )
+
     df_transformed = transform_dataframe(download_hospitalizations(url))
     assert ptypes.is_integer_dtype(df_transformed.new_hospitalizations)
     assert ptypes.is_float_dtype(df_transformed.new_hospitalizations_per_100k)
@@ -32,4 +59,3 @@ def test_transform_dataframe_dtypes_match():
     assert ptypes.is_integer_dtype(df_transformed.days_since_jan1_begin)
     assert ptypes.is_integer_dtype(df_transformed.days_since_jan1_end)
     assert ptypes.is_datetime64_dtype(df_transformed.date_updated)
-
