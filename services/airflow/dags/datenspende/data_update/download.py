@@ -86,7 +86,7 @@ def load_files(*_):
                 "choice_id": Int64,
                 "text": Utf8,
             },
-        ),
+        ).select(["element", "question", "choice_id", "text"]),
         "questionnaires": po.read_csv(
             "questionnaires.csv",
             dtype={
