@@ -1,7 +1,9 @@
-from typing import List, Any
+from typing import List, Any, Union
 import re
-import psycopg2
 import ramda as R
+
+from psycopg2.sql import SQL, Composed
+from psycopg2.extras import execute_values as _ps_execute_values
 
 from .types import DBContext, Cursor, DBContextWithCursor
 from .db_context import (
@@ -30,7 +32,7 @@ def execute_values(context: DBContext, query: str, tuples: List[Any]) -> DBConte
             R.tap(
                 R.apply(
                     R.use_with(
-                        psycopg2.extras.execute_values,
+                        _ps_execute_values,
                         [R.pipe(open_cursor, R.prop("cursor")), R.identity, R.identity],
                     )
                 )
@@ -70,7 +72,7 @@ def execute_sql(context, sql: str, data=None) -> None:
 
 
 @R.curry
-def query_one_element(context, sql: str) -> Any:
+def query_one_element(context, sql: Union[str, SQL, Composed]) -> Any:
     cursor = _execute_sql_and_return_cursor(context, sql)
     res = cursor.fetchone()[0]
     cursor.close()
@@ -78,7 +80,7 @@ def query_one_element(context, sql: str) -> Any:
 
 
 @R.curry
-def query_all_elements(context, sql: str) -> Any:
+def query_all_elements(context, sql: Union[str, SQL, Composed]) -> Any:
     cursor = _execute_sql_and_return_cursor(
         context,
         sql,
@@ -89,7 +91,9 @@ def query_all_elements(context, sql: str) -> Any:
 
 
 @R.curry
-def _execute_sql_and_return_cursor(context: DBContext, sql: str) -> Cursor:
+def _execute_sql_and_return_cursor(
+    context: DBContext, sql: Union[str, SQL, Composed]
+) -> Cursor:
     return R.pipe(
         R.apply(R.use_with(_execute_sql_on_cursor, [open_cursor, R.identity])),
         R.prop("cursor"),
@@ -98,7 +102,7 @@ def _execute_sql_and_return_cursor(context: DBContext, sql: str) -> Cursor:
 
 @R.curry
 def _execute_sql_on_cursor(
-    context: DBContextWithCursor, sql: str, data=None
+    context: DBContextWithCursor, sql: Union[str, SQL, Composed], data=None
 ) -> DBContextWithCursor:
     context["cursor"].execute(sql, data)
     return context
