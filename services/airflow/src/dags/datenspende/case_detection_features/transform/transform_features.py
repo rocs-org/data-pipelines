@@ -6,7 +6,7 @@ from src.dags.datenspende.case_detection_features.parameters import (
     WEEKLY_QUESTIONNAIRE,
     FEATURE_MAPPING,
 )
-from database import with_db_context, create_db_context
+from database import create_db_context
 
 
 @R.curry

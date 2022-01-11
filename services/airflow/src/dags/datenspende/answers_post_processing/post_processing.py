@@ -1,29 +1,30 @@
 import ramda as R
 import pandas
-from typing import Dict
-from database import with_db_context
+from typing import Dict, Union
+from psycopg2.sql import SQL, Composed
+from database import with_db_context, DBContext
 from src.lib.dag_helpers import connect_to_db_and_insert_pandas_dataframe
 from src.lib.test_helpers import set_env_variable_from_dag_config_if_present
 
 
-fetch_answers_from_db = with_db_context(
-    R.converge(
-        pandas.read_sql_query,
-        [
-            R.always(
-                """
-                SELECT
-                    id, user_id, questionnaire, questionnaire_session, question, created_at, element
-                FROM
-                    datenspende.answers
-                WHERE
-                    questionnaire = 10
-                ;
-            """
-            ),
-            R.prop("connection"),
-        ],
-    )
+@R.curry
+def load_from_db_and_return_as_df(
+    db_context: DBContext, query: Union[str, SQL, Composed]
+) -> pandas.DataFrame:
+    return pandas.read_sql_query(query, R.prop("connection", db_context))
+
+
+fetch_answers_from_db = lambda *_: with_db_context(
+    load_from_db_and_return_as_df,
+    """
+        SELECT
+            id, user_id, questionnaire, questionnaire_session, question, created_at, element
+        FROM
+            datenspende.answers
+        WHERE
+            questionnaire = 10
+        ;
+    """,
 )
 
 

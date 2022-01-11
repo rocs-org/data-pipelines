@@ -7,7 +7,7 @@ def execute_dag(dag_id, execution_date):
     process = subprocess.Popen(
         [
             "airflow",
-            "src",
+            "dags",
             "backfill",
             "-s",
             execution_date,

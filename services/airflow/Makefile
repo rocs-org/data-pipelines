@@ -9,7 +9,7 @@ build:
 	 DOCKER_BUILDKIT=1 docker-compose build
 
 setup:
-	docker-compose up -d && make migrations
+	docker-compose up -d && make migrations && bash wait-for-healthy-container.sh airflow-scheduler 120
 
 down:
 	docker-compose down -v
