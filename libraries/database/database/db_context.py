@@ -4,7 +4,6 @@ from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
 import os
 import ramda as R
 
-
 from .types import (
     Cursor,
     Connection,
@@ -44,6 +43,13 @@ def teardown_db_context(context: DBContext) -> DBContext:
     context["connection"].commit()
     context["connection"].close()
     return context
+
+
+def with_db_context(function, *args):
+    context = create_db_context()
+    result = function(context, *args)
+    teardown_db_context(context)
+    return result
 
 
 def _read_db_credentials_from_env() -> DBCredentials:
