@@ -43,7 +43,7 @@ x-airflow-common:
     AIRFLOW__API__AUTH_BACKEND: 'airflow.api.auth.backend.basic_auth'
   volumes:
     - ../../libraries:/libraries
-    - ./dags:/opt/airflow/dags
+    - ./src:/opt/airflow/src
     - airflow-logs-volume:/opt/airflow/logs
     - ./setup.cfg:/opt/airflow/setup.cfg
   user: "${AIRFLOW_UID:-50000}:${AIRFLOW_GID:-50000}"
