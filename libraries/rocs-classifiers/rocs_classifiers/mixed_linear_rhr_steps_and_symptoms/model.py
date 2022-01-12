@@ -1,5 +1,5 @@
 import numpy as np
-from numpy.typing import ArrayLike
+from numpy.typing import NDArray
 from sklearn.base import ClassifierMixin, BaseEstimator
 
 
@@ -29,7 +29,7 @@ class Model(BaseEstimator, ClassifierMixin):
 
         super().__init__(**kwargs)
 
-    def predict(self, x: ArrayLike):
+    def predict(self, x: NDArray) -> NDArray:
         """
         make predictions based on feature vector x
         as described by Quer et al. 2021 (http://dx.doi.org/10.1038/s41591-020-1123-x)
@@ -50,12 +50,12 @@ class Model(BaseEstimator, ClassifierMixin):
         symptom_data = x.T[6:]
 
         def symptom_metric(
-            age: ArrayLike,
-            sex: ArrayLike,
-            smell: ArrayLike,
-            cough: ArrayLike,
-            fatigue: ArrayLike,
-        ):
+            age: NDArray,
+            sex: NDArray,
+            smell: NDArray,
+            cough: NDArray,
+            fatigue: NDArray,
+        ) -> NDArray:
             return (
                 self.symptoms_bias
                 + self.symptoms_age * age
@@ -66,13 +66,13 @@ class Model(BaseEstimator, ClassifierMixin):
             )
 
         def sensor_metric(
-            rhr_baseline,
-            rhr_test,
-            sleep_baseline,
-            sleep_test,
-            activity_baseline,
-            activity_test,
-        ):
+            rhr_baseline: NDArray,
+            rhr_test: NDArray,
+            sleep_baseline: NDArray,
+            sleep_test: NDArray,
+            activity_baseline: NDArray,
+            activity_test: NDArray,
+        ) -> NDArray:
             return (
                 (rhr_test - rhr_baseline) / self.sensor_rhr
                 + (sleep_test - sleep_baseline) / self.sensor_sleep
