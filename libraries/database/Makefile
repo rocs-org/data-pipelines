@@ -15,10 +15,10 @@ unittest:
 	poetry run pytest -v -n 'auto'
 
 lint:
-	poetry run flake8
+	poetry run pflake8 && make stylecheck
 	
 stylecheck:
-	poetry run black --check
+	poetry run black --check .
 
 watch:
 	poetry run pytest -f
