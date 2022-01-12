@@ -40,6 +40,7 @@ types-tabulate = "^0.1.1"
 types-toml = "^0.1.3"
 responses = "^0.14.0"
 pytest-sugar = "^0.9.4"
+pyproject-flake8 = "^0.0.1-alpha.2"
 
 [tool.pytest]
 env_files =".env"
@@ -49,3 +50,10 @@ looponfailroots="dags"
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
 
+[tool.pytest.ini_options]
+looponfailroots = 'src'
+
+[tool.flake8]
+max-line-length = 120
+max-complexity = 10
+ignore = "E731, W503"
