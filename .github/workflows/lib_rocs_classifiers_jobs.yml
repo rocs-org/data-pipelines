@@ -1,16 +1,16 @@
 # This is a basic workflow to help you get started with Actions
 
-name: lib/database
+name: lib/rocs_classifiers
 
 # Controls when the workflow will run
 on:
   # Triggers the workflow on push or pull request events but only for the main branch
   push:
     branches: [ main ]
-    paths: ["libraries/database/**"]
+    paths: ["libraries/rocs-classifiers/**"]
   pull_request:
     branches: [ main ]
-    paths: ["libraries/database/**"]
+    paths: ["libraries/rocs-classifiers/**"]
 
 
   # Allows you to run this workflow manually from the Actions tab
@@ -26,7 +26,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./libraries/database
+        working-directory: ./libraries/rocs-classifiers
 
     steps:
       - uses: actions/checkout@v2
@@ -40,8 +40,6 @@ jobs:
           poetry-version: 1.1.11
       - name: Install dependencies
         run: poetry install
-      - name: Setup test database
-        run: make setup
       - name: Run unit tests
         run: make unittest
 
@@ -50,7 +48,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./libraries/database
+        working-directory: ./libraries/rocs-classifiers
 
     steps:
       - uses: actions/checkout@v2

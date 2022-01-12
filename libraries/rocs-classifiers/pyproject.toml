@@ -1,0 +1,33 @@
+[tool.poetry]
+name = "rocs-classifiers"
+version = "0.1.0"
+description = "Custom classifiers for research at ROCS"
+authors = ["jakobkolb <jakob.j.kolb@gmail.com>"]
+license = "MIT"
+
+[tool.poetry.dependencies]
+python = "^3.8"
+sklearn = "^0.0"
+
+[tool.poetry.dev-dependencies]
+pytest = "^6.2.5"
+black = "^21.12b0"
+flake8 = "^4.0.1"
+mypy = "^0.931"
+pyproject-flake8 = "^0.0.1-alpha.2"
+pytest-xdist = "^2.5.0"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.pytest.ini_options]
+looponfailroots = 'rocs_classifiers'
+
+[tool.flake8]
+max-line-length = 120
+max-complexity = 10
+ignore = "E731, W503"
+
+[tool.mypy]
+ignore_missing_imports = true
