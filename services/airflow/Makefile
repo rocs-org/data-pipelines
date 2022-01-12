@@ -1,5 +1,5 @@
 #!make
-include .env
+-include .env
 export $(shell sed 's/=.*//' .env)
 
 test:
@@ -9,7 +9,7 @@ build:
 	 DOCKER_BUILDKIT=1 docker-compose build
 
 setup:
-	docker-compose up -d && make migrations && bash wait-for-healthy-container.sh airflow-scheduler 120
+	docker-compose up -d && make migrations && bash wait-for-healthy-container.sh airflow-scheduler 300
 
 down:
 	docker-compose down -v
@@ -21,7 +21,7 @@ integrationtest:
 	docker exec airflow-scheduler pytest -v -k 'integration'
 
 lint:
-	poetry run flake8
+	poetry run pflake8 && poetry run black --check .
 
 watch:
 	docker exec -it airflow-scheduler pytest -f --ignore ./logs -k 'not integration'
