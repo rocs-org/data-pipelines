@@ -34,7 +34,7 @@ def test_datenspende_dag_writes_correct_results_to_db(db_context: DBContext):
         1635228999300,
         120,
     )
-    assert len(answers_from_db) == 10
+    assert len(answers_from_db) == 20
 
 
 THRYVE_FTP_URL = "http://static-files/thryve/export.7z"
