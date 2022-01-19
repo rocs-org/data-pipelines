@@ -23,7 +23,7 @@ def test_datenspende_dag_writes_correct_results_to_db(db_context: DBContext):
         == 0
     )
     answers_from_db = query_all_elements(
-        db_context, "SELECT * FROM datenspende.vitaldata"
+        db_context, "SELECT * FROM datenspende.vitaldata;"
     )
     assert answers_from_db[-1] == (
         200,
@@ -36,5 +36,9 @@ def test_datenspende_dag_writes_correct_results_to_db(db_context: DBContext):
     )
     assert len(answers_from_db) == 20
 
+    answers_from_db = query_all_elements(
+        db_context, "SELECT * FROM datenspende.steps_ct;"
+    )
+    assert len(answers_from_db) == 2
 
 THRYVE_FTP_URL = "http://static-files/thryve/export.7z"
