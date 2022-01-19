@@ -4,9 +4,10 @@ import ramda as R
 from ..data_update.download import download
 from ..data_update.transform import transform
 from ..data_update.upload import upload
-from .pivot_tables import create_pivot_table
+from .pivot_tables import PIVOT_TARGETS, create_pivot_table
 
 
+PIVOT_TARGETS = [(9, 'steps', 'int'), (65, 'resting_heartrate', 'int')]
 
 
 def setup_vitaldata_in_db():
@@ -25,12 +26,11 @@ def setup_vitaldata_in_db():
 
 def test_pivot_vitaldata_creates_correct_tables(db_context: DBContext):
     setup_vitaldata_in_db()
-    pivot_targets = [(9, 'steps', 'int'), (65, 'resting_heartrate', 'int')]
-    for vitalid, vitaltype, datatype in pivot_targets:
+    for vitalid, vitaltype, datatype in PIVOT_TARGETS:
         create_pivot_table(db_context, vitalid, vitaltype, datatype)
     
-    steps_data = query_all_elements(db_context, "SELECT * FROM datenspende.steps_ct;")
-    resting_heartrate_data = query_all_elements(db_context, "SELECT * FROM datenspende.resting_heartrate_ct;")
+    steps_data = query_all_elements(db_context, "SELECT * FROM datenspende_derivatives.steps_ct;")
+    resting_heartrate_data = query_all_elements(db_context, "SELECT * FROM datenspende_derivatives.resting_heartrate_ct;")
     assert (
         steps_data[-1] == (200, 3600, None, None, None, None, None, None, None)
     )
