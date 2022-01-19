@@ -1,7 +1,6 @@
 from airflow import DAG
 from airflow.utils.dates import days_ago
 from airflow.operators.python import PythonOperator
-from airflow.sensors.external_task import ExternalTaskSensor
 from datetime import timedelta
 
 from src.dags.datenspende_vitaldata.data_update import (
@@ -30,19 +29,11 @@ dag = DAG(
     default_args=default_args,
     description="ETL vital data from thryve",
     schedule_interval=timedelta(days=1),
-    start_date=days_ago(1, hour=1),
+    start_date=days_ago(1, hour=2),
     tags=["ROCS pipelines"],
     on_failure_callback=slack_notifier_factory(
         create_slack_error_message_from_task_context
     ),
-)
-
-externalsensor1 = ExternalTaskSensor(
-    task_id="dag_datenspende_completed_status",
-    external_dag_id="datenspende_surveys_v2",
-    external_task_id="gather_data_from_thryve",
-    check_existence=True,
-    timeout=1200,
 )
 
 t1 = PythonOperator(
@@ -60,4 +51,4 @@ t2 = PythonOperator(
     dag=dag,
 )
 
-externalsensor1 >> t1 >> t2
+t1 >> t2
