@@ -1,4 +1,5 @@
 from typing import List
+from psycopg2 import sql
 from src.lib.test_helpers import set_env_variable_from_dag_config_if_present
 from database import (
     create_db_context,
@@ -25,12 +26,14 @@ def create_pivot_table(db_context, vitalid, vitaltype, datatype):
         "SELECT DISTINCT to_char(date, 'YYYY-MM-DD') from datenspende.vitaldata ORDER BY 1;",
     )
     dates = [res[0] for res in dates]
-    sql_query = "DROP TABLE IF EXISTS datenspende_derivatives.{vitaltype}_ct;\
-        CREATE TABLE datenspende_derivatives.{vitaltype}_ct AS SELECT * FROM \
+    sql_query = sql.SQL(
+        "DROP TABLE IF EXISTS datenspende_derivatives.{vitaltype};\
+        CREATE TABLE datenspende_derivatives.{vitaltype} AS SELECT * FROM \
             crosstab('SELECT user_id, date, value FROM datenspende.vitaldata WHERE type = {vitalid} ORDER BY 1', \
-            'SELECT DISTINCT date from datenspende.vitaldata ORDER BY 1') as columns(user_id int, {columns});".format(
-        vitaltype=vitaltype,
-        vitalid=vitalid,
-        columns=", ".join(['"' + date + '" ' + datatype for date in dates]),
+            'SELECT DISTINCT date from datenspende.vitaldata ORDER BY 1') as columns(user_id int, {columns} int);"
+    ).format(
+        vitaltype=sql.Identifier(vitaltype + "_ct"),
+        vitalid=sql.Literal(vitalid),
+        columns=sql.SQL(" int, ").join([sql.Identifier(date) for date in dates]),
     )
     execute_sql(db_context, sql_query)
