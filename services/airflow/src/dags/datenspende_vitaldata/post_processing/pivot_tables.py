@@ -1,3 +1,5 @@
+from typing import List
+from src.lib.test_helpers import set_env_variable_from_dag_config_if_present
 from database import (
     create_db_context,
     teardown_db_context,
@@ -6,12 +8,13 @@ from database import (
 )
 
 
-PIVOT_TARGETS = [(9, "steps", "int"), (65, "resting_heartrate", "int")]
+PIVOT_TARGETS = [[(9, "steps", "int"), (65, "resting_heartrate", "int")]]
 
 
-def pivot_vitaldata():
+def pivot_vitaldata(pivot_targets: List, **kwargs):
+    set_env_variable_from_dag_config_if_present("TARGET_DB", kwargs)
     db_context = create_db_context()
-    for vitalid, vitaltype, datatype in PIVOT_TARGETS:
+    for vitalid, vitaltype, datatype in pivot_targets:
         create_pivot_table(db_context, vitalid, vitaltype, datatype)
     teardown_db_context(db_context)
 
