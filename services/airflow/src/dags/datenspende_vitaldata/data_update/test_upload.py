@@ -29,7 +29,7 @@ def test_upload_writes_all_dataframe_to_database(db_context: DBContext):
         number_of_elements_returned_from(db_context)(
             "SELECT * FROM datenspende.vitaldata"
         )
-        == 10
+        == 20
     )
 
 
