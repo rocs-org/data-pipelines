@@ -7,7 +7,11 @@ from src.dags.datenspende_vitaldata.data_update import (
     vital_data_update_etl,
     VITAL_DATA_UPDATE_ARGS,
 )
-from src.dags.datenspende_vitaldata.post_processing import pivot_vitaldata
+from src.dags.datenspende_vitaldata.post_processing import (
+    pivot_vitaldata,
+    PIVOT_TARGETS,
+)
+
 from src.lib.dag_helpers import (
     create_slack_error_message_from_task_context,
     slack_notifier_factory,
@@ -49,6 +53,7 @@ t2 = PythonOperator(
     task_id="create_vitaldata_pivot_tables",
     python_callable=pivot_vitaldata,
     dag=dag,
+    op_args=PIVOT_TARGETS,
 )
 
 t1 >> t2

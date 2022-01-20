@@ -7,9 +7,6 @@ from ..data_update.upload import upload
 from .pivot_tables import create_pivot_table
 
 
-PIVOT_TARGETS = [(9, "steps", "int"), (65, "resting_heartrate", "int")]
-
-
 def setup_vitaldata_in_db():
     URL = "http://static-files/thryve/export.7z"
     R.pipe(
@@ -27,7 +24,10 @@ def setup_vitaldata_in_db():
 
 def test_pivot_vitaldata_creates_correct_tables(db_context: DBContext):
     setup_vitaldata_in_db()
-    for vitalid, vitaltype, datatype in PIVOT_TARGETS:
+    for vitalid, vitaltype, datatype in [
+        (9, "steps", "int"),
+        (65, "resting_heartrate", "int"),
+    ]:
         create_pivot_table(db_context, vitalid, vitaltype, datatype)
 
     steps_data = query_all_elements(
