@@ -24,7 +24,7 @@ def setup_vitaldata_in_db():
 
 def test_pivot_vitaldata_creates_correct_tables(db_context: DBContext):
     setup_vitaldata_in_db()
-    for vitalid, vitaltype, datatype in PIVOT_TARGETS:
+    for vitalid, vitaltype, datatype in PIVOT_TARGETS[0]:
         create_pivot_table(db_context, vitalid, vitaltype, datatype)
 
     steps_data = query_all_elements(
