@@ -13,8 +13,12 @@ from database import create_db_context
 def restructure_features(
     questionnaire: int, questions, data: pd.DataFrame
 ) -> pd.DataFrame:
+
     # Unpack multiple choice question (symptoms)
-    symptoms_answers = unstack_multiple_choice_question(questions["symptoms"], data)
+    symptom_answers_list = []
+    for q in questions["symptoms"]:
+        symptom_answers_list.append(unstack_multiple_choice_question(q, data))
+    symptoms_answers = pd.concat(symptom_answers_list)
 
     # select and restructure test results
     test_results_answers = select_answers_by_question_ids(
