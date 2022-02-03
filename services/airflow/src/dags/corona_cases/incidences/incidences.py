@@ -179,6 +179,8 @@ def calculate_incidence(
 
     # construct location_level 3 (landkreise)
     landkreise = new.filter(po.col("state") != 11)
+    print(landkreise)
+    print(berlin)
     landkreise = landkreise.vstack(berlin).sort(keys)
     landkreise["id"] = landkreise["IdLandkreis"]
     landkreise = landkreise.drop("IdLandkreis")

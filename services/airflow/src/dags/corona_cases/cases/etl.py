@@ -1,4 +1,5 @@
 import ramda as R
+import pandas as pd
 from pandas import DataFrame
 from returns.curry import curry
 
@@ -8,7 +9,7 @@ from src.lib.dag_helpers import connect_to_db_and_insert_pandas_dataframe
 from src.lib.test_helpers import set_env_variable_from_dag_config_if_present
 
 
-URL = "https://prod-hub-indexer.s3.amazonaws.com/files/dd4580c810204019a7b8eb3e0b329dd6/0/full/4326/dd4580c810204019a7b8eb3e0b329dd6_0_full_4326.csv"  # noqa: E501
+URL = "https://github.com/robert-koch-institut/SARS-CoV-2_Infektionen_in_Deutschland/blob/master/Aktuell_Deutschland_SarsCov2_Infektionen.csv?raw=true"
 SCHEMA = "coronacases"
 TABLE = "german_counties_more_info"
 
@@ -28,12 +29,12 @@ def etl_covid_cases(url: str, schema: str, table: str, **kwargs) -> DBContext:
 
 def transform_dataframe(df: DataFrame) -> DataFrame:
     print(df.columns)
-    renamed = df.rename(columns=COLUMN_MAPPING, inplace=False).drop(
-        columns=["Datenstand"]
-    )
-    renamed["agegroup2"] = renamed["agegroup2"].map(
-        lambda x: x if not (R.is_nil(x) or x == "Nicht übermittelt") else None
-    )
+    additional_info = download_csv("http://static-files/static/countyID_mapping.csv")
+    df = df.join(additional_info.set_index('IdLandkreis'), on='IdLandkreis')
+    df["Altersgruppe2"] = None
+    renamed = df.rename(columns=COLUMN_MAPPING, inplace=False)
+    renamed['date_cet'] = pd.to_datetime(renamed['date_cet'])
+    renamed['ref_date_cet'] = pd.to_datetime(renamed['ref_date_cet'])
     renamed["ref_date_is_symptom_onset"] = renamed["ref_date_is_symptom_onset"].astype(
         bool
     )
@@ -42,11 +43,10 @@ def transform_dataframe(df: DataFrame) -> DataFrame:
 
 
 COLUMN_MAPPING = {
-    "ObjectId": "caseid",
     "IdBundesland": "stateid",
     "Bundesland": "state",
-    "IdLandkreis": "countyid",
     "Landkreis": "county",
+    "IdLandkreis": "countyid",
     "Altersgruppe": "agegroup",
     "Altersgruppe2": "agegroup2",
     "Geschlecht": "sex",

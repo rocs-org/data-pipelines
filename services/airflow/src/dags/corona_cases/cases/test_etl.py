@@ -18,7 +18,7 @@ from database import (
 from src.lib.dag_helpers import download_csv
 
 
-URL = "http://static-files/static/coronacases.csv"
+URL = "http://static-files/static/coronacases2.csv"
 
 
 def test_corona_cases_table_is_accessible(db_context: DBContext):
@@ -53,7 +53,6 @@ def test_dataframe_transformer_transform_column_names_and_types():
     assert Counter(df.columns) == Counter(COLUMNS)
 
     assert df.iloc[0]["agegroup2"] is None
-    assert df.iloc[1]["agegroup2"] is not None
 
     assert type(df.iloc[0]["ref_date_is_symptom_onset"]) is numpy.bool_
 
@@ -71,18 +70,18 @@ def test_download_csv_and_write_to_postgres_happy_path(db_context):
         ),
     )
     print(results[0])
-    assert len(results) == 9
+    assert len(results) == 5
     assert results[0] == (
         1,
         1,
         "Schleswig-Holstein",
         1001,
         "SK Flensburg",
-        "A35-A59",
+        "A15-A34",
         None,
         "M",
-        datetime.datetime(2020, 10, 30, 0, 0),
-        datetime.datetime(2020, 10, 27, 0, 0),
+        datetime.datetime(2020, 10, 28, 0, 0),
+        datetime.datetime(2020, 1, 19, 0, 0),
         True,
         0,
         -9,

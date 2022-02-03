@@ -1,0 +1,6 @@
+IdLandkreis,Altersgruppe,Geschlecht,Meldedatum,Refdatum,IstErkrankungsbeginn,NeuerFall,NeuerTodesfall,NeuGenesen,AnzahlFall,AnzahlTodesfall,AnzahlGenesen
+1001,A15-A34,M,2020-10-28,2020-01-19,1,0,-9,0,1,0,1
+1001,A15-A34,M,2020-03-21,2020-03-13,1,0,-9,0,1,0,1
+1001,A15-A34,M,2020-03-19,2020-03-13,1,0,-9,0,1,0,1
+1001,A15-A34,M,2020-03-19,2020-03-16,1,0,-9,0,1,0,1
+1001,A35-A59,M,2020-03-14,2020-03-16,1,0,-9,0,1,0,1
