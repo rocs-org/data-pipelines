@@ -34,7 +34,9 @@ def load_test_and_symptoms_data(questionnaire: int, questions: dict):
                     user_id, questionnaire_session, question_id
                 ;
             """.format(
-                ",".join([str(question_id) for question_id in questions.values()]),
+                ",".join(
+                    [str(question_id) for question_id in R.flatten(questions.values())]
+                ),
                 str(questionnaire),
             )
         ),

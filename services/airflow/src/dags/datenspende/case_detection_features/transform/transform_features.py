@@ -13,8 +13,12 @@ from database import create_db_context
 def restructure_features(
     questionnaire: int, questions, data: pd.DataFrame
 ) -> pd.DataFrame:
+
     # Unpack multiple choice question (symptoms)
-    symptoms_answers = unstack_multiple_choice_question(questions["symptoms"], data)
+    symptom_answers_list = []
+    for q in questions["symptoms"]:
+        symptom_answers_list.append(unstack_multiple_choice_question(q, data))
+    symptoms_answers = pd.concat(symptom_answers_list)
 
     # select and restructure test results
     test_results_answers = select_answers_by_question_ids(
@@ -145,15 +149,18 @@ def add_test_dates_to_features(
 
 @R.curry
 def collect_feature_names(questions, data: pd.DataFrame) -> pd.DataFrame:
+
     symptoms = data[["answer", "answer_id"]][
-        data["question_id"] == questions["symptoms"]
+        data["question_id"].isin(questions["symptoms"])
     ].drop_duplicates("answer_id")
+
     symptoms.columns = ["description", "id"]
     symptoms["is_choice"] = False
 
     other_features = data[["question", "question_id"]][
-        ~(data["question_id"] == questions["symptoms"])
+        ~(data["question_id"].isin(questions["symptoms"]))
     ].drop_duplicates("question_id")
+
     other_features.columns = ["description", "id"]
     other_features["is_choice"] = True
 
@@ -191,13 +198,21 @@ def combine_columns(mapping: dict, dataframe: pd.DataFrame) -> pd.DataFrame:
     column_map = collect_keys_with_same_values_from(mapping)
     for combined_column, columns in column_map.items():
         try:
-            dataframe[combined_column] = dataframe[columns].apply(
-                R.reduce(xor, None), axis=1
+            existing_columns = elements_of_l1_that_are_in_l2(
+                columns, dataframe.columns.values
             )
-            dataframe.drop(columns=columns, inplace=True)
+            if len(existing_columns) > 0:
+                dataframe[combined_column] = dataframe[existing_columns].apply(
+                    R.reduce(xor, None), axis=1
+                )
+                dataframe.drop(columns=existing_columns, inplace=True)
         except KeyError:
             pass
     return dataframe
+
+
+def elements_of_l1_that_are_in_l2(l1, l2):
+    return [element for element in l1 if element in l2]
 
 
 def xor(a, b):

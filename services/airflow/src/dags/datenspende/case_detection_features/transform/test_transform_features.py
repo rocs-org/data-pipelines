@@ -17,6 +17,7 @@ from src.dags.datenspende.case_detection_features.transform.transform_features i
     get_weekly_dates,
     unstack_multiple_choice_question,
     select_first_answer_by_question_ids,
+    elements_of_l1_that_are_in_l2,
 )
 from src.dags.datenspende.case_detection_features.parameters import (
     ONE_OFF_QUESTIONS,
@@ -46,7 +47,8 @@ def test_restructure_one_off_features(prepared_db):
     reference = pd.DataFrame(
         columns=FEATURE_ORDER_ONE_OFF, data=[FIRST_FEATURE_VALUES_ONE_OFF]
     )
-
+    print(features.head(n=1))
+    print(reference.values)
     pd.testing.assert_frame_equal(features.head(n=1), reference, check_dtype=False)
 
 
@@ -217,6 +219,11 @@ def test_get_symptom_ids_from_db(prepared_db):
     assert get_symptom_ids_from_weekly() == ONE_OFF_SYMPTOM_IDS
 
 
+def test_elements_of_l1_that_are_in_l2_returns_subset():
+    lst = elements_of_l1_that_are_in_l2([1, 2], [2, 3, 4])
+    assert lst == [2]
+
+
 @pytest.fixture
 def prepared_db(db_context: DBContext):
     run_task_with_url(
@@ -275,6 +282,7 @@ FEATURE_IDS = [
     "f474",
     "f478",
     "f121",
+    "f451",
 ]
 
 FEATURE_ORDER_ONE_OFF = [
@@ -296,6 +304,7 @@ FEATURE_ORDER_ONE_OFF = [
     "f42",
     "f10",
     "f121",
+    "f451",
     "test_week_start",
 ]
 
@@ -319,6 +328,7 @@ FIRST_FEATURE_VALUES_ONE_OFF = [
     None,
     False,
     728.0,
+    None,
     datetime.strptime("2020-12-28", "%Y-%m-%d").date(),
 ]
 
