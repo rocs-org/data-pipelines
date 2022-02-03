@@ -30,7 +30,8 @@ def create_pivot_table(db_context, vitalid, vitaltype, datatype):
         "DROP TABLE IF EXISTS datenspende_derivatives.{vitaltype};\
         CREATE TABLE datenspende_derivatives.{vitaltype} AS SELECT * FROM \
             crosstab('SELECT user_id, date, value FROM datenspende.vitaldata WHERE type = {vitalid} ORDER BY 1', \
-            'SELECT DISTINCT date from datenspende.vitaldata ORDER BY 1') as columns(user_id int, {columns} int);"
+            'SELECT DISTINCT date from datenspende.vitaldata ORDER BY 1') as columns(user_id int, {columns} int); \
+            CREATE INDEX on datenspende_derivatives.{vitaltype} (user_id);"
     ).format(
         vitaltype=sql.Identifier(vitaltype + "_ct"),
         vitalid=sql.Literal(vitalid),

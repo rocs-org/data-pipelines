@@ -41,44 +41,13 @@ def restructure_features(
     )
 
     return R.pipe(
-        R.tap(
-            lambda df: print(
-                2,
-                df[df["questionnaire_session"].isin([461391, 337505])][
-                    [
-                        "questionnaire_session",
-                        43,
-                        860,
-                        49,
-                        868,
-                    ]
-                ],
-            )
-        ),
         combine_columns(FEATURE_MAPPING),
-        R.tap(
-            lambda df: print(
-                2,
-                df[df["questionnaire_session"].isin([461391, 337505])][
-                    ["questionnaire_session", 43, 49]
-                ],
-            )
-        ),
         map_column_names_to_string_that_works_as_sql_identifier,
         add_test_dates_to_features(questionnaire),
-        R.tap(
-            lambda df: print(
-                3,
-                df[df["questionnaire_session"].isin([461391, 337505])][
-                    ["questionnaire_session", "f43"]
-                ],
-            )
-        ),
         map_test_results_and_vaccination_status,
         lambda df: df.drop_duplicates(
             subset=["user_id", "test_week_start"], keep="last"
         ),
-        R.tap(lambda df: print(5, df[df["questionnaire_session"] == 461391])),
     )(features)
 
 
@@ -253,7 +222,6 @@ def elements_of_l1_that_are_in_l2(l1, l2):
 
 
 def xor(a, b):
-    print(a, b)
     if pd.isna(a) and pd.isna(b):
         return None
     elif pd.isna(a):
