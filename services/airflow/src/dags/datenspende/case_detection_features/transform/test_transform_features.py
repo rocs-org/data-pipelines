@@ -17,6 +17,7 @@ from src.dags.datenspende.case_detection_features.transform.transform_features i
     get_weekly_dates,
     unstack_multiple_choice_question,
     select_first_answer_by_question_ids,
+    elements_of_l1_that_are_in_l2,
 )
 from src.dags.datenspende.case_detection_features.parameters import (
     ONE_OFF_QUESTIONS,
@@ -46,7 +47,8 @@ def test_restructure_one_off_features(prepared_db):
     reference = pd.DataFrame(
         columns=FEATURE_ORDER_ONE_OFF, data=[FIRST_FEATURE_VALUES_ONE_OFF]
     )
-
+    print(features.head(n=1))
+    print(reference.values)
     pd.testing.assert_frame_equal(features.head(n=1), reference, check_dtype=False)
 
 
@@ -213,8 +215,26 @@ def test_combine_columns():
     assert list(combined.iloc[4].values) == [None, False, None]
 
 
+def test_combine_columns_real_data():
+    df = pd.DataFrame(
+        columns=[43, 860, 49, 868],
+        data=[
+            [float("nan"), True, float("nan"), False],
+            [True, float("nan"), False, float("nan")],
+        ],
+    )
+    combined = combine_columns({860: 43, 868: 49}, df)
+    print(combined)
+    assert (combined.values == [[True, False], [True, False]]).all()
+
+
 def test_get_symptom_ids_from_db(prepared_db):
     assert get_symptom_ids_from_weekly() == ONE_OFF_SYMPTOM_IDS
+
+
+def test_elements_of_l1_that_are_in_l2_returns_subset():
+    lst = elements_of_l1_that_are_in_l2([1, 2], [2, 3, 4])
+    assert lst == [2]
 
 
 @pytest.fixture

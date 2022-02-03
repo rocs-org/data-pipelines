@@ -9,6 +9,14 @@ from src.dags.datenspende.case_detection_features import (
 from src.lib.test_helpers import run_task_with_url
 from database import DBContext
 
+from src.dags.datenspende.case_detection_features.extract import (
+    load_test_and_symptoms_data,
+)
+from src.dags.datenspende.case_detection_features.transform import (
+    restructure_features,
+    collect_feature_names,
+)
+
 
 def test_feature_task_on_one_off_survey_results(db_context: DBContext):
 
@@ -50,7 +58,7 @@ def test_feature_task_on_one_off_survey_results(db_context: DBContext):
     connection.close()
 
     # same number of features that we put on
-    assert len(feature_names_from_db) == 18
+    assert len(feature_names_from_db) == 19
     assert len(features_from_db) == 49
 
     # features from db have expected format
@@ -110,3 +118,36 @@ def test_feature_task_on_weeekly_survey_results(db_context: DBContext):
         "f10",
         True,
     ]
+
+
+def test_extract_features_prod():
+    def extract_features(
+        questionnaire_id: int,
+        questions: dict,
+        feature_table: str,
+        feature_description_table: str,
+    ):
+        return R.pipe(
+            load_test_and_symptoms_data(questionnaire_id, questions),
+            R.apply_spec(
+                {
+                    feature_table: {
+                        "df": restructure_features(questionnaire_id, questions),
+                        "constraints": R.always(["unique_answers"]),
+                    },
+                    feature_description_table: {
+                        "df": collect_feature_names(questions),
+                        "constraints": R.always(["id_unique"]),
+                    },
+                }
+            ),
+        )("")
+
+    features = extract_features(*WEEKLY_FEATURE_EXTRACTION_ARGS)
+
+    R.pipe(
+        R.path(["homogenized_features", "df"]),
+        lambda df: df.sort_values("test_week_start"),
+        print,
+    )(features)
+    assert False

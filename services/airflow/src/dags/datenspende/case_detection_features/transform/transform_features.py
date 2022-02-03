@@ -41,13 +41,44 @@ def restructure_features(
     )
 
     return R.pipe(
+        R.tap(
+            lambda df: print(
+                2,
+                df[df["questionnaire_session"].isin([461391, 337505])][
+                    [
+                        "questionnaire_session",
+                        43,
+                        860,
+                        49,
+                        868,
+                    ]
+                ],
+            )
+        ),
         combine_columns(FEATURE_MAPPING),
+        R.tap(
+            lambda df: print(
+                2,
+                df[df["questionnaire_session"].isin([461391, 337505])][
+                    ["questionnaire_session", 43, 49]
+                ],
+            )
+        ),
         map_column_names_to_string_that_works_as_sql_identifier,
         add_test_dates_to_features(questionnaire),
+        R.tap(
+            lambda df: print(
+                3,
+                df[df["questionnaire_session"].isin([461391, 337505])][
+                    ["questionnaire_session", "f43"]
+                ],
+            )
+        ),
         map_test_results_and_vaccination_status,
         lambda df: df.drop_duplicates(
             subset=["user_id", "test_week_start"], keep="last"
         ),
+        R.tap(lambda df: print(5, df[df["questionnaire_session"] == 461391])),
     )(features)
 
 
@@ -196,18 +227,33 @@ def collect_feature_names(questions, data: pd.DataFrame) -> pd.DataFrame:
 @R.curry
 def combine_columns(mapping: dict, dataframe: pd.DataFrame) -> pd.DataFrame:
     column_map = collect_keys_with_same_values_from(mapping)
+
     for combined_column, columns in column_map.items():
         try:
-            dataframe[combined_column] = dataframe[columns].apply(
-                R.reduce(xor, None), axis=1
+            existing_columns = elements_of_l1_that_are_in_l2(
+                columns + [combined_column], dataframe.columns.values
             )
-            dataframe.drop(columns=columns, inplace=True)
+            old_columns = elements_of_l1_that_are_in_l2(
+                columns, dataframe.columns.values
+            )
+            print(combined_column, columns, existing_columns)
+
+            if len(existing_columns) > 0:
+                dataframe[combined_column] = dataframe[existing_columns].apply(
+                    R.reduce(xor, None), axis=1
+                )
+                dataframe.drop(columns=old_columns, inplace=True)
         except KeyError:
             pass
     return dataframe
 
 
+def elements_of_l1_that_are_in_l2(l1, l2):
+    return [element for element in l1 if element in l2]
+
+
 def xor(a, b):
+    print(a, b)
     if pd.isna(a) and pd.isna(b):
         return None
     elif pd.isna(a):
