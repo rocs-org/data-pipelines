@@ -198,13 +198,21 @@ def combine_columns(mapping: dict, dataframe: pd.DataFrame) -> pd.DataFrame:
     column_map = collect_keys_with_same_values_from(mapping)
     for combined_column, columns in column_map.items():
         try:
-            dataframe[combined_column] = dataframe[columns].apply(
-                R.reduce(xor, None), axis=1
+            existing_columns = elements_of_l1_that_are_in_l2(
+                columns, dataframe.columns.values
             )
-            dataframe.drop(columns=columns, inplace=True)
+            if len(existing_columns) > 0:
+                dataframe[combined_column] = dataframe[existing_columns].apply(
+                    R.reduce(xor, None), axis=1
+                )
+                dataframe.drop(columns=existing_columns, inplace=True)
         except KeyError:
             pass
     return dataframe
+
+
+def elements_of_l1_that_are_in_l2(l1, l2):
+    return [element for element in l1 if element in l2]
 
 
 def xor(a, b):

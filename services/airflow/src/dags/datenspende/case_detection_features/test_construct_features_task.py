@@ -50,7 +50,7 @@ def test_feature_task_on_one_off_survey_results(db_context: DBContext):
     connection.close()
 
     # same number of features that we put on
-    assert len(feature_names_from_db) == 18
+    assert len(feature_names_from_db) == 19
     assert len(features_from_db) == 49
 
     # features from db have expected format
