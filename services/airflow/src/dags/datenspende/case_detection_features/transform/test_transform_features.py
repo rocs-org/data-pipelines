@@ -215,6 +215,19 @@ def test_combine_columns():
     assert list(combined.iloc[4].values) == [None, False, None]
 
 
+def test_combine_columns_real_data():
+    df = pd.DataFrame(
+        columns=[43, 860, 49, 868],
+        data=[
+            [float("nan"), True, float("nan"), False],
+            [True, float("nan"), False, float("nan")],
+        ],
+    )
+    combined = combine_columns({860: 43, 868: 49}, df)
+    print(combined)
+    assert (combined.values == [[True, False], [True, False]]).all()
+
+
 def test_get_symptom_ids_from_db(prepared_db):
     assert get_symptom_ids_from_weekly() == ONE_OFF_SYMPTOM_IDS
 
