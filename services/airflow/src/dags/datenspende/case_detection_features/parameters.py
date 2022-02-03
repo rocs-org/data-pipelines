@@ -35,11 +35,9 @@ ONE_OFF_FEATURE_EXTRACTION_ARGS = [
 ]
 
 # map feature ids between one off survey and weekly survey
-# TODO: Check whether mapping needs update due to new multiple choice answers options
 FEATURE_MAPPING = {
     30: 121,  # Vaccination status
     129: 10,  # Test result
-    451: 40,  # Fieber
     452: 40,  # Schüttelfrost
     473: 41,  # Gliederschmerzen
     476: 42,  # Geruchs und
@@ -50,4 +48,17 @@ FEATURE_MAPPING = {
     470: 47,  # Halsschmerzen
     472: 48,  # Kopfschmerzen
     479: 49,  # Keine
+    # Answers from ID 137
+    857: 40,  # Schüttelfrost
+    858: 41,  # Gliederschmerzen
+    859: 42,  # Geruchs und Geschmacksverlust
+    860: 43,  # Fatigue
+    861: 44,  # Husten
+    862: 45,  # Schupfen
+    863: 46,  # Durchfall
+    864: 47,  # Halsschmerzen
+    865: 48,  # Kopfschmerzen
+    866: 451,  # Fever
+    867: 467,  # Short of breath
+    868: 49,  # Keine
 }
