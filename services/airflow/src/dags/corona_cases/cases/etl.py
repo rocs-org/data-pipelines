@@ -9,7 +9,7 @@ from src.lib.dag_helpers import connect_to_db_and_insert_pandas_dataframe
 from src.lib.test_helpers import set_env_variable_from_dag_config_if_present
 
 
-URL = "https://github.com/robert-koch-institut/SARS-CoV-2_Infektionen_in_Deutschland/blob/master/Aktuell_Deutschland_SarsCov2_Infektionen.csv?raw=true"
+URL = "https://github.com/robert-koch-institut/SARS-CoV-2_Infektionen_in_Deutschland/blob/master/Aktuell_Deutschland_SarsCov2_Infektionen.csv?raw=true"  # noqa: E501
 SCHEMA = "coronacases"
 TABLE = "german_counties_more_info"
 
@@ -30,11 +30,11 @@ def etl_covid_cases(url: str, schema: str, table: str, **kwargs) -> DBContext:
 def transform_dataframe(df: DataFrame) -> DataFrame:
     print(df.columns)
     additional_info = download_csv("http://static-files/static/countyID_mapping.csv")
-    df = df.join(additional_info.set_index('IdLandkreis'), on='IdLandkreis')
+    df = df.join(additional_info.set_index("IdLandkreis"), on="IdLandkreis")
     df["Altersgruppe2"] = None
     renamed = df.rename(columns=COLUMN_MAPPING, inplace=False)
-    renamed['date_cet'] = pd.to_datetime(renamed['date_cet'])
-    renamed['ref_date_cet'] = pd.to_datetime(renamed['ref_date_cet'])
+    renamed["date_cet"] = pd.to_datetime(renamed["date_cet"])
+    renamed["ref_date_cet"] = pd.to_datetime(renamed["ref_date_cet"])
     renamed["ref_date_is_symptom_onset"] = renamed["ref_date_is_symptom_onset"].astype(
         bool
     )

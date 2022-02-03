@@ -1,4 +1,3 @@
-from numpy import float32
 import polars as po
 from typing import List
 from returns.curry import curry

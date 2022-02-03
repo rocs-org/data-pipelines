@@ -72,7 +72,7 @@ def test_get_continuous_dates_returns_list_of_serial_integers():
     ]
 
 
-CASES_URL = "http://static-files/static/coronacases2.csv"
+CASES_URL = "http://static-files/static/coronacases.csv"
 REGIONS_URL = "http://static-files/static/NUTS2021.xlsx"
 COUNTIES_URL = "http://static-files/static/alle-kreise.xlsx"
 

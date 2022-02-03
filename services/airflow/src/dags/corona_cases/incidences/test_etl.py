@@ -53,6 +53,6 @@ def test_incidences_etl_writes_incidences_to_db(db_context: DBContext):
     assert len(db_entries_after_dag_rerun) == 150
 
 
-CASES_URL = "http://static-files/static/coronacases2.csv"
+CASES_URL = "http://static-files/static/coronacases.csv"
 REGIONS_URL = "http://static-files/static/NUTS2021.xlsx"
 COUNTIES_URL = "http://static-files/static/alle-kreise.xlsx"
