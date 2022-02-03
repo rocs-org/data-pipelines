@@ -196,16 +196,22 @@ def collect_feature_names(questions, data: pd.DataFrame) -> pd.DataFrame:
 @R.curry
 def combine_columns(mapping: dict, dataframe: pd.DataFrame) -> pd.DataFrame:
     column_map = collect_keys_with_same_values_from(mapping)
+
     for combined_column, columns in column_map.items():
         try:
             existing_columns = elements_of_l1_that_are_in_l2(
+                columns + [combined_column], dataframe.columns.values
+            )
+            old_columns = elements_of_l1_that_are_in_l2(
                 columns, dataframe.columns.values
             )
+            print(combined_column, columns, existing_columns)
+
             if len(existing_columns) > 0:
                 dataframe[combined_column] = dataframe[existing_columns].apply(
                     R.reduce(xor, None), axis=1
                 )
-                dataframe.drop(columns=existing_columns, inplace=True)
+                dataframe.drop(columns=old_columns, inplace=True)
         except KeyError:
             pass
     return dataframe
