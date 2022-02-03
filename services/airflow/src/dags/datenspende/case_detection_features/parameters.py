@@ -4,7 +4,7 @@ ONE_OFF_QUESTIONNAIRE = 10
 ONE_OFF_QUESTIONS = {
     "test_result": 129,  # True/False/NULL
     "vaccination_status": 121,  # True/False/NULL
-    "symptoms": [86],  # True/False/NULL
+    "symptoms": [86, 137],  # True/False/NULL
     "age": 133,  # INT/NULL
     "sex": 127,  # STR/NULL
     "height": 74,  # INT/NULL

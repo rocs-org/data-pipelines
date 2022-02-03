@@ -275,6 +275,7 @@ FEATURE_IDS = [
     "f474",
     "f478",
     "f121",
+    "f451",
 ]
 
 FEATURE_ORDER_ONE_OFF = [
@@ -296,6 +297,7 @@ FEATURE_ORDER_ONE_OFF = [
     "f42",
     "f10",
     "f121",
+    "f451",
     "test_week_start",
 ]
 
@@ -319,6 +321,7 @@ FIRST_FEATURE_VALUES_ONE_OFF = [
     None,
     False,
     728.0,
+    None,
     datetime.strptime("2020-12-28", "%Y-%m-%d").date(),
 ]
 
