@@ -7,6 +7,7 @@ from .write_dataframe_to_postgres import (
     _upsert_column_action,
     _build_upsert_query,
     connect_to_db_and_insert_pandas_dataframe,
+    connect_to_db_and_truncate_insert_pandas_dataframe,
     connect_to_db_and_insert_polars_dataframe,
     connect_to_db_and_upsert_pandas_dataframe,
 )
@@ -71,6 +72,40 @@ def test_insert_dataframe_to_postgres_does_not_overwrite(db_context: DBContext):
     assert res[0] == (0, "DE", "Deutschland", 0)
 
 
+def test_truncate_insert_dataframe_to_postgres_does_replace_existing_data(
+    db_context: DBContext,
+):
+    connect_to_db_and_insert_pandas_dataframe(
+        schema="coronacases", table="german_counties_more_info", data=DATA4
+    )
+    connect_to_db_and_truncate_insert_pandas_dataframe(
+        schema="coronacases", table="german_counties_more_info", data=DATA4
+    )
+
+    res = with_db_context(
+        query_all_elements, "SELECT * FROM coronacases.german_counties_more_info;"
+    )
+    print(res)
+    assert len(res) == 2
+    assert res[0] == (
+        1,
+        "Berlin",
+        1,
+        "Berlin",
+        "A15-100",
+        "M",
+        datetime(2021, 10, 28, 0, 0),
+        datetime(2021, 10, 28, 0, 0),
+        True,
+        0,
+        -9,
+        0,
+        1,
+        0,
+        1,
+    )
+
+
 def test_generate_upsert_action_fragments(db_context: DBContext):
     upsert_action = _upsert_column_action(["blub"])
     assert (
@@ -131,5 +166,61 @@ DATA3 = po.DataFrame(
     data=[
         [0, 1, float("nan"), 0],
         [1, None, 1.0, 1],
+    ],
+)
+
+DATA4 = pd.DataFrame(
+    columns=[
+        "stateid",
+        "state",
+        "countyid",
+        "county",
+        "agegroup",
+        "sex",
+        "date_cet",
+        "ref_date_cet",
+        "ref_date_is_symptom_onset",
+        "is_new_case",
+        "is_new_death",
+        "is_new_recovered",
+        "new_cases",
+        "new_deaths",
+        "new_recovereds",
+    ],
+    data=[
+        [
+            1,
+            "Berlin",
+            1,
+            "Berlin",
+            "A15-100",
+            "M",
+            "2021-10-28",
+            "2021-10-28",
+            True,
+            0,
+            -9,
+            0,
+            1,
+            0,
+            1,
+        ],
+        [
+            2,
+            "Berlin",
+            2,
+            "Berlin",
+            "A15-100",
+            "M",
+            "2021-10-28",
+            "2021-10-28",
+            True,
+            0,
+            -9,
+            0,
+            1,
+            0,
+            1,
+        ],
     ],
 )

@@ -51,7 +51,6 @@ def test_corona_cases_dag_writes_correct_results_to_db(db_context: DBContext):
     assert len(res_cases) == 9
     assert res_cases[0] == (
         1,
-        1,
         "Schleswig-Holstein",
         1001,
         "SK Flensburg",

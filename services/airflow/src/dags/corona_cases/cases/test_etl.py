@@ -71,7 +71,6 @@ def test_download_csv_and_write_to_postgres_happy_path(db_context):
     assert len(results) == 9
     assert results[0] == (
         1,
-        1,
         "Schleswig-Holstein",
         1001,
         "SK Flensburg",
