@@ -5,7 +5,7 @@ from returns.curry import curry
 
 from database import DBContext
 from src.lib.dag_helpers import download_csv
-from src.lib.dag_helpers import connect_to_db_and_insert_pandas_dataframe
+from src.lib.dag_helpers import connect_to_db_and_truncate_insert_pandas_dataframe
 from src.lib.test_helpers import set_env_variable_from_dag_config_if_present
 
 
@@ -22,7 +22,7 @@ def etl_covid_cases(url: str, schema: str, table: str, **kwargs) -> DBContext:
         set_env_variable_from_dag_config_if_present("TARGET_DB"),
         lambda *args: download_csv(url),
         transform_dataframe,
-        connect_to_db_and_insert_pandas_dataframe(schema, table),
+        connect_to_db_and_truncate_insert_pandas_dataframe(schema, table),
         R.path(["credentials", "database"]),
     )(kwargs)
 
@@ -31,7 +31,6 @@ def transform_dataframe(df: DataFrame) -> DataFrame:
     print(df.columns)
     additional_info = download_csv("http://static-files/static/countyID_mapping.csv")
     df = df.join(additional_info.set_index("IdLandkreis"), on="IdLandkreis")
-    df["Altersgruppe2"] = None
     renamed = df.rename(columns=COLUMN_MAPPING, inplace=False)
     renamed["date_cet"] = pd.to_datetime(renamed["date_cet"])
     renamed["ref_date_cet"] = pd.to_datetime(renamed["ref_date_cet"])
@@ -48,7 +47,6 @@ COLUMN_MAPPING = {
     "Landkreis": "county",
     "IdLandkreis": "countyid",
     "Altersgruppe": "agegroup",
-    "Altersgruppe2": "agegroup2",
     "Geschlecht": "sex",
     "Meldedatum": "date_cet",
     "Refdatum": "ref_date_cet",

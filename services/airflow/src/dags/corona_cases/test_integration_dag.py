@@ -56,7 +56,6 @@ def test_corona_cases_dag_writes_correct_results_to_db(db_context: DBContext):
         1001,
         "SK Flensburg",
         "A35-A59",
-        None,
         "M",
         datetime(2020, 10, 30, 0, 0),
         datetime(2020, 10, 27, 0, 0),
