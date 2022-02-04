@@ -52,9 +52,6 @@ def test_dataframe_transformer_transform_column_names_and_types():
     df = R.pipe(download_csv, transform_dataframe)(URL)
     assert Counter(df.columns) == Counter(COLUMNS)
 
-    assert df.iloc[0]["agegroup2"] is None
-    assert df.iloc[1]["agegroup2"] is not None
-
     assert type(df.iloc[0]["ref_date_is_symptom_onset"]) is numpy.bool_
 
 
@@ -74,12 +71,10 @@ def test_download_csv_and_write_to_postgres_happy_path(db_context):
     assert len(results) == 9
     assert results[0] == (
         1,
-        1,
         "Schleswig-Holstein",
         1001,
         "SK Flensburg",
         "A35-A59",
-        None,
         "M",
         datetime.datetime(2020, 10, 30, 0, 0),
         datetime.datetime(2020, 10, 27, 0, 0),

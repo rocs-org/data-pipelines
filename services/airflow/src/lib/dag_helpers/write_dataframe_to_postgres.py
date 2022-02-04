@@ -27,6 +27,15 @@ def connect_to_db_and_insert_pandas_dataframe(
 
 
 @curry
+def connect_to_db_and_truncate_insert_pandas_dataframe(
+    schema: str, table: str, data: pd.DataFrame
+):
+    return _connect_to_db_and_execute(
+        _build_truncate_insert_query(schema, table), _get_tuples_from_pd_dataframe, data
+    )
+
+
+@curry
 def connect_to_db_and_insert_polars_dataframe(
     schema: str, table: str, data: polars.DataFrame
 ):
@@ -102,6 +111,25 @@ def _build_insert_query(schema: str, table: str) -> Callable[[DataFrame], sql.SQ
         R.converge(
             sql.SQL("INSERT INTO {}.{} ({}) VALUES %s ON CONFLICT DO NOTHING;").format,
             [
+                R.always(sql.Identifier(schema)),
+                R.always(sql.Identifier(table)),
+                _get_column_identifier_list,
+            ],
+        ),
+    )
+
+
+@R.curry
+def _build_truncate_insert_query(
+    schema: str, table: str
+) -> Callable[[DataFrame], sql.SQL]:
+    return pipe(
+        _get_columns,
+        R.converge(
+            sql.SQL("TRUNCATE TABLE {}.{}; INSERT INTO {}.{} ({}) VALUES %s;").format,
+            [
+                R.always(sql.Identifier(schema)),
+                R.always(sql.Identifier(table)),
                 R.always(sql.Identifier(schema)),
                 R.always(sql.Identifier(table)),
                 _get_column_identifier_list,
