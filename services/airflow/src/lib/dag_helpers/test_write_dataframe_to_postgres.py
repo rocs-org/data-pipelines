@@ -78,15 +78,38 @@ def test_truncate_insert_dataframe_to_postgres_does_replace_existing_data(
     connect_to_db_and_insert_pandas_dataframe(
         schema="coronacases", table="german_counties_more_info", data=DATA4
     )
+    res = with_db_context(
+        query_all_elements, "SELECT * FROM coronacases.german_counties_more_info;"
+    )
+    print(res)
+    assert len(res) == 1
+    assert res[0] == (
+        2,
+        "Berlin",
+        2,
+        "Berlin",
+        "A15-100",
+        "M",
+        datetime(2021, 10, 28, 0, 0),
+        datetime(2021, 10, 28, 0, 0),
+        True,
+        0,
+        -9,
+        0,
+        0,
+        1,
+        0,
+    )
+
     connect_to_db_and_truncate_insert_pandas_dataframe(
-        schema="coronacases", table="german_counties_more_info", data=DATA4
+        schema="coronacases", table="german_counties_more_info", data=DATA5
     )
 
     res = with_db_context(
         query_all_elements, "SELECT * FROM coronacases.german_counties_more_info;"
     )
     print(res)
-    assert len(res) == 2
+    assert len(res) == 1
     assert res[0] == (
         1,
         "Berlin",
@@ -189,9 +212,9 @@ DATA4 = pd.DataFrame(
     ],
     data=[
         [
-            1,
+            2,
             "Berlin",
-            1,
+            2,
             "Berlin",
             "A15-100",
             "M",
@@ -201,14 +224,36 @@ DATA4 = pd.DataFrame(
             0,
             -9,
             0,
-            1,
             0,
             1,
+            0,
         ],
+    ],
+)
+
+DATA5 = pd.DataFrame(
+    columns=[
+        "stateid",
+        "state",
+        "countyid",
+        "county",
+        "agegroup",
+        "sex",
+        "date_cet",
+        "ref_date_cet",
+        "ref_date_is_symptom_onset",
+        "is_new_case",
+        "is_new_death",
+        "is_new_recovered",
+        "new_cases",
+        "new_deaths",
+        "new_recovereds",
+    ],
+    data=[
         [
-            2,
+            1,
             "Berlin",
-            2,
+            1,
             "Berlin",
             "A15-100",
             "M",
