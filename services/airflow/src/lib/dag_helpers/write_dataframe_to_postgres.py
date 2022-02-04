@@ -120,11 +120,13 @@ def _build_insert_query(schema: str, table: str) -> Callable[[DataFrame], sql.SQ
 
 
 @R.curry
-def _build_truncate_insert_query(schema: str, table: str) -> Callable[[DataFrame], sql.SQL]:
+def _build_truncate_insert_query(
+    schema: str, table: str
+) -> Callable[[DataFrame], sql.SQL]:
     return pipe(
         _get_columns,
         R.converge(
-            sql.SQL("TRUNCATE TABLE {}.{}; INSERT INTO {}.{} ({}) VALUES %s ON CONFLICT DO NOTHING;").format,
+            sql.SQL("TRUNCATE TABLE {}.{}; INSERT INTO {}.{} ({}) VALUES %s;").format,
             [
                 R.always(sql.Identifier(schema)),
                 R.always(sql.Identifier(table)),
