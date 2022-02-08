@@ -36,7 +36,6 @@ def connect_to_db_and_truncate_insert_pandas_dataframe(
         schema=sql.Identifier(schema),
         table=sql.Identifier(table),
     )
-    print(sql_query)
     execute_sql(db_context, sql_query)
     teardown_db_context(db_context)
     return _connect_to_db_and_execute(
