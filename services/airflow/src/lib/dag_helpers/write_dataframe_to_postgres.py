@@ -1,4 +1,5 @@
 from typing import Callable, List
+from database.execute_sql import execute_sql
 
 import polars
 import pandas as pd
@@ -30,8 +31,16 @@ def connect_to_db_and_insert_pandas_dataframe(
 def connect_to_db_and_truncate_insert_pandas_dataframe(
     schema: str, table: str, data: pd.DataFrame
 ):
+    db_context = create_db_context()
+    sql_query = sql.SQL("TRUNCATE TABLE {schema}.{table};").format(
+        schema=sql.Identifier(schema),
+        table=sql.Identifier(table),
+    )
+    print(sql_query)
+    execute_sql(db_context, sql_query)
+    teardown_db_context(db_context)
     return _connect_to_db_and_execute(
-        _build_truncate_insert_query(schema, table), _get_tuples_from_pd_dataframe, data
+        _build_insert_query(schema, table), _get_tuples_from_pd_dataframe, data
     )
 
 
@@ -111,25 +120,6 @@ def _build_insert_query(schema: str, table: str) -> Callable[[DataFrame], sql.SQ
         R.converge(
             sql.SQL("INSERT INTO {}.{} ({}) VALUES %s ON CONFLICT DO NOTHING;").format,
             [
-                R.always(sql.Identifier(schema)),
-                R.always(sql.Identifier(table)),
-                _get_column_identifier_list,
-            ],
-        ),
-    )
-
-
-@R.curry
-def _build_truncate_insert_query(
-    schema: str, table: str
-) -> Callable[[DataFrame], sql.SQL]:
-    return pipe(
-        _get_columns,
-        R.converge(
-            sql.SQL("TRUNCATE TABLE {}.{}; INSERT INTO {}.{} ({}) VALUES %s;").format,
-            [
-                R.always(sql.Identifier(schema)),
-                R.always(sql.Identifier(table)),
                 R.always(sql.Identifier(schema)),
                 R.always(sql.Identifier(table)),
                 _get_column_identifier_list,
