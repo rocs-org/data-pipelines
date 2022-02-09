@@ -1,4 +1,4 @@
-FROM apache/airflow:2.1.1rc1-python3.8
+FROM apache/airflow:2.2.3-python3.8
 
 USER root
 
@@ -8,7 +8,7 @@ RUN apt-get update && \
 
 RUN mkdir ../../libraries
 
-RUN chown -R airflow:airflow /usr/local/src
+RUN chown -R airflow:root /usr/local/src
 
 USER airflow
 
