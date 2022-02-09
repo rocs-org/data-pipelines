@@ -31,13 +31,15 @@ def connect_to_db_and_insert_pandas_dataframe(
 def connect_to_db_and_truncate_insert_pandas_dataframe(
     schema: str, table: str, data: pd.DataFrame
 ):
-    db_context = create_db_context()
-    sql_query = sql.SQL("TRUNCATE TABLE {schema}.{table};").format(
-        schema=sql.Identifier(schema),
-        table=sql.Identifier(table),
+    _connect_to_db_and_execute(
+        R.always(sql.SQL("TRUNCATE TABLE {schema}.{table};").format(
+            schema=sql.Identifier(schema),
+            table=sql.Identifier(table),
+            )
+        ), 
+        R.T, 
+        ""
     )
-    execute_sql(db_context, sql_query)
-    teardown_db_context(db_context)
     return _connect_to_db_and_execute(
         _build_insert_query(schema, table), _get_tuples_from_pd_dataframe, data
     )
