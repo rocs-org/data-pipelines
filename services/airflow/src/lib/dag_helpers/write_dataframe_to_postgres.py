@@ -31,14 +31,10 @@ def connect_to_db_and_insert_pandas_dataframe(
 def connect_to_db_and_truncate_insert_pandas_dataframe(
     schema: str, table: str, data: pd.DataFrame
 ):
-    _connect_to_db_and_execute(
-        R.always(sql.SQL("TRUNCATE TABLE {schema}.{table};").format(
-            schema=sql.Identifier(schema),
-            table=sql.Identifier(table),
-            )
-        ), 
-        R.T, 
-        ""
+    _connect_to_db_and_execute_statement(
+        sql.SQL("TRUNCATE TABLE {schema}.{table};").format(
+            schema=sql.Identifier(schema), table=sql.Identifier(table)
+        )
     )
     return _connect_to_db_and_execute(
         _build_insert_query(schema, table), _get_tuples_from_pd_dataframe, data
@@ -105,13 +101,21 @@ def connect_to_db_and_upsert_polars_dataframe(
 @curry
 def _connect_to_db_and_execute(query_builder, tuple_getter, data: pd.DataFrame):
     return R.pipe(
-        R.tap(lambda *_: print("try to connect to db and execute")),
         R.converge(
             execute_values,
             [lambda x: create_db_context(), query_builder, tuple_getter],
         ),
         teardown_db_context,
     )(data)
+
+
+_connect_to_db_and_execute_statement = R.pipe(
+    R.converge(
+        execute_sql,
+        [lambda x: create_db_context(), R.identity],
+    ),
+    teardown_db_context,
+)
 
 
 @R.curry
