@@ -81,8 +81,8 @@ def test_truncate_insert_dataframe_to_postgres_does_replace_existing_data(
     res = with_db_context(
         query_all_elements, "SELECT * FROM coronacases.german_counties_more_info;"
     )
-    print(res)
-    assert len(res) == 1
+    print(res[0])
+    assert len(res) == 150
     assert res[0] == (
         2,
         "Berlin",
@@ -108,8 +108,8 @@ def test_truncate_insert_dataframe_to_postgres_does_replace_existing_data(
     res = with_db_context(
         query_all_elements, "SELECT * FROM coronacases.german_counties_more_info;"
     )
-    print(res)
-    assert len(res) == 1
+    print(res[0])
+    assert len(res) == 200
     assert res[0] == (
         1,
         "Berlin",
@@ -210,7 +210,8 @@ DATA4 = pd.DataFrame(
         "new_deaths",
         "new_recovereds",
     ],
-    data=[
+    data=150
+    * [
         [
             2,
             "Berlin",
@@ -249,7 +250,8 @@ DATA5 = pd.DataFrame(
         "new_deaths",
         "new_recovereds",
     ],
-    data=[
+    data=200
+    * [
         [
             1,
             "Berlin",
