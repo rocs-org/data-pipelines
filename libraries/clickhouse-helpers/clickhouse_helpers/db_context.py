@@ -1,4 +1,5 @@
 import os
+
 import ramda as R
 from clickhouse_driver import Client
 

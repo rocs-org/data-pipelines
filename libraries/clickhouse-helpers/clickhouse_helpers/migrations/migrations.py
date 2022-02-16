@@ -1,6 +1,8 @@
-from clickhouse_helpers.types import DBContext
-from clickhouse_migrate.migrate import migrate as ch_migrate
 import pathlib
+
+from clickhouse_migrate.migrate import migrate as ch_migrate
+
+from clickhouse_helpers.types import DBContext
 
 
 def migrate(context: DBContext):

@@ -1,13 +1,14 @@
+import os
 import random
 import string
+
 import pytest
-import os
 import ramda as R
 
-from .types import DBContext
-from .execute_sql import execute_sql, _create_database
 from .db_context import create_db_context, _update_connection_in_context
+from .execute_sql import execute_sql, _create_database
 from .migrations import migrate
+from .types import DBContext
 
 
 @pytest.fixture
