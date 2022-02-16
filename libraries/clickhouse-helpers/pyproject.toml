@@ -1,0 +1,30 @@
+[tool.poetry]
+name = "clickhouse-helpers"
+version = "0.1.0"
+description = ""
+authors = ["Jakob J. Kolb <jakob.j.kolb@gmail.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+ramda = "^0.6.4"
+clickhouse-migrator = "^1.0.6"
+pandahouse = "^0.2.7"
+
+[tool.poetry.dev-dependencies]
+pytest = "^6.0.0"
+pytest-xdist = "^2.4.0"
+flake8 = "^4.0.1"
+black = "^21.10b0"
+pyproject-flake8 = "^0.0.1-alpha.2"
+
+[build-system]
+requires = ["poetry-core @ git+https://github.com/python-poetry/poetry-core.git@master"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.pytest.ini_options]
+looponfailroots = 'clickhouse_helpers'
+
+[tool.flake8]
+max-line-length = 120
+max-complexity = 10
+ignore = "E731, W503"
