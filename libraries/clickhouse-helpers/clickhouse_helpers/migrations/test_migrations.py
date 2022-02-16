@@ -3,13 +3,11 @@ import pytest
 from clickhouse_driver.errors import ServerException
 
 from clickhouse_helpers import (
-    execute_sql,
     query_dataframe,
     insert_dataframe,
     teardown_test_db_context,
     create_test_db_context,
 )
-
 from clickhouse_helpers.migrations.migrations import (
     get_connection_string,
     migrate,

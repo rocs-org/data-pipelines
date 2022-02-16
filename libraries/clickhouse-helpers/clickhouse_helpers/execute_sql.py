@@ -1,9 +1,9 @@
-from typing import Any
 import re
-from pandahouse import to_clickhouse
+from typing import Any
 
 import pandas as pd
 import ramda as R
+from pandahouse import to_clickhouse
 
 from .types import DBContext
 

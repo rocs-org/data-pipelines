@@ -1,7 +1,7 @@
 from typing import TypedDict
+
 from clickhouse_driver import Client
 from clickhouse_driver.connection import Connection
-
 
 Client.__deepcopy__ = lambda self, memo: self
 
