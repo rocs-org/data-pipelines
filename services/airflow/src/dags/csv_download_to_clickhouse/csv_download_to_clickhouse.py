@@ -25,7 +25,7 @@ URL = "https://drive.google.com/uc?export=download&id=1t_WFejY2lXj00Qkc-6RAFgyr4
 
 
 @curry
-def download_csv_and_upload_to_postgres(
+def download_csv_and_upload_to_clickhouse(
     url: str, table: str, **kwargs
 ) -> DBCredentials:
     return R.pipe(
@@ -64,9 +64,9 @@ dag = DAG(
 )
 
 t1 = PythonOperator(
-    task_id="extract_load",
+    task_id="EL",
     python_callable=if_var_exists_in_dag_conf_use_as_first_arg(
-        "URL", download_csv_and_upload_to_postgres
+        "URL", download_csv_and_upload_to_clickhouse
     ),
     dag=dag,
     op_args=[URL, "test_table"],
