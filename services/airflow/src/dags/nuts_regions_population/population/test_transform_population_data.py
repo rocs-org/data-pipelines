@@ -16,7 +16,7 @@ import pandas.api.types as ptypes
 URL = "http://static-files/static/demo_r_pjangrp3.tsv"
 
 
-def test_transform_returns_correct_columns(db_context: DBContext):
+def test_transform_returns_correct_columns(pg_context: DBContext):
     insert_some_nuts_regions_into_db_to_filter_agains()
     df = R.pipe(download_data, transform)(URL)
 
@@ -30,7 +30,7 @@ def test_transform_returns_correct_columns(db_context: DBContext):
     }
 
 
-def test_transform_population_returns_correct_dtypes(db_context: DBContext):
+def test_transform_population_returns_correct_dtypes(pg_context: DBContext):
     insert_some_nuts_regions_into_db_to_filter_agains()
 
     transformed = R.pipe(download_data, transform)(URL)
@@ -73,7 +73,7 @@ def test_set_sex_as_column():
 
 
 def test_filtering_for_existing_regions_deletes_rows_without_regions(
-    db_context: DBContext,
+    pg_context: DBContext,
 ):
     connect_to_db_and_insert_pandas_dataframe(
         "censusdata",

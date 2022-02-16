@@ -8,7 +8,7 @@ from .upload import upload
 URL = "http://static-files/thryve/exportStudy.7z"
 
 
-def test_datenspende_upload_writes_all_dataframe_to_database(db_context: DBContext):
+def test_datenspende_upload_writes_all_dataframe_to_database(pg_context: DBContext):
     R.pipe(
         download(
             {
@@ -22,57 +22,57 @@ def test_datenspende_upload_writes_all_dataframe_to_database(db_context: DBConte
     )(URL)
 
     assert (
-        number_of_elements_returned_from(db_context)(
+        number_of_elements_returned_from(pg_context)(
             "SELECT * FROM datenspende.answers"
         )
         == 5765
     )
 
     assert (
-        number_of_elements_returned_from(db_context)("SELECT * FROM datenspende.choice")
+        number_of_elements_returned_from(pg_context)("SELECT * FROM datenspende.choice")
         == 760
     )
 
     assert (
-        number_of_elements_returned_from(db_context)(
+        number_of_elements_returned_from(pg_context)(
             "SELECT * FROM datenspende.questionnaires"
         )
         == 5
     )
 
     assert (
-        number_of_elements_returned_from(db_context)(
+        number_of_elements_returned_from(pg_context)(
             "SELECT * FROM datenspende.questionnaire_session"
         )
         == 347
     )
 
     assert (
-        number_of_elements_returned_from(db_context)(
+        number_of_elements_returned_from(pg_context)(
             "SELECT * FROM datenspende.questions"
         )
         == 90
     )
 
     assert (
-        number_of_elements_returned_from(db_context)(
+        number_of_elements_returned_from(pg_context)(
             "SELECT * FROM datenspende.question_to_questionnaire"
         )
         == 91
     )
 
     assert (
-        number_of_elements_returned_from(db_context)(
+        number_of_elements_returned_from(pg_context)(
             "SELECT * FROM datenspende.study_overview"
         )
         == 2
     )
     assert (
-        number_of_elements_returned_from(db_context)("SELECT * FROM datenspende.users")
+        number_of_elements_returned_from(pg_context)("SELECT * FROM datenspende.users")
         == 168
     )
 
 
 @R.curry
-def number_of_elements_returned_from(db_context):
-    return R.pipe(query_all_elements(db_context), len)
+def number_of_elements_returned_from(pg_context):
+    return R.pipe(query_all_elements(pg_context), len)

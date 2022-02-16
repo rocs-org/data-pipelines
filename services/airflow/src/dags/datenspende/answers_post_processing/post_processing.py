@@ -9,9 +9,9 @@ from src.lib.test_helpers import set_env_variable_from_dag_config_if_present
 
 @R.curry
 def load_from_db_and_return_as_df(
-    db_context: DBContext, query: Union[str, SQL, Composed]
+    pg_context: DBContext, query: Union[str, SQL, Composed]
 ) -> pandas.DataFrame:
-    return pandas.read_sql_query(query, R.prop("connection", db_context))
+    return pandas.read_sql_query(query, R.prop("connection", pg_context))
 
 
 fetch_answers_from_db = lambda *_: with_db_context(

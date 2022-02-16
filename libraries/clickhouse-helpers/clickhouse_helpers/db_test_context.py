@@ -12,7 +12,7 @@ from .types import DBContext
 
 
 @pytest.fixture
-def db_context():
+def pg_context():
     context = create_test_db_context()
     migrate(context)
 
