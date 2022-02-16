@@ -6,16 +6,16 @@ from pandahouse.http import ClickhouseException
 
 from clickhouse_helpers import query_dataframe
 from .csv_download_to_clickhouse import (
-    download_csv_and_upload_to_postgres,
+    download_csv_and_upload_to_clickhouse,
 )
 
 URL = "http://static-files/static/test.csv"
 
 
-def test_download_csv_and_write_to_postgres_happy_path(ch_context):
+def test_download_csv_and_write_to_clickhouse_happy_path(ch_context):
     table = "test_table"
 
-    download_csv_and_upload_to_postgres(URL, table)
+    download_csv_and_upload_to_clickhouse(URL, table)
 
     results = query_dataframe(ch_context, f"SELECT col1, col2, col3 FROM {table}")
 
@@ -32,7 +32,7 @@ def test_download_csv_and_write_to_clickhouse_picks_up_injected_db_name(ch_conte
     table = "test_table"
 
     with pytest.raises(ClickhouseException) as exception_info:
-        download_csv_and_upload_to_postgres(
+        download_csv_and_upload_to_clickhouse(
             URL, table, dag_run={"conf": {"CLICKHOUSE_DB": "rando_name"}}
         )
 

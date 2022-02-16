@@ -24,8 +24,8 @@ def test_clickhouse_dag_executes_with_no_errors(ch_context: DBContext):
         )
         == 0
     )
-    print(credentials)
-    res = query_dataframe(ch_context, "SELECT * FROM test_table")
+
+    res = query_dataframe(ch_context, "SELECT col1, col2, col3 FROM test_table")
 
     assert len(res) == 2
     assert (

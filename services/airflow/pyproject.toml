@@ -21,6 +21,7 @@ database = {path = "../../libraries/database", develop=true}
 clickhouse-helpers = {path = "../../libraries/clickhouse-helpers", develop=true}
 ramda = "^0.6.4"
 isoweek = "^1.3.3"
+SQLAlchemy = "1.3.24"  # We have to pin this dependency, otherwise deleting dags for tests does not work: https://github.com/apache/airflow/issues/15354
 
 [tool.poetry.dev-dependencies]
 flake8 = "^3.9.2"
