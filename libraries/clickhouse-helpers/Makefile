@@ -3,7 +3,7 @@ include .env
 export $(shell sed 's/=.*//' .env)
 
 setup:
-	docker-compose up -d
+	docker-compose up -d && bash wait-for-healthy-container.sh clickhouse-db-testing 300
 
 down:
 	docker-compose down -v
