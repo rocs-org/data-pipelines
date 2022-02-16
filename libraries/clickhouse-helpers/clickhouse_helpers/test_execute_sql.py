@@ -21,7 +21,7 @@ def execute_sql_writes_to_and_reads_from_db(db_context: DBContext):
             db_context,
             """
              SELECT col1, col2, col3 FROM test_table;
-        """,
+            """,
         )
         == [(1, "Hello", "World!")]
     )

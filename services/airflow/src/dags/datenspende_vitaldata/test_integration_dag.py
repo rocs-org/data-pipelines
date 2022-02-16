@@ -12,7 +12,7 @@ def test_dag_loads_with_no_errors():
 
 
 def test_datenspende_vitals_dag_writes_correct_results_to_db(pg_context: DBContext):
-    credentials = db_context["credentials"]
+    credentials = pg_context["credentials"]
 
     assert (
         execute_dag(
@@ -23,7 +23,7 @@ def test_datenspende_vitals_dag_writes_correct_results_to_db(pg_context: DBConte
         == 0
     )
     answers_from_db = query_all_elements(
-        db_context, "SELECT * FROM datenspende.vitaldata;"
+        pg_context, "SELECT * FROM datenspende.vitaldata;"
     )
     assert answers_from_db[-1] == (
         200,
@@ -37,7 +37,7 @@ def test_datenspende_vitals_dag_writes_correct_results_to_db(pg_context: DBConte
     assert len(answers_from_db) == 20
 
     answers_from_db = query_all_elements(
-        db_context, "SELECT * FROM datenspende_derivatives.steps_ct;"
+        pg_context, "SELECT * FROM datenspende_derivatives.steps_ct;"
     )
     assert len(answers_from_db) == 2
 
