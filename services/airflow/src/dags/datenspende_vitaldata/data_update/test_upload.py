@@ -8,7 +8,7 @@ from .upload import upload
 URL = "http://static-files/thryve/export.7z"
 
 
-def test_upload_writes_all_dataframe_to_database(db_context: DBContext):
+def test_upload_writes_all_dataframe_to_database(pg_context: DBContext):
     R.pipe(
         download(
             {
@@ -22,11 +22,11 @@ def test_upload_writes_all_dataframe_to_database(db_context: DBContext):
     )(URL)
 
     assert (
-        number_of_elements_returned_from(db_context)("SELECT * FROM datenspende.users")
+        number_of_elements_returned_from(pg_context)("SELECT * FROM datenspende.users")
         == 168
     )
     assert (
-        number_of_elements_returned_from(db_context)(
+        number_of_elements_returned_from(pg_context)(
             "SELECT * FROM datenspende.vitaldata"
         )
         == 20
@@ -34,5 +34,5 @@ def test_upload_writes_all_dataframe_to_database(db_context: DBContext):
 
 
 @R.curry
-def number_of_elements_returned_from(db_context):
-    return R.pipe(query_all_elements(db_context), len)
+def number_of_elements_returned_from(pg_context):
+    return R.pipe(query_all_elements(pg_context), len)

@@ -11,7 +11,7 @@ from src.lib.test_helpers import run_task_with_url
 HOSPITALIZATIONS_URL = "http://static-files/static/hospitalizations.csv"
 
 
-def test_etl_hospitalizations(db_context: DBContext):
+def test_etl_hospitalizations(pg_context: DBContext):
 
     run_task_with_url(
         "nuts_regions_population",
@@ -30,13 +30,13 @@ def test_etl_hospitalizations(db_context: DBContext):
 
     hospitalizations = pd.read_sql(
         f"SELECT * FROM {HOSPITALIZATIONS_SCHEMA}.{HOSPITALIZATIONS_TABLE}",
-        db_context["connection"],
+        pg_context["connection"],
     )
 
     assert len(hospitalizations) == 82
 
 
-def test_etl_runs_in_dag(db_context: DBContext):
+def test_etl_runs_in_dag(pg_context: DBContext):
 
     run_task_with_url(
         "nuts_regions_population",
@@ -55,7 +55,7 @@ def test_etl_runs_in_dag(db_context: DBContext):
 
     hospitalizations = pd.read_sql(
         f"SELECT * FROM {HOSPITALIZATIONS_SCHEMA}.{HOSPITALIZATIONS_TABLE}",
-        db_context["connection"],
+        pg_context["connection"],
     )
 
     assert len(hospitalizations) == 82

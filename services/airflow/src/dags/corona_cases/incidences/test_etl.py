@@ -19,7 +19,7 @@ from src.dags.corona_cases.cases import etl_covid_cases, CASES_ARGS
 from .etl import calculate_incidence_post_processing, INCIDENCES_ARGS
 
 
-def test_incidences_etl_writes_incidences_to_db(db_context: DBContext):
+def test_incidences_etl_writes_incidences_to_db(pg_context: DBContext):
     replace_url_in_args_and_run_task(REGIONS_URL, REGIONS_ARGS, etl_eu_regions)
     replace_url_in_args_and_run_task(
         COUNTIES_URL, COUNTIES_ARGS, etl_german_counties_more_info
@@ -27,9 +27,9 @@ def test_incidences_etl_writes_incidences_to_db(db_context: DBContext):
     replace_url_in_args_and_run_task(CASES_URL, CASES_ARGS, etl_covid_cases)
     calculate_incidence_post_processing(*INCIDENCES_ARGS)
     [schema, table] = INCIDENCES_ARGS
-    db_context = create_db_context()
-    db_entries = query_all_elements(db_context, f"SELECT * FROM {schema}.{table}")
-    teardown_db_context(db_context)
+    pg_context = create_db_context()
+    db_entries = query_all_elements(pg_context, f"SELECT * FROM {schema}.{table}")
+    teardown_db_context(pg_context)
     assert len(db_entries) == 150
     assert db_entries[8] == (
         1001,
@@ -45,11 +45,11 @@ def test_incidences_etl_writes_incidences_to_db(db_context: DBContext):
     )
     calculate_incidence_post_processing(*INCIDENCES_ARGS)
 
-    db_context = create_db_context()
+    pg_context = create_db_context()
     db_entries_after_dag_rerun = query_all_elements(
-        db_context, f"SELECT * FROM {schema}.{table}"
+        pg_context, f"SELECT * FROM {schema}.{table}"
     )
-    teardown_db_context(db_context)
+    teardown_db_context(pg_context)
     assert len(db_entries_after_dag_rerun) == 150
 
 

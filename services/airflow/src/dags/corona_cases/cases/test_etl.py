@@ -21,9 +21,9 @@ from src.lib.dag_helpers import download_csv
 URL = "http://static-files/static/coronacases.csv"
 
 
-def test_corona_cases_table_is_accessible(db_context: DBContext):
+def test_corona_cases_table_is_accessible(pg_context: DBContext):
     execute_sql(
-        db_context,
+        pg_context,
         """INSERT INTO coronacases.german_counties_more_info (
             stateid,
             state,
@@ -44,7 +44,7 @@ def test_corona_cases_table_is_accessible(db_context: DBContext):
             true
         )""",
     )
-    res = query_all_elements(db_context, f"SELECT * from {SCHEMA}.{TABLE}")
+    res = query_all_elements(pg_context, f"SELECT * from {SCHEMA}.{TABLE}")
     assert len(res) == 1
 
 
@@ -55,14 +55,14 @@ def test_dataframe_transformer_transform_column_names_and_types():
     assert type(df.iloc[0]["ref_date_is_symptom_onset"]) is numpy.bool_
 
 
-def test_download_csv_and_write_to_postgres_happy_path(db_context):
+def test_download_csv_and_write_to_postgres_happy_path(pg_context):
 
     etl_covid_cases(URL, SCHEMA, TABLE)
 
-    print(R.path(["credentials", "database"], db_context))
+    print(R.path(["credentials", "database"], pg_context))
 
     results = query_all_elements(
-        db_context,
+        pg_context,
         sql.SQL("SELECT * FROM {}.{}").format(
             sql.Identifier(SCHEMA), sql.Identifier(TABLE)
         ),

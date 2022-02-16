@@ -15,7 +15,7 @@ from database import DBContext, query_all_elements, with_db_context
 
 
 def test_insert_dataframe_to_postgres_works_with_polars_dataframe(
-    db_context: DBContext,
+    pg_context: DBContext,
 ):
     def date32_to_datetime(date32):
         return date(1970, 1, 1) + timedelta(days=date32)
@@ -48,7 +48,7 @@ def test_insert_dataframe_to_postgres_works_with_polars_dataframe(
     assert np.isnan(res[0][5])
 
 
-def test_insert_dataframe_to_postgres_writes_data_correctly(db_context: DBContext):
+def test_insert_dataframe_to_postgres_writes_data_correctly(pg_context: DBContext):
 
     connect_to_db_and_insert_pandas_dataframe(
         schema="censusdata", table="nuts", data=DATA1
@@ -59,7 +59,7 @@ def test_insert_dataframe_to_postgres_writes_data_correctly(db_context: DBContex
     assert res[0] == (0, "DE", "Deutschland", 0)
 
 
-def test_insert_dataframe_to_postgres_does_not_overwrite(db_context: DBContext):
+def test_insert_dataframe_to_postgres_does_not_overwrite(pg_context: DBContext):
     connect_to_db_and_insert_pandas_dataframe(
         schema="censusdata", table="nuts", data=DATA1
     )
@@ -73,7 +73,7 @@ def test_insert_dataframe_to_postgres_does_not_overwrite(db_context: DBContext):
 
 
 def test_truncate_insert_dataframe_to_postgres_does_replace_existing_data(
-    db_context: DBContext,
+    pg_context: DBContext,
 ):
     connect_to_db_and_insert_pandas_dataframe(
         schema="coronacases", table="german_counties_more_info", data=DATA4
@@ -129,14 +129,14 @@ def test_truncate_insert_dataframe_to_postgres_does_replace_existing_data(
     )
 
 
-def test_generate_upsert_action_fragments(db_context: DBContext):
+def test_generate_upsert_action_fragments(pg_context: DBContext):
     upsert_action = _upsert_column_action(["blub"])
     assert (
-        upsert_action.as_string(db_context["connection"]) == '"blub" = EXCLUDED."blub"'
+        upsert_action.as_string(pg_context["connection"]) == '"blub" = EXCLUDED."blub"'
     )
 
 
-def test_generate_upsert_query(db_context: DBContext):
+def test_generate_upsert_query(pg_context: DBContext):
     df = pd.DataFrame(columns=["col1", "col2"], data=[[1, 2]])
     query = _build_upsert_query(
         "INSERT INTO {}.{} ({}) VALUES %s ON CONFLICT ({}) DO UPDATE SET {};",
@@ -145,13 +145,13 @@ def test_generate_upsert_query(db_context: DBContext):
         ["const"],
     )(df)
     assert (
-        query.as_string(db_context["connection"])
+        query.as_string(pg_context["connection"])
         == 'INSERT INTO "bli"."bla" ("col1","col2") VALUES %s ON CONFLICT ("const") DO UPDATE SET '
         + '"col1" = EXCLUDED."col1", "col2" = EXCLUDED."col2";'
     )
 
 
-def test_upsert_dataframe_to_postgres_does_overwrite(db_context: DBContext):
+def test_upsert_dataframe_to_postgres_does_overwrite(pg_context: DBContext):
     connect_to_db_and_insert_pandas_dataframe(
         schema="censusdata", table="nuts", data=DATA1
     )
@@ -163,12 +163,12 @@ def test_upsert_dataframe_to_postgres_does_overwrite(db_context: DBContext):
     assert res[0] == (1, "DE", "Deutschland", 1)
 
 
-def test_query_builder_returns_correct_query(db_context):
+def test_query_builder_returns_correct_query(pg_context):
     df = pd.DataFrame(columns=["col1", "col2"], data=[[1, 2]])
 
     query = _build_insert_query("schemaname", "tablename")(df)
 
-    query_string = query.as_string(db_context["connection"])
+    query_string = query.as_string(pg_context["connection"])
 
     print(query_string)
     assert """"schemaname"."tablename" ("col1","col2")""" in query_string

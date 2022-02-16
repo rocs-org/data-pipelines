@@ -14,7 +14,7 @@ from src.dags.nuts_regions_population.nuts_regions import (
 URL = "http://static-files/static/04-kreise.xlsx"
 
 
-def test_etl_writes_data_to_database(db_context: DBContext):
+def test_etl_writes_data_to_database(pg_context: DBContext):
 
     etl_eu_regions(
         "http://static-files/static/NUTS2021.xlsx", REGIONS_ARGS[1], REGIONS_ARGS[2]
@@ -23,7 +23,7 @@ def test_etl_writes_data_to_database(db_context: DBContext):
     etl_german_counties_more_info(URL, SCHEMA, TABLE)
 
     data_from_db = query_all_elements(
-        db_context,
+        pg_context,
         sql.SQL("SELECT * FROM {schema}.{table}").format(
             schema=sql.Identifier(SCHEMA), table=sql.Identifier(TABLE)
         ),
