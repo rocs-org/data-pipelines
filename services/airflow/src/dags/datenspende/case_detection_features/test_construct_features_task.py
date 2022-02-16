@@ -10,7 +10,7 @@ from src.lib.test_helpers import run_task_with_url
 from database import DBContext
 
 
-def test_feature_task_on_one_off_survey_results(db_context: DBContext):
+def test_feature_task_on_one_off_survey_results(pg_context: DBContext):
 
     # fill database
     # TODO: Add data for question ID 137 (new symptoms question)
@@ -24,7 +24,7 @@ def test_feature_task_on_one_off_survey_results(db_context: DBContext):
     extract_features_task(*ONE_OFF_FEATURE_EXTRACTION_ARGS)
 
     # load freature values and descriptions from database
-    connection = R.prop("connection", db_context)
+    connection = R.prop("connection", pg_context)
     features_from_db = pd.read_sql(
         """
         SELECT
@@ -61,7 +61,7 @@ def test_feature_task_on_one_off_survey_results(db_context: DBContext):
     ]
 
 
-def test_feature_task_on_weeekly_survey_results(db_context: DBContext):
+def test_feature_task_on_weeekly_survey_results(pg_context: DBContext):
 
     # fill database
     run_task_with_url(
@@ -74,7 +74,7 @@ def test_feature_task_on_weeekly_survey_results(db_context: DBContext):
     extract_features_task(*WEEKLY_FEATURE_EXTRACTION_ARGS)
 
     # load freature values and descriptions from database
-    connection = R.prop("connection", db_context)
+    connection = R.prop("connection", pg_context)
     features_from_db = pd.read_sql(
         """
         SELECT

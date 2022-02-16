@@ -57,10 +57,10 @@ def test_extract_features_from_weekly_questionnarie(prepared_db):
 
 
 @pytest.fixture
-def prepared_db(db_context: DBContext):
+def prepared_db(pg_context: DBContext):
     run_task_with_url(
         "datenspende_surveys_v2",
         "gather_data_from_thryve",
         "http://static-files/thryve/exportStudy.7z",
     )
-    return db_context
+    return pg_context

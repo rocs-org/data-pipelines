@@ -9,34 +9,34 @@ from src.dags.nuts_regions_population.german_counties_more_info import (
 )
 
 
-def test_nuts_regions_population_tasks_executes(db_context):
+def test_nuts_regions_population_tasks_executes(pg_context):
     run_task_with_url("nuts_regions_population", REGIONS_TASK, REGIONS_URL)
 
     [_, SCHEMA, TABLE] = REGIONS_ARGS
-    db_entries = query_all_elements(db_context, f"SELECT * FROM {SCHEMA}.{TABLE};")
+    db_entries = query_all_elements(pg_context, f"SELECT * FROM {SCHEMA}.{TABLE};")
     assert len(db_entries) > 10
     assert db_entries[0] == (0, "BE", "Belgique/België", 1)
 
 
-def test_population_task_executes_after_regions_task(db_context):
+def test_population_task_executes_after_regions_task(pg_context):
     run_task_with_url("nuts_regions_population", REGIONS_TASK, REGIONS_URL)
     run_task_with_url("nuts_regions_population", POPULATION_TASK, POPULATION_URL)
 
     [_, SCHEMA, TABLE] = POPULATION_ARGS
 
-    db_entries = query_all_elements(db_context, f"SELECT * FROM {SCHEMA}.{TABLE};")
+    db_entries = query_all_elements(pg_context, f"SELECT * FROM {SCHEMA}.{TABLE};")
 
     assert db_entries[0] == (1, 5841215, "BE", "TOTAL", "F", 2020, "")
     assert len(db_entries) == 1130
 
 
-def test_counties_task_executes_after_regions_task(db_context):
+def test_counties_task_executes_after_regions_task(pg_context):
     run_task_with_url("nuts_regions_population", REGIONS_TASK, REGIONS_URL)
     run_task_with_url("nuts_regions_population", COUNTIES_TASK, COUNTIES_URL)
 
     [_, SCHEMA, TABLE] = COUNTIES_ARGS
 
-    db_entries = query_all_elements(db_context, f"SELECT * FROM {SCHEMA}.{TABLE};")
+    db_entries = query_all_elements(pg_context, f"SELECT * FROM {SCHEMA}.{TABLE};")
 
     assert db_entries[0] == (
         1,
