@@ -2,7 +2,6 @@ from typing import Any
 
 import pandas as pd
 import ramda as R
-from pandahouse import to_clickhouse
 
 from clickhouse_helpers.types import DBContext
 
@@ -19,15 +18,7 @@ def query_dataframe(context: DBContext, sql: str) -> pd.DataFrame:
 
 @R.curry
 def insert_dataframe(context: DBContext, table: str, data: pd.DataFrame):
-    credentials = context["credentials"]
-    to_clickhouse(
-        data,
-        table,
-        connection={
-            "host": f"http://{credentials['host']}:8123",  # pandahouse uses clickhouses HTTP client (different port)
-            "database": credentials["database"],
-        },
-    )
+    return context["connection"].insert_dataframe(f"INSERT INTO {table} VALUES", data)
 
 
 @R.curry
