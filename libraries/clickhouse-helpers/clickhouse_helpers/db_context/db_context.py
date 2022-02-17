@@ -39,7 +39,7 @@ def _read_db_credentials_from_env() -> DBCredentials:
 
 
 def _connect_to_db(credentials: DBCredentials) -> Client:
-    return Client(**credentials)
+    return Client(**credentials, settings={"use_numpy": True})
 
 
 def raiser(err):
