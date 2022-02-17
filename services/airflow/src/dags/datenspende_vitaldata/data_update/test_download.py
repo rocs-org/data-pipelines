@@ -3,7 +3,8 @@ import os
 import polars as po
 from polars.datatypes import Int64, Utf8
 import ramda as R
-from .download import download, DataList
+from .download import download
+from src.lib.dag_helpers.download_helpers import DataList
 
 URL = "http://static-files/thryve/export.7z"
 
