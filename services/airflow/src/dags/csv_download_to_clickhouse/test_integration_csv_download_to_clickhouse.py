@@ -4,7 +4,7 @@ from airflow.models import DagBag
 from clickhouse_helpers import DBContext, query_dataframe
 from src.lib.test_helpers import execute_dag
 
-URL = "http://static-files/static/test.csv"
+URL = "http://static-files/static/test_ch.csv"
 
 
 def test_dag_loads_with_no_errors():
