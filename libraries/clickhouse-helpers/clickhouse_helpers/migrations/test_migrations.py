@@ -28,7 +28,7 @@ def test_migrate_runs_migrations_on_db():
     insert_dataframe(
         context,
         "test_table",
-        TEST_DF.set_index("id"),
+        TEST_DF,
     )
 
     res = query_dataframe(
