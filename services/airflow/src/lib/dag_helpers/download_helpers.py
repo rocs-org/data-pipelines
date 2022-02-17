@@ -7,6 +7,23 @@ from returns.curry import curry
 from requests.auth import HTTPBasicAuth
 from pandas import DataFrame, read_csv
 
+from src.dags.datenspende_vitaldata.data_update.download import DataList
+
+
+@R.curry
+def extract(
+    file_loader,
+    mapper,
+    access_config: dict,
+    url: str,
+) -> DataList:
+    return R.pipe(
+        download_7zfile(access_config),
+        unzip_7zfile(access_config),
+        file_loader,
+        mapper,
+    )(url)
+
 
 @curry
 def download_7zfile(access_config: dict, url):

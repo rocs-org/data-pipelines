@@ -1,11 +1,9 @@
 import ramda as R
 
 from clickhouse_helpers import DBContext, query_dataframe
-from .el_epoch_data import el_epoch_data
+from .el_epoch_data import el_epoch_data, EPOCH_TABLE
 
 URL = "http://static-files/thryve/exportEpoch.7z"
-
-EPOCH_TABLE = "vital_data_epoch"
 
 
 def test_load_writes_all_epoch_frames_to_database(ch_context: DBContext):
