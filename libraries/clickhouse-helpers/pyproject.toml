@@ -9,6 +9,7 @@ python = "^3.8"
 ramda = "^0.6.4"
 clickhouse-migrator = "^1.0.6"
 pandahouse = "^0.2.7"
+typer = "^0.4.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.0.0"
@@ -28,3 +29,6 @@ looponfailroots = 'clickhouse_helpers'
 max-line-length = 120
 max-complexity = 10
 ignore = "E731, W503"
+
+[tool.poetry.scripts]
+migrate-clickhouse = "clickhouse_helpers.cli:run_migrations"

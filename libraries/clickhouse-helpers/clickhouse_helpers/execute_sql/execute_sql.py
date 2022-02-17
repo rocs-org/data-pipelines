@@ -1,11 +1,10 @@
-import re
 from typing import Any
 
 import pandas as pd
 import ramda as R
 from pandahouse import to_clickhouse
 
-from .types import DBContext
+from clickhouse_helpers.types import DBContext
 
 
 @R.curry
@@ -25,7 +24,7 @@ def insert_dataframe(context: DBContext, table: str, data: pd.DataFrame):
         data,
         table,
         connection={
-            "host": f"http://{credentials['host']}:8123",
+            "host": f"http://{credentials['host']}:8123",  # pandahouse uses clickhouses HTTP client (different port)
             "database": credentials["database"],
         },
     )
@@ -37,11 +36,3 @@ def _create_database(context: DBContext) -> DBContext:
         context, f"CREATE DATABASE {R.path(['credentials', 'database'], context)};"
     )
     return context
-
-
-def camel_case_to_snake_case(string: str):
-    return re.sub(r"(?<!^)(?=[A-Z])", "_", string).lower()
-
-
-def snake_case_to_camel_case(string: str):
-    return "".join(word.title() for word in string.split("_"))

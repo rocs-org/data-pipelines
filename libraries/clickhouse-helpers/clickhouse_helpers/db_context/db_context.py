@@ -3,7 +3,7 @@ import os
 import ramda as R
 from clickhouse_driver import Client
 
-from .types import (
+from clickhouse_helpers.types import (
     DBCredentials,
     DBContext,
 )
@@ -12,7 +12,7 @@ from .types import (
 def create_db_context(*_) -> DBContext:
     return R.pipe(
         lambda *_: _read_db_credentials_from_env(),
-        _create_context_from_credentials,
+        create_context_from_credentials,
     )("")
 
 
@@ -42,18 +42,13 @@ def _connect_to_db(credentials: DBCredentials) -> Client:
     return Client(**credentials)
 
 
-_create_context_from_credentials = R.apply_spec(
+def raiser(err):
+    raise err
+
+
+create_context_from_credentials = R.apply_spec(
     {
         "connection": _connect_to_db,
         "credentials": R.identity,
     }
 )
-
-
-_update_connection_in_context = R.pipe(
-    R.prop("credentials"), _create_context_from_credentials
-)
-
-
-def raiser(err):
-    raise err

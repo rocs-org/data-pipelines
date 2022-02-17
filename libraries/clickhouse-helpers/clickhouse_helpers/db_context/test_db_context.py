@@ -4,7 +4,7 @@ import pytest
 import ramda as R
 from clickhouse_driver.errors import ServerException
 
-from . import (
+from clickhouse_helpers import (
     execute_sql,
     teardown_test_db_context,
     create_test_db_context,

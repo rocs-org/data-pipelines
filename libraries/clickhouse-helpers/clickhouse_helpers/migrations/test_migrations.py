@@ -14,7 +14,7 @@ from clickhouse_helpers.migrations.migrations import (
 )
 
 
-def test_migrations():
+def test_migrate_runs_migrations_on_db():
     context = create_test_db_context()
 
     with pytest.raises(ServerException):

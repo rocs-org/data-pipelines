@@ -1,9 +1,7 @@
 import pandas as pd
 
-from . import DBContext
-from .execute_sql import (
-    snake_case_to_camel_case,
-    camel_case_to_snake_case,
+from clickhouse_helpers import DBContext
+from clickhouse_helpers.execute_sql import (
     execute_sql,
     insert_dataframe,
     query_dataframe,
@@ -68,15 +66,6 @@ def test_insert_dataframe_works_with_missing_columns(db_context: DBContext):
             {"id": [1, 2], "col1": [0, 0], "col2": ["a", "b"], "col3": ["", ""]}
         ).values
     ).all()
-
-
-def test_snake_case_to_camel_case():
-    assert snake_case_to_camel_case("snake_case") == "SnakeCase"
-
-
-def test_camel_case_to_snake_case():
-    assert camel_case_to_snake_case("CamelCase") == "camel_case"
-    assert camel_case_to_snake_case("snake_case") == "snake_case"
 
 
 TEST_DF = pd.DataFrame(

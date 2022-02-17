@@ -92,11 +92,11 @@ services:
     volumes:
       - ./docker/clickhouse/config.yaml:/etc/clickhouse-server/config.yaml
       - ./docker/clickhouse/users.yaml:/etc/clickhouse-server/users.d/users.yaml
-      - ./docker/clickhouse/init.sql:/docker-entrypoint-initdb.d/init.sql
       - clickhouse-db-volume:/var/lib/clickhouse:rw
     environment:
       CLICKHOUSE_USER: "${CLICKHOUSE_USER}"
       CLICKHOUSE_PASSWORD: "${CLICKHOUSE_PASSWORD}"
+      CLICKHOUSE_DB: "${CLICKHOUSE_DB}"
     ports:
       - "9000:9000" # for native clickhouse client
       - "8123:8123" # for HTML client
