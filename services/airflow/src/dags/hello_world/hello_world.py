@@ -26,9 +26,6 @@ def load(data: str) -> str:
 default_args = {
     "owner": "airflow",
     "depends_on_past": False,
-    "email": ["jakob.j.kolb@gmail.com"],
-    "email_on_failure": True,
-    "email_on_retry": False,
     "retries": 1,
     "retry_delay": timedelta(minutes=5),
     "provide_context": True,

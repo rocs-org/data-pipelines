@@ -16,9 +16,6 @@ from src.lib.test_helpers.helpers import (
 default_args = {
     "owner": "airflow",
     "depends_on_past": False,
-    "email": ["jakob.j.kolb@gmail.com"],
-    "email_on_failure": True,
-    "email_on_retry": False,
     "provide_context": True,
 }
 dag_id = "dag_name"

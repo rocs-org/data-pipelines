@@ -21,7 +21,6 @@ from src.lib.test_helpers import if_var_exists_in_dag_conf_use_as_first_arg
 default_args = {
     "owner": "airflow",
     "depends_on_past": False,
-    "email": ["jakob.j.kolb@gmail.com"],
     "retries": 0,
     "retry": False,
     "provide_context": True,
