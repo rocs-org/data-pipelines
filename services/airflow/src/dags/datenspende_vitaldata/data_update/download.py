@@ -1,12 +1,8 @@
-import polars
 import polars as po
 import glob
 from polars.datatypes import Utf8, Int64
-from typing import List, Tuple
 
 from src.lib.dag_helpers.download_helpers import extract
-
-DataList = List[Tuple[str, List, polars.DataFrame]]
 
 
 def load_files(*_):
