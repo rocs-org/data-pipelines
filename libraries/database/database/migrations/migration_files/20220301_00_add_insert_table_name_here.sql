@@ -1,0 +1,1 @@
+CREATE SCHEMA your_new_schema;
