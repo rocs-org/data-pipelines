@@ -65,7 +65,13 @@ def test_datenspende_dag_writes_correct_results_to_db(db_context: DBContext):
         ;
         """,
         connection,
-    ).dropna(axis=1, how="all")
+    )
+
+    # assert feature record links are written in the dag
+    assert (
+        features["test_week_start"][features["id"] == 48].values[0]
+        < features["test_week_start"][features["id"] == 49].values[0]
+    )
 
     assert len(features) == 56
 
