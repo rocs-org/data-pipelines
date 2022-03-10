@@ -1,14 +1,13 @@
-from datetime import datetime
-import ramda as R
-import subprocess
-import os
 import json
+import os
+import subprocess
+from datetime import datetime
 
+import ramda as R
 from airflow.models import DagBag, TaskInstance
+from airflow.utils.dates import days_ago
 from airflow.utils.types import DagRunType
 from returns.curry import curry
-
-from airflow.utils.dates import days_ago
 
 
 def execute_dag(dag_id: str, execution_date: str, dag_config: dict = {}):
@@ -103,6 +102,15 @@ def create_task_instance(dag_id: str, task_id: str, url: str = None):
 
 def run_task_with_url(dag_id: str, task_id: str, url: str):
     task, task_instance = create_task_instance(dag_id, task_id, url)
+
+    task_instance.get_template_context()
+    res = task.prepare_for_execution().execute(task_instance.get_template_context())
+
+    return res
+
+
+def run_task(dag_id: str, task_id: str):
+    task, task_instance = create_task_instance(dag_id, task_id)
 
     task_instance.get_template_context()
     res = task.prepare_for_execution().execute(task_instance.get_template_context())
