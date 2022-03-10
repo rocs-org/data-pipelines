@@ -49,7 +49,10 @@ requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.pytest.ini_options]
+env_files =".env"
 looponfailroots = 'src'
+python_files = ['*_test.py', 'test_*.py']
+
 
 [tool.flake8]
 max-line-length = 120

@@ -35,5 +35,4 @@ def test_feature_name_ids_have_to_match_columns_in_feature_table(db_context: DBC
         """,
     )
 
-    print(feature_descriptions_from_db)
     assert len(feature_descriptions_from_db) == 1

@@ -11,7 +11,7 @@ def test_dag_loads_with_no_errors():
     assert len(dag_bag.import_errors) == 0
 
 
-def test_datenspende_dag_writes_correct_results_to_db(pg_context: DBContext):
+def test_datenspende_vitals_dag_writes_correct_results_to_db(pg_context: DBContext):
     credentials = pg_context["credentials"]
 
     assert (
