@@ -3,7 +3,6 @@ FROM apache/airflow:2.2.3-python3.8
 USER root
 
 RUN apt-get update && \
-    apt-get upgrade -y && \
     apt-get install -y git
 
 RUN mkdir ../../libraries

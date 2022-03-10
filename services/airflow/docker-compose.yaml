@@ -46,6 +46,7 @@ x-airflow-common:
     - ./src:/opt/airflow/src
     - airflow-logs-volume:/opt/airflow/logs
     - ./setup.cfg:/opt/airflow/setup.cfg
+    - ./pyproject.toml:/opt/airflow/pyproject.toml
   user: "${AIRFLOW_UID:-50000}:${AIRFLOW_GID:-50000}"
   depends_on:
     redis:
