@@ -4,3 +4,6 @@
 # build
 ./build
 .pytest_cache
+
+# environments
+.env.prod
