@@ -238,13 +238,13 @@ def test_elements_of_l1_that_are_in_l2_returns_subset():
 
 
 @pytest.fixture
-def prepared_db(db_context: DBContext):
+def prepared_db(pg_context: DBContext):
     run_task_with_url(
         "datenspende_surveys_v2",
         "gather_data_from_thryve",
         "http://static-files/thryve/exportStudy.7z",
     )
-    return db_context
+    return pg_context
 
 
 def difference_between_dataframes_without_duplicates(

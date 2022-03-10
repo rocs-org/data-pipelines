@@ -9,7 +9,7 @@ from database import query_all_elements, with_db_context
 URL = "http://static-files/static/test.csv"
 
 
-def test_download_csv_and_write_to_postgres_happy_path(db_context):
+def test_download_csv_and_write_to_postgres_happy_path(pg_context):
     table = "test_table"
 
     download_csv_and_upload_to_postgres(URL, table)
@@ -25,7 +25,7 @@ def test_download_csv_and_write_to_postgres_happy_path(db_context):
     ]
 
 
-def test_download_csv_and_write_to_postgres_picks_up_injected_db_name(db_context):
+def test_download_csv_and_write_to_postgres_picks_up_injected_db_name(pg_context):
     table = "test_table"
 
     with pytest.raises(psycopg2.OperationalError) as exception_info:

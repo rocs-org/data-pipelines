@@ -69,9 +69,6 @@ def _get_tuples(df: DataFrame) -> List:
 default_args = {
     "owner": "airflow",
     "depends_on_past": False,
-    "email": ["jakob.j.kolb@gmail.com"],
-    "email_on_failure": True,
-    "email_on_retry": False,
     "retries": 0,
     "retry": False,
     "provide_context": True,

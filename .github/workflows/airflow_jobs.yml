@@ -61,8 +61,12 @@ jobs:
         run: |
           sudo apt install git-secret
           git-secret reveal
+      - name: Pull docker impages
+        run: docker-compose pull
+      - uses: satackey/action-docker-layer-caching@v0.0.11
+        continue-on-error: true
       - name: Build docker stack
-        run: make setup
+        run: make build && make setup
       - name: Wait for container health
         run: bash wait-for-healthy-container.sh airflow-scheduler 300
       - name: Run unit tests
@@ -85,8 +89,12 @@ jobs:
         run: |
           sudo apt install git-secret
           git-secret reveal
+      - name: Pull docker impages
+        run: docker-compose pull
+      - uses: satackey/action-docker-layer-caching@v0.0.11
+        continue-on-error: true
       - name: Build docker stack
-        run: make setup
+        run: make build && make setup
       - name: Wait for container health
         run: bash wait-for-healthy-container.sh airflow-scheduler 300
       - name: Run DB migrations

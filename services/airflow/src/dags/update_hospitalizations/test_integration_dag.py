@@ -16,7 +16,7 @@ def test_dag_loads_with_no_errors():
     assert len(dag_bag.import_errors) == 0
 
 
-def test_dag_writes_correct_results_to_db(db_context: DBContext):
+def test_dag_writes_correct_results_to_db(pg_context: DBContext):
     run_task_with_url(
         "nuts_regions_population",
         "load_nuts_regions",
@@ -28,7 +28,7 @@ def test_dag_writes_correct_results_to_db(db_context: DBContext):
         "http://static-files/static/demo_r_pjangrp3.tsv",
     )
 
-    credentials = db_context["credentials"]
+    credentials = pg_context["credentials"]
 
     assert (
         execute_dag(
@@ -39,7 +39,7 @@ def test_dag_writes_correct_results_to_db(db_context: DBContext):
         == 0
     )
     res_cases = query_all_elements(
-        db_context, f"SELECT * FROM {HOSPITALIZATIONS_SCHEMA}.{HOSPITALIZATIONS_TABLE}"
+        pg_context, f"SELECT * FROM {HOSPITALIZATIONS_SCHEMA}.{HOSPITALIZATIONS_TABLE}"
     )
     assert len(res_cases) == 82
     test_case_tuple = res_cases[0]

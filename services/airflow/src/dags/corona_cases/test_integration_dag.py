@@ -17,8 +17,8 @@ def test_dag_loads_with_no_errors():
     assert len(dag_bag.import_errors) == 0
 
 
-def test_corona_cases_dag_writes_correct_results_to_db(db_context: DBContext):
-    credentials = db_context["credentials"]
+def test_corona_cases_dag_writes_correct_results_to_db(pg_context: DBContext):
+    credentials = pg_context["credentials"]
 
     # run population data pipeline first, as incidence calculation depends on its results
 
@@ -46,7 +46,7 @@ def test_corona_cases_dag_writes_correct_results_to_db(db_context: DBContext):
     )
 
     res_cases = query_all_elements(
-        db_context, f"SELECT * FROM {CASES_SCHEMA}.{CASES_TABLE}"
+        pg_context, f"SELECT * FROM {CASES_SCHEMA}.{CASES_TABLE}"
     )
     assert len(res_cases) == 9
     assert res_cases[0] == (
@@ -68,7 +68,7 @@ def test_corona_cases_dag_writes_correct_results_to_db(db_context: DBContext):
     )
 
     res_incidence = query_all_elements(
-        db_context, f"SELECT * FROM {INCIDENCES_SCHEMA}.{INCIDENCES_TABLE};"
+        pg_context, f"SELECT * FROM {INCIDENCES_SCHEMA}.{INCIDENCES_TABLE};"
     )
     assert len(res_incidence) == 150
     assert res_incidence[8] == (

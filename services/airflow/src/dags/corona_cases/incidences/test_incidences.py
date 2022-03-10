@@ -77,7 +77,7 @@ REGIONS_URL = "http://static-files/static/NUTS2021.xlsx"
 COUNTIES_URL = "http://static-files/static/alle-kreise.xlsx"
 
 
-def test_calculated_incidence_matches_expected_results(db_context: DBContext):
+def test_calculated_incidence_matches_expected_results(pg_context: DBContext):
 
     replace_url_in_args_and_run_task(REGIONS_URL, REGIONS_ARGS, etl_eu_regions)
     replace_url_in_args_and_run_task(

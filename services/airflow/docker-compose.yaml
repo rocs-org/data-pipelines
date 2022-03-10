@@ -67,7 +67,8 @@ services:
       - ./files/thryve:/var/www/thryve
     command: nginx
     ports:
-      - 80:80
+      - "80:80"
+
   target-db:
     container_name: "test_db"
     image: postgres:13
@@ -83,7 +84,23 @@ services:
       retries: 5
     restart: always
     ports:
-      - 5432:5432
+      - "5432:5432"
+
+  clickhouse:
+    container_name: "clickhouse"
+    image: yandex/clickhouse-server:latest
+    volumes:
+      - ./docker/clickhouse/config.yaml:/etc/clickhouse-server/config.yaml
+      - ./docker/clickhouse/users.yaml:/etc/clickhouse-server/users.d/users.yaml
+      - clickhouse-db-volume:/var/lib/clickhouse:rw
+    environment:
+      CLICKHOUSE_USER: "${CLICKHOUSE_USER}"
+      CLICKHOUSE_PASSWORD: "${CLICKHOUSE_PASSWORD}"
+      CLICKHOUSE_DB: "${CLICKHOUSE_DB}"
+    ports:
+      - "9000:9000" # for native clickhouse client
+      - "8123:8123" # for HTML client
+      - "9005:9005" # for postgres client
 
   postgres:
     image: postgres:13
@@ -169,3 +186,4 @@ volumes:
   postgres-db-volume:
   airflow-logs-volume:
   target-db-volume:
+  clickhouse-db-volume:

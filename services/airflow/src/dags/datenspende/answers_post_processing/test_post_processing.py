@@ -11,7 +11,7 @@ from .post_processing import (
 )
 
 
-def test_post_processing_loads_correct_answers(db_context: DBContext):
+def test_post_processing_loads_correct_answers(pg_context: DBContext):
     run_task_with_url(
         "datenspende_surveys_v2",
         "gather_data_from_thryve",
@@ -29,7 +29,7 @@ def test_transform_answers_returns_elements_as_list():
     assert transformed.equals(TRANSFORMED_QUESTIONS_WITH_DUPLICATES)
 
 
-def test_etl_writes_to_db_correctly(db_context: DBContext):
+def test_etl_writes_to_db_correctly(pg_context: DBContext):
     run_task_with_url(
         "datenspende_surveys_v2",
         "gather_data_from_thryve",
@@ -40,13 +40,13 @@ def test_etl_writes_to_db_correctly(db_context: DBContext):
 
     single_answers = pandas.read_sql_query(
         "SELECT * FROM datenspende_derivatives.test_and_symptoms_answers;",
-        R.prop("connection", db_context),
+        R.prop("connection", pg_context),
     )
     assert len(single_answers) == 575
 
     duplicated_answers = pandas.read_sql_query(
         "SELECT * FROM datenspende_derivatives.test_and_symptoms_answers_duplicates;",
-        R.prop("connection", db_context),
+        R.prop("connection", pg_context),
     )
     assert len(duplicated_answers) == 29
 

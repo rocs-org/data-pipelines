@@ -11,8 +11,8 @@ def test_dag_loads_with_no_errors():
     assert len(dag_bag.import_errors) == 0
 
 
-def test_dag_executes_with_no_errors(db_context: DBContext):
-    credentials = db_context["credentials"]
+def test_postgres_dag_executes_with_no_errors(pg_context: DBContext):
+    credentials = pg_context["credentials"]
 
     assert (
         execute_dag(
@@ -22,6 +22,7 @@ def test_dag_executes_with_no_errors(db_context: DBContext):
         )
         == 0
     )
-    res = query_all_elements(db_context, "SELECT * FROM test_tables.test_table")
+
+    res = query_all_elements(pg_context, "SELECT * FROM test_tables.test_table")
 
     assert len(res) == 2

@@ -26,8 +26,8 @@ def test_dag_loads_with_no_errors():
     assert len(dag_bag.import_errors) == 0
 
 
-def test_population_dag_executes_and_writes_entries_to_DB(db_context: DBContext):
-    credentials = db_context["credentials"]
+def test_population_dag_executes_and_writes_entries_to_DB(pg_context: DBContext):
+    credentials = pg_context["credentials"]
 
     assert (
         execute_dag(
@@ -45,7 +45,7 @@ def test_population_dag_executes_and_writes_entries_to_DB(db_context: DBContext)
     )
 
     regions_from_db = query_all_elements(
-        db_context,
+        pg_context,
         sql.SQL("SELECT * FROM {}.{}").format(
             sql.Identifier(REGIONS_SCHEMA), sql.Identifier(REGIONS_TABLE)
         ),
@@ -53,7 +53,7 @@ def test_population_dag_executes_and_writes_entries_to_DB(db_context: DBContext)
     assert len(regions_from_db) == 2121
 
     german_counties_from_db = query_all_elements(
-        db_context,
+        pg_context,
         sql.SQL("SELECT * FROM {}.{}").format(
             sql.Identifier(COUNTIES_SCHEMA), sql.Identifier(COUNTIES_TABLE)
         ),
@@ -61,7 +61,7 @@ def test_population_dag_executes_and_writes_entries_to_DB(db_context: DBContext)
     assert len(german_counties_from_db) == 15
 
     german_zips_from_db = query_all_elements(
-        db_context,
+        pg_context,
         sql.SQL("SELECT * FROM {}.{};").format(
             sql.Identifier(ZIP_SCHEMA), sql.Identifier(ZIP_TABLE)
         ),

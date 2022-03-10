@@ -22,16 +22,16 @@ def setup_vitaldata_in_db():
     )(URL)
 
 
-def test_pivot_vitaldata_creates_correct_tables(db_context: DBContext):
+def test_pivot_vitaldata_creates_correct_tables(pg_context: DBContext):
     setup_vitaldata_in_db()
     for vitalid, vitaltype, datatype in PIVOT_TARGETS[0]:
-        create_pivot_table(db_context, vitalid, vitaltype, datatype)
+        create_pivot_table(pg_context, vitalid, vitaltype, datatype)
 
     steps_data = query_all_elements(
-        db_context, "SELECT * FROM datenspende_derivatives.steps_ct;"
+        pg_context, "SELECT * FROM datenspende_derivatives.steps_ct;"
     )
     resting_heartrate_data = query_all_elements(
-        db_context, "SELECT * FROM datenspende_derivatives.resting_heartrate_ct;"
+        pg_context, "SELECT * FROM datenspende_derivatives.resting_heartrate_ct;"
     )
     assert steps_data[-1] == (200, 3600, None, None, None, None, None, None, None)
     assert resting_heartrate_data[0] == (100, None, None, 50, 50, 50, None, None, None)
