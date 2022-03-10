@@ -4,12 +4,12 @@ from .write_dataframe_to_postgres import connect_to_db_and_insert_pandas_datafra
 from .load_dataframe_from_postgres import execute_query_and_return_dataframe
 
 
-def test_load_dataframe_from_postgres(db_context: DBContext):
+def test_load_dataframe_from_postgres(pg_context: DBContext):
     connect_to_db_and_insert_pandas_dataframe(
         schema="censusdata", table="nuts", data=DATA1
     )
     res_from_db = execute_query_and_return_dataframe(
-        """ SELECT * FROM censusdata.nuts;""", db_context
+        """ SELECT * FROM censusdata.nuts;""", pg_context
     )
 
     assert (res_from_db.values == DATA1.values).all()
