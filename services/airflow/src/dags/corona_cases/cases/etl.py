@@ -28,7 +28,6 @@ def etl_covid_cases(url: str, schema: str, table: str, **kwargs) -> DBContext:
 
 
 def transform_dataframe(df: DataFrame) -> DataFrame:
-    print(df.columns)
     additional_info = download_csv("http://static-files/static/countyID_mapping.csv")
     df = df.join(additional_info.set_index("IdLandkreis"), on="IdLandkreis")
     renamed = df.rename(columns=COLUMN_MAPPING, inplace=False)

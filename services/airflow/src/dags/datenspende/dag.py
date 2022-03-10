@@ -11,6 +11,9 @@ from src.dags.datenspende.case_detection_features import (
     WEEKLY_FEATURE_EXTRACTION_ARGS,
     ONE_OFF_FEATURE_EXTRACTION_ARGS,
 )
+from src.dags.datenspende.link_feature_records import (
+    link_feature_records,
+)
 from src.lib.dag_helpers import (
     create_slack_error_message_from_task_context,
     slack_notifier_factory,
@@ -65,4 +68,11 @@ t4 = PythonOperator(
     op_args=ONE_OFF_FEATURE_EXTRACTION_ARGS,
 )
 
+t5 = PythonOperator(
+    task_id="link_feature_records",
+    python_callable=link_feature_records,
+    dag=dag,
+)
+
 t1 >> [t2, t3, t4]
+[t3, t4] >> t5
