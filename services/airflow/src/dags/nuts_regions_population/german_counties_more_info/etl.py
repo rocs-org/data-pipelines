@@ -7,9 +7,8 @@ from src.lib.dag_helpers import connect_to_db_and_insert_pandas_dataframe
 
 
 URL = (
-    "https://www.destatis.de/DE/Themen/Laender-Regionen/Regionales/"
-    + "Gemeindeverzeichnis/Administrativ/04-kreise.xlsx;"
-    + "jsessionid=54A8E9B7D4B7A2D755B8A5B1FA599C4F.live711?__blob=publicationFile"
+    "https://www.destatis.de/DE/Themen/Laender-Regionen/Regionales"
+    "/Gemeindeverzeichnis/Administrativ/04-kreise.xlsx?__blob=publicationFile"
 )
 SCHEMA = "censusdata"
 TABLE = "german_counties_info"
