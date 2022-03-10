@@ -8,7 +8,7 @@ from .link_feature_records import (
 )
 
 
-def test_write_links_to_db_only_updates_link_columns(db_context: DBContext):
+def test_write_links_to_db_only_updates_link_columns(pg_context: DBContext):
     # fill database
     run_task_with_url(
         "datenspende_surveys_v2",
@@ -33,7 +33,7 @@ def test_write_links_to_db_only_updates_link_columns(db_context: DBContext):
         FROM
             datenspende_derivatives.homogenized_features
         """,
-        db_context,
+        pg_context,
     )
 
     # assert record 49 dates after 48
