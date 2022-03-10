@@ -1,24 +1,8 @@
-import polars
 import polars as po
 import glob
 from polars.datatypes import Utf8, Int64
-import ramda as R
-from typing import List, Tuple
 
-from src.lib.dag_helpers import download_7zfile, unzip_7zfile
-
-
-DataList = List[Tuple[str, List, polars.DataFrame]]
-
-
-@R.curry
-def download(access_config: dict, url: str) -> DataList:
-    return R.pipe(
-        download_7zfile(access_config),
-        unzip_7zfile(access_config),
-        load_files,
-        map_dict_to_list,
-    )(url)
+from src.lib.dag_helpers.download_helpers import extract
 
 
 def load_files(*_):
@@ -67,3 +51,6 @@ def load_files(*_):
 
 def map_dict_to_list(d: dict) -> list:
     return [(d[key]["table"], d[key]["constraint"], d[key]["df"]) for key in d.keys()]
+
+
+download = extract(load_files, map_dict_to_list)
