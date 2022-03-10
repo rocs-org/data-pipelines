@@ -1,11 +1,30 @@
 import io
+from typing import List, Tuple
 
+import polars
+import py7zr
 import ramda as R
 import requests
-import py7zr
-from returns.curry import curry
-from requests.auth import HTTPBasicAuth
 from pandas import DataFrame, read_csv
+from requests.auth import HTTPBasicAuth
+from returns.curry import curry
+
+DataList = List[Tuple[str, List, polars.DataFrame]]
+
+
+@R.curry
+def extract(
+    file_loader,
+    mapper,
+    access_config: dict,
+    url: str,
+) -> DataList:
+    return R.pipe(
+        download_7zfile(access_config),
+        unzip_7zfile(access_config),
+        file_loader,
+        mapper,
+    )(url)
 
 
 @curry

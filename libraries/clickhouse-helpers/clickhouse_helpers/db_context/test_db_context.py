@@ -1,11 +1,13 @@
 from os import environ
-
+import pandas as pd
 import pytest
 import ramda as R
 from clickhouse_driver.errors import ServerException
 
 from clickhouse_helpers import (
     execute_sql,
+    query_dataframe,
+    insert_dataframe,
     teardown_test_db_context,
     create_test_db_context,
     migrate,
@@ -22,20 +24,20 @@ def test_db_context_fixture_supplies_context_with_migrations_applied(
     db_context: DBContext,
 ):
     # assert migrations have run and read write is working
-    execute_sql(
+    insert_dataframe(
         db_context,
-        "INSERT INTO test_table (col1, col2, col3) VALUES",
-        [(1, "Hello", "World!")],
+        "test_table",
+        TEST_DF,
     )
     assert (
-        execute_sql(
+        query_dataframe(
             db_context,
             """
-             SELECT col1, col2, col3 FROM test_table;
-        """,
-        )
-        == [(1, "Hello", "World!")]
-    )
+             SELECT * FROM test_table;
+            """,
+        ).values
+        == TEST_DF.values
+    ).all()
 
 
 def test_create_db_context():
@@ -76,20 +78,16 @@ def test_db_connection_read_write():
     )
 
     # assert migrations have run and read write is working
-    execute_sql(
+    insert_dataframe(db_context, "test_table", TEST_DF)
+
+    res = query_dataframe(
         db_context,
-        "INSERT INTO test_table (col1, col2, col3) VALUES",
-        [(1, "Hello", "World!")],
+        """
+             SELECT * FROM test_table;
+            """,
     )
-    assert (
-        execute_sql(
-            db_context,
-            """
-             SELECT col1, col2, col3 FROM test_table;
-        """,
-        )
-        == [(1, "Hello", "World!")]
-    )
+
+    assert (res.values == TEST_DF.values).all()
 
     teardown_test_db_context(db_context)
 
@@ -98,7 +96,7 @@ def test_teardown_test_db_context():
     context = create_test_db_context()
     teardown_test_db_context(context)
     with pytest.raises(ServerException) as e:
-        execute_sql(context, "SELECT * FROM test_table")
+        query_dataframe(context, "SELECT * FROM test_table")
     assert f"Database {context['credentials']['database']} doesn't exist" in str(
         e.value
     )
@@ -107,3 +105,8 @@ def test_teardown_test_db_context():
 def test_read_credentials():
     credentials = _read_db_credentials_from_env()
     assert credentials["user"] == environ["CLICKHOUSE_USER"]
+
+
+TEST_DF = pd.DataFrame(
+    {"id": [0, 1], "col1": [1, 2], "col2": ["Hello", "b"], "col3": ["World!", "c"]}
+)

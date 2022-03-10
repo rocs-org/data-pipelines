@@ -38,7 +38,7 @@ def download_csv_and_upload_to_clickhouse(
 @R.curry
 def load_df_to_clickhouse(table: str, data: pd.DataFrame) -> DBCredentials:
     context = create_db_context()
-    insert_dataframe(context, table, data.set_index("col1"))
+    insert_dataframe(context, table, data)
     teardown_db_context(context)
     return context["credentials"]
 
