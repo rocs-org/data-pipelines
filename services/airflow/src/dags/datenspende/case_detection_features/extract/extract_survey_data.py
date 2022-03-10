@@ -1,7 +1,7 @@
-import pandas as pd
 import ramda as R
 
-from database import create_db_context, DBContext
+from database import create_db_context
+from src.lib.dag_helpers import execute_query_and_return_dataframe
 
 
 @R.curry
@@ -41,8 +41,3 @@ def load_test_and_symptoms_data(questionnaire: int, questions: dict):
             )
         ),
     )
-
-
-@R.curry
-def execute_query_and_return_dataframe(query: str, context: DBContext):
-    return pd.read_sql(query, con=context["connection"])
