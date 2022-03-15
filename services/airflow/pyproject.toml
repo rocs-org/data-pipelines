@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "data-pipelines"
-version = "0.0.1"
+version = "0.0.2"
 description = "pipelines gathering data to support research at ROCS"
 authors = ["Jakob J. Kolb <jakob.j.kolb@gmail.com>"]
 
@@ -17,9 +17,8 @@ polars = "0.9.12"
 psycopg2-binary = "^2.9.1"
 celery = "5.1.2"
 py7zr = "^0.16.1"
-database = {path = "../../libraries/database", develop=true}
+postgres-helpers = {path = "../../libraries/postgres-helpers", develop=true}
 clickhouse-helpers = {path = "../../libraries/clickhouse-helpers", develop=true}
-ramda = "^0.6.4"
 isoweek = "^1.3.3"
 SQLAlchemy = "1.3.24"  # We have to pin this dependency, otherwise deleting dags for tests does not work: https://github.com/apache/airflow/issues/15354
 

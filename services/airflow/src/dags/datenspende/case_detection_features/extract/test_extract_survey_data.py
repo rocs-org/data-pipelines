@@ -1,6 +1,6 @@
 import pandas as pd
 import pytest
-from database import DBContext
+from postgres_helpers import DBContext
 from src.dags.datenspende.case_detection_features.parameters import (
     ONE_OFF_QUESTIONS,
     WEEKLY_QUESTIONS,

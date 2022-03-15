@@ -1,6 +1,6 @@
 import pandas
 import ramda as R
-from database import DBContext
+from postgres_helpers import DBContext
 from src.lib.test_helpers import run_task_with_url
 
 from .post_processing import (

@@ -7,7 +7,7 @@ from src.dags.datenspende.case_detection_features import (
     WEEKLY_FEATURE_EXTRACTION_ARGS,
 )
 from src.lib.test_helpers import run_task_with_url
-from database import DBContext
+from postgres_helpers import DBContext
 
 
 def test_feature_task_on_one_off_survey_results(pg_context: DBContext):
@@ -23,7 +23,7 @@ def test_feature_task_on_one_off_survey_results(pg_context: DBContext):
     # run feature extraction task
     extract_features_task(*ONE_OFF_FEATURE_EXTRACTION_ARGS)
 
-    # load freature values and descriptions from database
+    # load freature values and descriptions from postgres_helpers
     connection = R.prop("connection", pg_context)
     features_from_db = pd.read_sql(
         """
@@ -73,7 +73,7 @@ def test_feature_task_on_weeekly_survey_results(pg_context: DBContext):
     # run feature extraction task
     extract_features_task(*WEEKLY_FEATURE_EXTRACTION_ARGS)
 
-    # load freature values and descriptions from database
+    # load freature values and descriptions from postgres_helpers
     connection = R.prop("connection", pg_context)
     features_from_db = pd.read_sql(
         """

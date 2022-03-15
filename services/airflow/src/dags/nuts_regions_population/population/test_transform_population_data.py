@@ -1,6 +1,6 @@
 import pandas as pd
 import ramda as R
-from database import DBContext
+from postgres_helpers import DBContext
 from src.lib.dag_helpers import (
     connect_to_db_and_insert_pandas_dataframe,
 )

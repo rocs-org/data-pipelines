@@ -1,6 +1,6 @@
 import ramda as R
 from .incidences import calculate_incidence, load_cases_data, load_counties_info
-from database import with_db_context, execute_sql
+from postgres_helpers import with_db_context, execute_sql
 from src.lib.dag_helpers import connect_to_db_and_insert_polars_dataframe
 from src.lib.test_helpers import set_env_variable_from_dag_config_if_present
 

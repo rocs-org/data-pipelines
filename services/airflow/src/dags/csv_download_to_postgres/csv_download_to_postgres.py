@@ -8,7 +8,7 @@ from airflow.utils.dates import days_ago
 from airflow.operators.python import PythonOperator
 from returns.curry import curry
 
-from database import (
+from postgres_helpers import (
     DBContext,
     execute_values,
 )

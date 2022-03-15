@@ -1,7 +1,7 @@
 import pandas as pd
 import ramda as R
 from returns.curry import curry
-from database import query_all_elements, with_db_context
+from postgres_helpers import query_all_elements, with_db_context
 
 INDICATORS = r"sex,unit,age,geo\time"
 

@@ -2,7 +2,7 @@ import polars
 from datetime import datetime, timedelta
 import ramda as R
 from returns.curry import curry
-from database import DBContext
+from postgres_helpers import DBContext
 from typing import Any, List
 from copy import deepcopy
 from src.dags.nuts_regions_population.nuts_regions import (

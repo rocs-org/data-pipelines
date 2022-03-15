@@ -1,5 +1,5 @@
 from datetime import date
-from database import query_all_elements
+from postgres_helpers import query_all_elements
 from src.lib.test_helpers.helpers import run_task_with_url
 
 from src.dags.nuts_regions_population.nuts_regions import REGIONS_ARGS

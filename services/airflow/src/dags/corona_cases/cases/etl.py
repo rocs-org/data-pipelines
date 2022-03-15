@@ -3,7 +3,7 @@ import pandas as pd
 from pandas import DataFrame
 from returns.curry import curry
 
-from database import DBContext
+from postgres_helpers import DBContext
 from src.lib.dag_helpers import download_csv
 from src.lib.dag_helpers import connect_to_db_and_truncate_insert_pandas_dataframe
 from src.lib.test_helpers import set_env_variable_from_dag_config_if_present

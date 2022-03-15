@@ -5,7 +5,7 @@ from src.lib.dag_helpers import (
     connect_to_db_and_upsert_pandas_dataframe_on_constraint,
 )
 from src.lib.test_helpers import set_env_variable_from_dag_config_if_present
-from database import create_db_context, teardown_db_context
+from postgres_helpers import create_db_context, teardown_db_context
 
 
 def link_feature_records(**kwargs):

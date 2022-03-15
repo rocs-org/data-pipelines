@@ -1,5 +1,5 @@
 from .etl import etl_german_zip_codes, ZIP_ARGS
-from database import DBContext, query_all_elements
+from postgres_helpers import DBContext, query_all_elements
 from src.dags.nuts_regions_population.nuts_regions import etl_eu_regions, REGIONS_ARGS
 from src.dags.corona_cases.incidences.test_incidences import (
     replace_url_in_args_and_run_task,

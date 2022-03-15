@@ -1,4 +1,4 @@
-from database import DBContext, query_all_elements
+from postgres_helpers import DBContext, query_all_elements
 import os
 import ramda as R
 from ..data_update.download import download

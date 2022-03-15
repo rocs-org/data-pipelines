@@ -1,7 +1,7 @@
 import polars
 import ramda as R
 
-from database import camel_case_to_snake_case
+from postgres_helpers import camel_case_to_snake_case
 
 
 @R.curry

@@ -1,4 +1,4 @@
-from database import DBContext, query_all_elements
+from postgres_helpers import DBContext, query_all_elements
 import pandas
 import ramda as R
 from airflow.models import DagBag

@@ -1,11 +1,11 @@
 from datetime import date
-from database import DBContext, query_all_elements
+
 from airflow.models import DagBag
 
-from src.lib.test_helpers import execute_dag
+from postgres_helpers import DBContext, query_all_elements
 from src.dags.update_hospitalizations.dag import HOSPITALIZATIONS_ARGS
+from src.lib.test_helpers import execute_dag
 from src.lib.test_helpers import run_task_with_url
-
 
 [_, HOSPITALIZATIONS_SCHEMA, HOSPITALIZATIONS_TABLE] = HOSPITALIZATIONS_ARGS
 
