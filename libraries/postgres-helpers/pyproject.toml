@@ -1,6 +1,6 @@
 [tool.poetry]
-name = "database"
-version = "0.1.0"
+name = "postgres-helpers"
+version = "0.1.1"
 description = ""
 authors = ["Jakob J. Kolb <jakob.j.kolb@gmail.com>"]
 
@@ -9,8 +9,8 @@ python = "^3.8"
 psycopg2-binary = "^2.9.1"
 yoyo-migrations = "^7.3.2"
 six = "^1.16.0"
-ramda = "^0.6.4"
 returns = "^0.18.0"
+ramda = "^0.7.3"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.0.0"

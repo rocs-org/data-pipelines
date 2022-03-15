@@ -1,5 +1,5 @@
 from typing import Callable, List
-from database.execute_sql import execute_sql
+from postgres_helpers.execute_sql import execute_sql
 
 import polars
 import pandas as pd
@@ -10,7 +10,7 @@ from returns.curry import curry
 from returns.pipeline import pipe
 
 
-from database import (
+from postgres_helpers import (
     execute_values,
     camel_case_to_snake_case,
     create_db_context,

@@ -2,7 +2,7 @@ import ramda as R
 import pandas
 from typing import Dict, Union
 from psycopg2.sql import SQL, Composed
-from database import with_db_context, DBContext
+from postgres_helpers import with_db_context, DBContext
 from src.lib.dag_helpers import connect_to_db_and_insert_pandas_dataframe
 from src.lib.test_helpers import set_env_variable_from_dag_config_if_present
 

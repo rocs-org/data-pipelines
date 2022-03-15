@@ -1,10 +1,10 @@
 import pandas as pd
-from database import DBContext
+
+from postgres_helpers import DBContext
 from src.dags.update_hospitalizations.etl_hospitalizations import (
     etl_hospitalizations,
     HOSPITALIZATIONS_ARGS,
 )
-
 from src.lib.test_helpers import run_task_with_url
 
 [_, HOSPITALIZATIONS_SCHEMA, HOSPITALIZATIONS_TABLE] = HOSPITALIZATIONS_ARGS

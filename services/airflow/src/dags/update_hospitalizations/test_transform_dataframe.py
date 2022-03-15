@@ -1,11 +1,11 @@
 import pandas.api.types as ptypes
-from src.lib.test_helpers import run_task_with_url
 
-from src.dags.update_hospitalizations.transform_dataframe import transform_dataframe
+from postgres_helpers import DBContext
 from src.dags.update_hospitalizations.download_hospitalizations import (
     download_hospitalizations,
 )
-
+from src.dags.update_hospitalizations.transform_dataframe import transform_dataframe
+from src.lib.test_helpers import run_task_with_url
 
 url = "http://static-files/static/hospitalizations.csv"
 transformed_df_column_names = [
@@ -22,7 +22,7 @@ transformed_df_column_names = [
 ]
 
 
-def test_transform_hospitalizations_dataframe_columns_match():
+def test_transform_hospitalizations_dataframe_columns_match(pg_context: DBContext):
 
     run_task_with_url(
         "nuts_regions_population",
@@ -39,7 +39,7 @@ def test_transform_hospitalizations_dataframe_columns_match():
     assert list(df_tranformed.columns) == transformed_df_column_names
 
 
-def test_transform_dataframe_dtypes_match():
+def test_transform_dataframe_dtypes_match(pg_context: DBContext):
 
     run_task_with_url(
         "nuts_regions_population",

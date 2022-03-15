@@ -1,5 +1,5 @@
 from .etl import etl_german_counties_more_info, SCHEMA, TABLE
-from database import (
+from postgres_helpers import (
     DBContext,
     query_all_elements,
 )

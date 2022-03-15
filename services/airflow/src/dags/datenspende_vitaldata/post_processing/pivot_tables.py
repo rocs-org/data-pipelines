@@ -1,7 +1,7 @@
 from typing import List
 from psycopg2 import sql
 from src.lib.test_helpers import set_env_variable_from_dag_config_if_present
-from database import (
+from postgres_helpers import (
     create_db_context,
     teardown_db_context,
     execute_sql,

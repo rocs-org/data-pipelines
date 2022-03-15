@@ -11,7 +11,7 @@ from .write_dataframe_to_postgres import (
     connect_to_db_and_insert_polars_dataframe,
     connect_to_db_and_upsert_pandas_dataframe,
 )
-from database import DBContext, query_all_elements, with_db_context
+from postgres_helpers import DBContext, query_all_elements, with_db_context
 
 
 def test_insert_dataframe_to_postgres_works_with_polars_dataframe(

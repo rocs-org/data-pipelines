@@ -1,4 +1,4 @@
-from database import DBContext, execute_sql, query_all_elements
+from postgres_helpers import DBContext, execute_sql, query_all_elements
 from psycopg2 import sql
 
 SCHEMA = "censusdata"

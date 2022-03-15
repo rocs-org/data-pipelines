@@ -1,6 +1,6 @@
 import ramda as R
 import pandas as pd
-from database import DBContext
+from postgres_helpers import DBContext
 
 
 @R.curry

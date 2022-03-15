@@ -1,5 +1,5 @@
-from database.execute_sql import query_all_elements
-from database import (
+from postgres_helpers.execute_sql import query_all_elements
+from postgres_helpers import (
     execute_sql,
     teardown_test_db_context,
     create_test_db_context,
@@ -7,7 +7,7 @@ from database import (
 
 import pytest
 from psycopg2.errors import UndefinedTable
-from database.migrations.migrations import (
+from postgres_helpers.migrations.migrations import (
     get_connection_string,
     migrate,
 )

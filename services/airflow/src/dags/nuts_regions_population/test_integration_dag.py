@@ -1,5 +1,5 @@
 from airflow.models import DagBag
-from database import DBContext, query_all_elements
+from postgres_helpers import DBContext, query_all_elements
 from src.lib.test_helpers import execute_dag
 from psycopg2 import sql
 from src.dags.nuts_regions_population.nuts_regions import REGIONS_ARGS

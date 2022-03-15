@@ -1,4 +1,4 @@
-from database.types import DBContext
+from postgres_helpers.types import DBContext
 from yoyo import read_migrations, get_backend
 import pathlib
 from logging import getLogger, WARNING

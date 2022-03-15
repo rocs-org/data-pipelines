@@ -1,6 +1,6 @@
 import ramda as R
 
-from database import create_db_context
+from postgres_helpers import create_db_context
 from src.lib.dag_helpers import execute_query_and_return_dataframe
 
 

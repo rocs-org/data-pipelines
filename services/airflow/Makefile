@@ -30,7 +30,7 @@ watchthis:
 	docker exec -it airflow-scheduler pytest -f --ignore ./logs -k $(TEST)
 
 postgres_migrations:
-	docker exec -w /opt/airflow/ airflow-scheduler poetry run yoyo apply --no-config-file --database postgresql://${TARGET_DB_USER}:${TARGET_DB_PW}@${TARGET_DB_HOSTNAME}/${TARGET_DB} ../../libraries/database/database/migrations/migration_files
+	docker exec -w /opt/airflow/ airflow-scheduler poetry run yoyo apply --no-config-file --database postgresql://${TARGET_DB_USER}:${TARGET_DB_PW}@${TARGET_DB_HOSTNAME}/${TARGET_DB} ../../libraries/postgres-helpers/postgres_helpers/migrations/migration_files
 
 clickhouse_migrations:
 	docker exec airflow-scheduler poetry run migrate-clickhouse --host ${CLICKHOUSE_HOSTNAME} --port ${CLICKHOUSE_PORT} --database ${CLICKHOUSE_DB} --user ${CLICKHOUSE_USER} --password ${CLICKHOUSE_PASSWORD}

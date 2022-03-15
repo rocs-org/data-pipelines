@@ -2,7 +2,7 @@ import polars as po
 from typing import List
 from returns.curry import curry
 from datetime import timedelta, date
-from database import (
+from postgres_helpers import (
     with_db_context,
     query_all_elements,
 )

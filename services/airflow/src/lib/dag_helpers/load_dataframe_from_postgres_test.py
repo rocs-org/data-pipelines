@@ -1,5 +1,5 @@
 import pandas as pd
-from database import DBContext
+from postgres_helpers import DBContext
 from .write_dataframe_to_postgres import connect_to_db_and_insert_pandas_dataframe
 from .load_dataframe_from_postgres import execute_query_and_return_dataframe
 

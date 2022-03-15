@@ -1,4 +1,4 @@
-from database import execute_sql, DBContext, query_all_elements
+from postgres_helpers import execute_sql, DBContext, query_all_elements
 
 
 def test_corona_cases(db_context: DBContext):

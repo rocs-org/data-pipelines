@@ -1,5 +1,5 @@
 import ramda as R
-from database import DBContext
+from postgres_helpers import DBContext
 from src.lib.test_helpers import run_task_with_url, run_task
 from src.lib.dag_helpers import execute_query_and_return_dataframe
 from .link_feature_records import (

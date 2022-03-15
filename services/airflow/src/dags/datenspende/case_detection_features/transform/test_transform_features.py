@@ -2,7 +2,7 @@ import pandas as pd
 import ramda as R
 import pytest
 from datetime import datetime
-from database import DBContext
+from postgres_helpers import DBContext
 from typing import List
 
 from src.lib.test_helpers import run_task_with_url

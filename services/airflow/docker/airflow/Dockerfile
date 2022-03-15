@@ -33,4 +33,4 @@ COPY libraries ../../libraries
 RUN poetry config virtualenvs.create false \
   && poetry install --no-interaction --no-ansi
 
-ENV PYTHONPATH "${PYTHONPATH}:/opt/airflow/dags"
+ENV PYTHONPATH "${PYTHONPATH}:/opt/airflow/src"

@@ -50,7 +50,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./libraries/database
+        working-directory: ./libraries/clickhouse-helpers
 
     steps:
       - uses: actions/checkout@v2
