@@ -1,12 +1,10 @@
-from typing import List
+from datetime import date, timedelta, datetime
 
 import numpy as np
 import pandas as pd
 import polars as po
-from datetime import date, timedelta, datetime
 
-import ramda as R
-
+from postgres_helpers import DBContext, query_all_elements, with_db_context
 from .write_dataframe_to_postgres import (
     _build_insert_query,
     _upsert_column_action,
@@ -15,14 +13,6 @@ from .write_dataframe_to_postgres import (
     connect_to_db_and_truncate_insert_pandas_dataframe,
     connect_to_db_and_insert_polars_dataframe,
     connect_to_db_and_upsert_pandas_dataframe,
-    build_upser_query_with_constraints,
-    _get_tuples_from_pd_dataframe,
-)
-from postgres_helpers import (
-    DBContext,
-    query_all_elements,
-    with_db_context,
-    execute_values,
 )
 
 

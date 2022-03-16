@@ -26,7 +26,7 @@ def db_context():
     yield context
 
     os.environ["CLICKHOUSE_DB"] = main_db
-    # teardown_test_db_context(context)
+    teardown_test_db_context(context)
 
 
 def teardown_test_db_context(context: DBContext) -> DBContext:
