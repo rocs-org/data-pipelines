@@ -7,6 +7,7 @@ from .write_dataframe_to_postgres import (
     connect_to_db_and_insert_polars_dataframe,
     connect_to_db_and_upsert_polars_dataframe,
     connect_to_db_and_upsert_pandas_dataframe_on_constraint,
+    upsert_pandas_dataframe_to_table_in_schema_with_db_context,
 )
 from .notify_slack import (
     create_slack_error_message_from_task_context,
@@ -28,4 +29,5 @@ __all__ = [
     "slack_notifier_factory",
     "create_slack_error_message_from_task_context",
     "execute_query_and_return_dataframe",
+    "upsert_pandas_dataframe_to_table_in_schema_with_db_context",
 ]
