@@ -6,7 +6,7 @@ build:
 	 DOCKER_BUILDKIT=1 docker-compose build
 
 setup:
-	docker-compose up -d
+	docker-compose up -d && bash wait-for-healthy-container.sh db 30
 
 down:
 	docker-compose down -v
