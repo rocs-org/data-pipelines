@@ -1,5 +1,5 @@
 from typing import Callable, List
-from postgres_helpers.execute_sql import execute_sql
+from postgres_helpers.execute_sql import execute_sql, DBContext
 
 import polars
 import pandas as pd
@@ -52,14 +52,14 @@ def connect_to_db_and_insert_polars_dataframe(
 
 @curry
 def connect_to_db_and_upsert_pandas_dataframe(
-    schema: str, table: str, constraint: List[str], data: pd.DataFrame
+    schema: str, table: str, constraint_columns: List[str], data: pd.DataFrame
 ):
     return _connect_to_db_and_execute(
         _build_upsert_query(
             "INSERT INTO {}.{} ({}) VALUES %s ON CONFLICT ({}) DO UPDATE SET {};",
             schema,
             table,
-            constraint,
+            constraint_columns,
         ),
         _get_tuples_from_pd_dataframe,
         data,
@@ -68,17 +68,39 @@ def connect_to_db_and_upsert_pandas_dataframe(
 
 @curry
 def connect_to_db_and_upsert_pandas_dataframe_on_constraint(
-    schema: str, table: str, constraint: List[str], data: pd.DataFrame
+    schema: str, table: str, constraints: List[str], data: pd.DataFrame
 ):
     return _connect_to_db_and_execute(
-        _build_upsert_query(
-            "INSERT INTO {}.{} ({}) VALUES %s ON CONFLICT ON CONSTRAINT {} DO UPDATE SET {};",
-            schema,
-            table,
-            constraint,
-        ),
+        build_upser_query_with_constraints(schema, table, constraints),
         _get_tuples_from_pd_dataframe,
         data,
+    )
+
+
+@R.curry
+def upsert_pandas_dataframe_to_table_in_schema_with_db_context(
+    db_context: DBContext,
+    schema: str,
+    table: str,
+    constraints: List[str],
+    data: pd.DataFrame,
+) -> None:
+    R.converge(
+        execute_values,
+        [
+            R.always(db_context),
+            build_upser_query_with_constraints(schema, table, constraints),
+            _get_tuples_from_pd_dataframe,
+        ],
+    )(data)
+
+
+def build_upser_query_with_constraints(schema: str, table: str, constraints: List[str]):
+    return _build_upsert_query(
+        "INSERT INTO {}.{} ({}) VALUES %s ON CONFLICT ON CONSTRAINT {} DO UPDATE SET {};",
+        schema,
+        table,
+        constraints,
     )
 
 

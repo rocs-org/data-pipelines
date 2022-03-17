@@ -10,6 +10,7 @@ from src.dags.datenspende_vitaldata.data_update import (
 from src.dags.datenspende_vitaldata.post_processing import (
     pivot_vitaldata,
     PIVOT_TARGETS,
+    pipeline_for_aggregate_statistics_of_per_user_vitals,
 )
 
 from src.lib.dag_helpers import (
@@ -56,4 +57,10 @@ t2 = PythonOperator(
     op_args=PIVOT_TARGETS,
 )
 
-t1 >> t2
+t3 = PythonOperator(
+    task_id="calculate_aggregate_per_user_statistics_of_daily_vitals",
+    python_callable=pipeline_for_aggregate_statistics_of_per_user_vitals,
+    dag=dag,
+)
+
+t1 >> [t2, t3]

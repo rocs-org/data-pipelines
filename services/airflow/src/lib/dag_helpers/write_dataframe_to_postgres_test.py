@@ -1,7 +1,10 @@
+from datetime import date, timedelta, datetime
+
 import numpy as np
 import pandas as pd
 import polars as po
-from datetime import date, timedelta, datetime
+
+from postgres_helpers import DBContext, query_all_elements, with_db_context
 from .write_dataframe_to_postgres import (
     _build_insert_query,
     _upsert_column_action,
@@ -11,7 +14,6 @@ from .write_dataframe_to_postgres import (
     connect_to_db_and_insert_polars_dataframe,
     connect_to_db_and_upsert_pandas_dataframe,
 )
-from postgres_helpers import DBContext, query_all_elements, with_db_context
 
 
 def test_insert_dataframe_to_postgres_works_with_polars_dataframe(
@@ -156,7 +158,7 @@ def test_upsert_dataframe_to_postgres_does_overwrite(pg_context: DBContext):
         schema="censusdata", table="nuts", data=DATA1
     )
     connect_to_db_and_upsert_pandas_dataframe(
-        schema="censusdata", table="nuts", constraint=["geo"], data=DATA2
+        schema="censusdata", table="nuts", constraint_columns=["geo"], data=DATA2
     )
     res = with_db_context(query_all_elements, "SELECT * FROM censusdata.nuts;")
     assert len(res) == 2
