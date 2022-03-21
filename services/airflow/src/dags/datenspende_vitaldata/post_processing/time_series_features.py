@@ -4,7 +4,7 @@ import pandas as pd
 import ramda as R
 from pandas.core import groupby
 
-from .aggregate_statistics import post_processing_vitals_pipeline_factory
+from .shared import post_processing_vitals_pipeline_factory
 
 DB_PARAMETERS = [
     "datenspende_derivatives",
