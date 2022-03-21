@@ -11,6 +11,7 @@ from src.dags.datenspende_vitaldata.post_processing import (
     pivot_vitaldata,
     PIVOT_TARGETS,
     pipeline_for_aggregate_statistics_of_per_user_vitals,
+    rolling_window_time_series_features_pipeline,
 )
 
 from src.lib.dag_helpers import (
@@ -63,4 +64,10 @@ t3 = PythonOperator(
     dag=dag,
 )
 
-t1 >> [t2, t3]
+t4 = PythonOperator(
+    task_id="calculate_rolling_window_statistics_of_daily_vitals",
+    python_callable=rolling_window_time_series_features_pipeline,
+    dag=dag,
+)
+
+t1 >> [t2, t3, t4]

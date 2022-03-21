@@ -4,7 +4,7 @@ from datetime import date
 import pandas as pd
 from src.lib.dag_helpers import execute_query_and_return_dataframe
 
-from src.dags.datenspende_vitaldata.post_processing.shared_test import (
+from src.dags.datenspende_vitaldata.post_processing.aggregate_statistics_test import (
     SECOND_TEST_USER_DATA,
 )
 
@@ -29,25 +29,23 @@ def test_datenspende_vitals_dag_writes_correct_results_to_db(pg_context: DBConte
         == 0
     )
     answers_from_db = query_all_elements(
-        pg_context,
-        "SELECT * FROM datenspende.vitaldata WHERE user_id=200;",
+        pg_context, "SELECT * FROM datenspende.vitaldata;"
     )
-    print(answers_from_db[-1])
     assert answers_from_db[-1] == (
         200,
-        date(2021, 10, 22),
-        53,
-        1634879000,
+        date(2021, 10, 21),
+        65,
+        70,
         6,
-        1635228999437,
+        1635228999300,
         120,
     )
-    assert len(answers_from_db) == 5
+    assert len(answers_from_db) == 20
 
     answers_from_db = query_all_elements(
         pg_context, "SELECT * FROM datenspende_derivatives.steps_ct;"
     )
-    assert len(answers_from_db) == 3
+    assert len(answers_from_db) == 2
 
     aggregate_statistics = execute_query_and_return_dataframe(
         "SELECT * FROM datenspende_derivatives.daily_vital_statistics;", pg_context
