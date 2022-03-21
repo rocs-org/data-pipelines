@@ -1,0 +1,1 @@
+DROP TABLE datenspende_derivatives.daily_vital_rolling_window_time_series_features;
