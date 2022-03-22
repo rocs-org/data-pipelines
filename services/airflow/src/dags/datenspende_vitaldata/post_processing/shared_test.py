@@ -1,7 +1,9 @@
-import pandas as pd
 import datetime
+
 from postgres_helpers import DBContext
-from src.dags.datenspende_vitaldata.post_processing.shared import load_per_user_data
+from src.dags.datenspende_vitaldata.post_processing.shared import (
+    load_user_vitals,
+)
 from src.dags.datenspende_vitaldata.post_processing.test_pivot_tables import (
     setup_vitaldata_in_db,
 )
@@ -10,13 +12,8 @@ from src.dags.datenspende_vitaldata.post_processing.test_pivot_tables import (
 def test_load_per_user_data_loads_vitals_for_existing_users(pg_context: DBContext):
     setup_vitaldata_in_db()
 
-    for user_data in list(load_per_user_data(pg_context)):
-        print(user_data.to_dict())
-        assert isinstance(user_data, pd.DataFrame)
-        assert (
-            user_data.to_dict() == FIRST_TEST_USER_DATA
-            or user_data.to_dict() == SECOND_TEST_USER_DATA
-        )
+    assert load_user_vitals(pg_context, 200).to_dict() == FIRST_TEST_USER_DATA
+    assert load_user_vitals(pg_context, 100).to_dict() == SECOND_TEST_USER_DATA
 
 
 FIRST_TEST_USER_DATA = {
