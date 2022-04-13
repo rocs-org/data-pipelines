@@ -4,7 +4,7 @@ from postgres_helpers import DBContext
 from src.dags.datenspende_vitaldata.post_processing.shared import (
     load_user_vitals,
 )
-from src.dags.datenspende_vitaldata.post_processing.test_pivot_tables import (
+from src.dags.datenspende_vitaldata.post_processing.pivot_tables_test import (
     setup_vitaldata_in_db,
 )
 

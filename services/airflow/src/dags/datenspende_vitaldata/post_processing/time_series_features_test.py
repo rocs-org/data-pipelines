@@ -3,7 +3,7 @@ import datetime
 from psycopg2.sql import SQL
 
 from postgres_helpers import DBContext
-from src.dags.datenspende_vitaldata.post_processing.test_pivot_tables import (
+from src.dags.datenspende_vitaldata.post_processing.pivot_tables_test import (
     setup_vitaldata_in_db,
 )
 from src.lib.dag_helpers import execute_query_and_return_dataframe
