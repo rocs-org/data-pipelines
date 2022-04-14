@@ -27,7 +27,7 @@ watch:
 	docker exec -it airflow-scheduler pytest -f --ignore ./logs -k 'not integration'
 
 watchthis:
-	docker exec -it airflow-scheduler pytest -f --ignore ./logs -k $(TEST)
+	docker exec -it airflow-scheduler pytest -f --ignore ./logs -k $(test)
 
 postgres_migrations:
 	docker exec -w /opt/airflow/ airflow-scheduler poetry run yoyo apply --no-config-file --database postgresql://${TARGET_DB_USER}:${TARGET_DB_PW}@${TARGET_DB_HOSTNAME}/${TARGET_DB} ../../libraries/postgres-helpers/postgres_helpers/migrations/migration_files

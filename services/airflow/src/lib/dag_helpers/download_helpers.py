@@ -9,6 +9,8 @@ from pandas import DataFrame, read_csv
 from requests.auth import HTTPBasicAuth
 from returns.curry import curry
 
+from src.lib.decorators import cwd_cleanup
+
 DataList = List[Tuple[str, List, polars.DataFrame]]
 
 
@@ -19,11 +21,14 @@ def extract(
     access_config: dict,
     url: str,
 ) -> DataList:
-    return R.pipe(
-        download_7zfile(access_config),
-        unzip_7zfile(access_config),
-        file_loader,
-        mapper,
+
+    return cwd_cleanup(
+        R.pipe(
+            download_7zfile(access_config),
+            unzip_7zfile(access_config),
+            file_loader,
+            mapper,
+        )
     )(url)
 
 
