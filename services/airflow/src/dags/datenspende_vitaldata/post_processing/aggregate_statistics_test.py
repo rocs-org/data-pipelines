@@ -8,7 +8,7 @@ from .aggregate_statistics import (
     calculate_aggregated_statistics_of_user_vitals,
 )
 from .shared_test import FIRST_TEST_USER_DATA, SECOND_TEST_USER_DATA
-from .test_pivot_tables import setup_vitaldata_in_db
+from .pivot_tables_test import setup_vitaldata_in_db
 
 
 def test_integration_aggregate_statistics_pipeline(pg_context: DBContext):

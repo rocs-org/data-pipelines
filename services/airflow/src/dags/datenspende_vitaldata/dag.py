@@ -12,6 +12,8 @@ from src.dags.datenspende_vitaldata.post_processing import (
     PIVOT_TARGETS,
     pipeline_for_aggregate_statistics_of_per_user_vitals,
     rolling_window_time_series_features_pipeline,
+    BEFORE_INFECTION_AGG_DB_PARAMETERS,
+    aggregate_statistics_before_infection,
 )
 
 from src.lib.dag_helpers import (
@@ -70,4 +72,10 @@ t4 = PythonOperator(
     dag=dag,
 )
 
-t1 >> [t2, t3, t4]
+t5 = PythonOperator(
+    task_id="calculate_aggregate_per_user_statistics_of_daily_vitals_before_first_infection",
+    python_callable=aggregate_statistics_before_infection,
+    op_args=BEFORE_INFECTION_AGG_DB_PARAMETERS,
+)
+
+t1 >> [t2, t3, t4, t5]
