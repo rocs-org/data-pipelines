@@ -25,4 +25,4 @@ def test_aggregate_statistics_creates_table_with_data(pg_context):
         pg_context,
     )
 
-    assert list(res.columns) == ["user_id", "type", "source", "std", "mean"]
+    assert list(res.columns) == ["user_id", "type", "source", "mean", "std"]

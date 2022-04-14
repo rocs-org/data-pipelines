@@ -45,7 +45,7 @@ def execute_values(context: DBContext, query: str, tuples: List[Any]) -> DBConte
 
 
 @R.curry
-def execute_sql(context, sql: str, data=None) -> None:
+def execute_sql(context: DBContext, sql: Union[str, SQL, Composed], data=None) -> None:
     return R.pipe(
         R.try_catch(
             R.apply(
