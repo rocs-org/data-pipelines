@@ -1,5 +1,6 @@
-import polars as po
 import glob
+
+import polars as po
 from polars.datatypes import Utf8, Int64
 
 from src.lib.dag_helpers.download_helpers import extract

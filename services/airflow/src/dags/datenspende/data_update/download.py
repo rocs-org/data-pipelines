@@ -1,13 +1,15 @@
-import polars
-import requests
-import py7zr
-import polars as po
-from polars.datatypes import Utf8, Int64
-import ramda as R
 from typing import List, Tuple
-from returns.curry import curry
-from requests.auth import HTTPBasicAuth
 
+import polars
+import polars as po
+import py7zr
+import ramda as R
+import requests
+from polars.datatypes import Utf8, Int64
+from requests.auth import HTTPBasicAuth
+from returns.curry import curry
+
+from src.lib.decorators import cwd_cleanup
 
 PolarsDataList = List[Tuple[str, polars.DataFrame]]
 
@@ -15,13 +17,16 @@ PolarsDataList = List[Tuple[str, polars.DataFrame]]
 DataList = PolarsDataList
 
 
+# TODO this is duplicate, refactor to remove with src.lib.dag_helpers.download_helpers.extract
 @R.curry
 def download(access_config: dict, url: str) -> PolarsDataList:
-    return R.pipe(
-        download_file(access_config),
-        unzip_file(access_config),
-        load_files,
-        map_dict_to_list,
+    return cwd_cleanup(
+        R.pipe(
+            download_file(access_config),
+            unzip_file(access_config),
+            load_files,
+            map_dict_to_list,
+        )
     )(url)
 
 
