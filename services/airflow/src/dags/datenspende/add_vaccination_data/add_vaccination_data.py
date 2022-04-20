@@ -30,6 +30,7 @@ def load_and_transform_vaccination_data_for_each_user(*_):
     return R.pipe(
         R.invoker(0, "itertuples"),
         R.reduce(vaccination_data_reducer(vaccination_data), []),
+        pd.DataFrame,
     )(feature_data)
 
 
@@ -44,7 +45,7 @@ def vaccination_data_reducer(vaccination_data, res, feature_data_row):
             {
                 "user_id": feature_data_row.user_id,
                 "test_week_start": feature_data_row.test_week_start,
-                "doses": None,
+                "administered_vaccine_doses": None,
                 "days_since_last_dose": None,
             }
         ]
@@ -71,7 +72,7 @@ def vaccination_data_reducer(vaccination_data, res, feature_data_row):
         {
             "user_id": feature_data_row.user_id,
             "test_week_start": feature_data_row.test_week_start,
-            "doses": number_of_administered_doses,
+            "administered_vaccine_doses": number_of_administered_doses,
             "days_since_last_dose": days_since_last_dose,
         }
     ]
@@ -207,7 +208,8 @@ def _vaccination_one_survey(db_context: DBContext, questionnaire: int):
             "Nein, nur teilweise geimpft": "partial",
             "Nein, überhaupt nicht geimpft": "unvaccinated",
             "mit Auffrischimpfung (Booster)": "booster",
-            "vollständig erstimunisiert (zweite Dosis im Fall von Moderna, Biontech, Astra Zeneca oder erste Impfdosis im Fall von Johnson&Johnson)": "full",
+            "vollständig erstimunisiert (zweite Dosis im Fall von Moderna, "
+            + "Biontech, Astra Zeneca oder erste Impfdosis im Fall von Johnson&Johnson)": "full",
             "unvollständig erstimunisiert (nur erste Impfdosis im Fall von Moderna, Biontech, Astra Zeneca)": "partial",
             "gar nicht geimpft": "unvaccinated",
         },
@@ -450,7 +452,8 @@ def load_vaccinations(db_context: DBContext):
     # Replace responses in second_dose with nan-values
     df.second_dose.replace(
         {
-            "Ich wurde mit dem Vakzin von Johnson & Johnson geimpft und benötigte daher keine zweite Impfdosis.": np.nan,
+            "Ich wurde mit dem Vakzin von Johnson & Johnson "
+            + "geimpft und benötigte daher keine zweite Impfdosis.": np.nan,
             "Ich habe aus anderen Gründen keine zweite Dosis erhalten": np.nan,
         },
         inplace=True,

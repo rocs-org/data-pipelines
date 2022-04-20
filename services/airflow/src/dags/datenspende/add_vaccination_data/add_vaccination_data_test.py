@@ -1,0 +1,6 @@
+from .add_vaccination_data import add_vaccination_data_to_homogenized_feature_table
+from postgres_helpers import DBContext
+
+
+def test_vaccination_data_task_runs_without_errors(pg_context: DBContext):
+    add_vaccination_data_to_homogenized_feature_table()
