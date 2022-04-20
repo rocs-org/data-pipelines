@@ -14,6 +14,7 @@ from src.dags.datenspende.case_detection_features import (
 from src.dags.datenspende.link_feature_records import (
     link_feature_records,
 )
+from src.dags.datenspende.add_vaccination_data import add_vaccination_data_to_homogenized_feature_table
 from src.lib.dag_helpers import (
     create_slack_error_message_from_task_context,
     slack_notifier_factory,
@@ -74,5 +75,11 @@ t5 = PythonOperator(
     dag=dag,
 )
 
+t6 = PythonOperator(
+    task_id="add_vaccination_data",
+    python_callable=add_vaccination_data_to_homogenized_feature_table(),
+    dag=dag,
+)
+
 t1 >> [t2, t3, t4]
-[t3, t4] >> t5
+[t3, t4] >> [t5, t6]

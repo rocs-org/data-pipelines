@@ -1,0 +1,3 @@
+from .add_vaccination_data import add_vaccination_data_to_homogenized_feature_table
+
+__all__ = ["add_vaccination_data_to_homogenized_feature_table"]
