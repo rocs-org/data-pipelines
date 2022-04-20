@@ -28,10 +28,12 @@ def post_processing_vitals_pipeline_factory(
         teardown_db_context(db_context)
 
         with Pool(worker_pool_size) as pool:
-            pool.map(
+            result = pool.map_async(
                 extract_process_load_vital_data_for_one_user(aggregator, db_parameters),
                 user_ids,
             )
+
+            result.wait()
 
     return pipeline
 
