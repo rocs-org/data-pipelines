@@ -1,6 +1,7 @@
 import pandas as pd
 import ramda as R
 import numpy as np
+from typing import List, TypedDict, Union
 from datetime import datetime
 from psycopg2.sql import SQL
 from src.lib.dag_helpers import (
@@ -9,6 +10,13 @@ from src.lib.dag_helpers import (
 )
 from src.lib.test_helpers import set_env_variable_from_dag_config_if_present
 from postgres_helpers import create_db_context, teardown_db_context, DBContext
+
+
+class UserVaccinationData(TypedDict):
+    user_id: str
+    test_week_start: datetime
+    administered_vaccine_doses: Union[int, None]
+    days_since_last_dose: Union[int, None]
 
 
 def add_vaccination_data_to_homogenized_feature_table(**kwargs):
@@ -21,7 +29,18 @@ def add_vaccination_data_to_homogenized_feature_table(**kwargs):
     )(kwargs)
 
 
-def load_and_transform_vaccination_data_for_each_user(*_):
+def load_and_transform_vaccination_data_for_each_user(
+    *_,
+):
+    """
+    Load unified weekly survey data and determine vaccination status:
+
+    * days_since_last_dose: difference between the date of the last vaccine dose and the begin of the week of the survey
+    * administered_vaccine_doses:  sum  of vaccine doses administered before the start of  the week  of the survey
+
+    for each entry.
+    Add vaccination status to unified featuers table.
+    """
     db_context = create_db_context()
     vaccination_data = load_vaccinations(db_context)
     feature_data = load_feature_data(db_context)
@@ -35,13 +54,21 @@ def load_and_transform_vaccination_data_for_each_user(*_):
 
 
 @R.curry
-def vaccination_data_reducer(vaccination_data, res, feature_data_row):
+def vaccination_data_reducer(
+    vaccination_data: pd.DataFrame,
+    accumulator: List[UserVaccinationData],
+    feature_data_row: pd.DataFrame,
+) -> List[UserVaccinationData]:
+    """
+    Calculate days_since_last_dose and number of administered_vaccine_doses from the vaccine_data
+     for the user_id and date in the feature_data_row and appends a new item of UserVaccinationData to the results list
+    """
     try:
         user_vaccination_data = vaccination_data.set_index("user_id").loc[
             [feature_data_row.user_id]
         ]
     except KeyError:
-        return res + [
+        return accumulator + [
             {
                 "user_id": feature_data_row.user_id,
                 "test_week_start": feature_data_row.test_week_start,
@@ -68,7 +95,7 @@ def vaccination_data_reducer(vaccination_data, res, feature_data_row):
         ).days
     except ValueError:
         days_since_last_dose = None
-    return res + [
+    return accumulator + [
         {
             "user_id": feature_data_row.user_id,
             "test_week_start": feature_data_row.test_week_start,
