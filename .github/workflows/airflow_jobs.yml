@@ -73,11 +73,10 @@ jobs:
         run: make unittest
 
   integration-tests:
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, docker]
     defaults:
       run:
         working-directory: ./services/airflow
-
     steps:
       - uses: actions/checkout@v2
       - name: Configure GPG Key
@@ -87,10 +86,11 @@ jobs:
           GPG_KEY: ${{ secrets.GPG_KEY }}
       - name: Reveal secrets
         run: |
-          sudo apt install git-secret
           git-secret reveal
-      - name: Pull docker impages
-        run: docker-compose pull
+      - name: Pull docker images
+        run: |
+          docker-compose --version
+          docker-compose pull
       - uses: satackey/action-docker-layer-caching@v0.0.11
         continue-on-error: true
       - name: Build docker stack
