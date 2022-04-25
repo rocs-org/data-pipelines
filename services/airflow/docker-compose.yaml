@@ -66,8 +66,8 @@ services:
       - ./files/static:/var/www/static
       - ./files/thryve:/var/www/thryve
     command: nginx
-    ports:
-      - "80:80"
+#    ports:
+#      - "80:80"
 
   target-db:
     container_name: "test_db"
@@ -83,8 +83,8 @@ services:
       interval: 5s
       retries: 5
     restart: always
-    ports:
-      - "5432:5432"
+#    ports:
+#      - "5432:5432"
 
   clickhouse:
     container_name: "clickhouse"
@@ -97,10 +97,10 @@ services:
       CLICKHOUSE_USER: "${CLICKHOUSE_USER}"
       CLICKHOUSE_PASSWORD: "${CLICKHOUSE_PASSWORD}"
       CLICKHOUSE_DB: "${CLICKHOUSE_DB}"
-    ports:
-      - "9000:9000" # for native clickhouse client
-      - "8123:8123" # for HTML client
-      - "9005:9005" # for postgres client
+#    ports:
+#      - "9000:9000" # for native clickhouse client
+#      - "8123:8123" # for HTML client
+#      - "9005:9005" # for postgres client
 
   postgres:
     image: postgres:13
