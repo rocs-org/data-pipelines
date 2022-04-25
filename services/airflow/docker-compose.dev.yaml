@@ -1,0 +1,15 @@
+
+services:
+  static-files:
+    ports:
+      - "80:80"
+
+  target-db:
+    ports:
+      - "5432:5432"
+
+  clickhouse:
+    ports:
+      - "9000:9000" # for native clickhouse client
+      - "8123:8123" # for HTML client
+      - "9005:9005" # for postgres client

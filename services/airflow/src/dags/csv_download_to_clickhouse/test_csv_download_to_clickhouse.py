@@ -36,7 +36,7 @@ def test_download_csv_and_write_to_clickhouse_happy_path(ch_context):
 def test_download_csv_and_write_to_clickhouse_picks_up_injected_db_name(ch_context):
     table = "test_table"
 
-    with pytest.raises(ServerException) as exception_info:
+    with pytest.raises((ServerException, BrokenPipeError)) as exception_info:
         download_csv_and_upload_to_clickhouse(
             URL, table, dag_run={"conf": {"CLICKHOUSE_DB": "rando_name"}}
         )

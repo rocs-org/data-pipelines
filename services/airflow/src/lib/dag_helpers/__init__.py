@@ -14,6 +14,7 @@ from .notify_slack import (
     slack_notifier_factory,
 )
 from .load_dataframe_from_postgres import execute_query_and_return_dataframe
+from .refresh_materialized_view import refresh_materialized_view
 
 __all__ = [
     "download_csv",
@@ -30,4 +31,5 @@ __all__ = [
     "create_slack_error_message_from_task_context",
     "execute_query_and_return_dataframe",
     "upsert_pandas_dataframe_to_table_in_schema_with_db_context",
+    "refresh_materialized_view",
 ]

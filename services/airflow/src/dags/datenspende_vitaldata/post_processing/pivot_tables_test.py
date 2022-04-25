@@ -35,5 +35,5 @@ def test_pivot_vitaldata_creates_correct_tables(pg_context: DBContext):
     )
     print(steps_data[-1])
     print(resting_heartrate_data[0])
-    assert steps_data[-1] == (200, 3600, None, None, None, None, None, None, None)
+    assert steps_data[-1] == (200, 3600, None, None, None, None, 4601, 4601, 4601)
     assert resting_heartrate_data[0] == (100, None, None, 50, 50, 50, None, None, None)
