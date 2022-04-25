@@ -80,7 +80,5 @@ def test_datenspende_vitals_dag_writes_correct_results_to_db(pg_context: DBConte
 
     print(standardized_vitals)
 
-    assert False
-
 
 THRYVE_FTP_URL = "http://static-files/thryve/export.7z"
