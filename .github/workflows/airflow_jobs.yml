@@ -87,8 +87,10 @@ jobs:
       - name: Reveal secrets
         run: |
           git-secret reveal
-      - name: Pull docker impages
-        run: docker-compose pull
+      - name: Pull docker images
+        run: |
+          docker-compose --version
+          docker-compose pull
       - uses: satackey/action-docker-layer-caching@v0.0.11
         continue-on-error: true
       - name: Build docker stack
