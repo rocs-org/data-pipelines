@@ -50,6 +50,16 @@ def load_and_transform_vaccination_data_for_each_user(
         R.invoker(0, "itertuples"),
         R.reduce(vaccination_data_reducer(vaccination_data), []),
         pd.DataFrame,
+        lambda df: df.replace(
+            {float("nan"): -1}
+        ),  # because pandas handling of Null values is stupid.
+        lambda df: df.astype(
+            {
+                "administered_vaccine_doses": int,
+                "days_since_last_dose": int,
+            }
+        ),
+        lambda df: df.replace({-1: None}),
     )(feature_data)
 
 
