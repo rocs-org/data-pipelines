@@ -31,7 +31,7 @@ def test_upload_writes_all_dataframe_to_database(pg_context: DBContext):
         number_of_elements_returned_from(pg_context)(
             "SELECT * FROM datenspende.vitaldata"
         )
-        == 20
+        == 35
     )
 
 
