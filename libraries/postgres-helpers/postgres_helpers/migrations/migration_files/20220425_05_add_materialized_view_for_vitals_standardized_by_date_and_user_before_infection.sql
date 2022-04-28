@@ -13,7 +13,15 @@ from
 where
     vital.user_id = statistics.user_id AND
     vital.source = statistics.source AND
-    vital.type = statistics.type;
+    vital.type = statistics.type AND
+    vital.user_id not in (
+    select
+        user_id
+    from
+        datenspende_derivatives.excluded_users
+    where
+        project = 'scripps colaboration long covid'
+    );
 
 COMMENT ON COLUMN
 	datenspende_derivatives.vitals_standardized_by_date_and_user_before_infection.standardized_value

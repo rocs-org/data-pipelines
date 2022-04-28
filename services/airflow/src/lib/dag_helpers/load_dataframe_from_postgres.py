@@ -11,7 +11,7 @@ import warnings
 @R.curry
 def execute_query_and_return_dataframe(
     query: Union[str, SQL, Composed], context: DBContext
-):
+) -> pd.DataFrame:
     with warnings.catch_warnings():
         warnings.simplefilter("ignore", category=UserWarning)
         data = pd.read_sql(query, con=context["connection"])

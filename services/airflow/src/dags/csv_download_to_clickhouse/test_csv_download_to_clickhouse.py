@@ -41,5 +41,6 @@ def test_download_csv_and_write_to_clickhouse_picks_up_injected_db_name(ch_conte
             URL, table, dag_run={"conf": {"CLICKHOUSE_DB": "rando_name"}}
         )
 
-    assert "Database rando_name doesn't exist" in str(exception_info.value)
+    if "Broken pipe" not in str(exception_info):
+        assert "Database rando_name doesn't exist" in str(exception_info.value)
     assert os.environ["CLICKHOUSE_DB"] == "rando_name"

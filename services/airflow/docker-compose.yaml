@@ -43,6 +43,7 @@ x-airflow-common:
     AIRFLOW__API__AUTH_BACKEND: 'airflow.api.auth.backend.basic_auth'
   volumes:
     - ../../libraries:/libraries
+    - ../../libraries/postgres-helpers/postgres_helpers/migrations/migration_files:/home/airflow/.local/lib/python3.8/site-packages/postgres_helpers/migrations/migration_files
     - ./src:/opt/airflow/src
     - airflow-logs-volume:/opt/airflow/logs
     - ./setup.cfg:/opt/airflow/setup.cfg
@@ -66,8 +67,6 @@ services:
       - ./files/static:/var/www/static
       - ./files/thryve:/var/www/thryve
     command: nginx
-#    ports:
-#      - "80:80"
 
   target-db:
     container_name: "test_db"
@@ -83,8 +82,6 @@ services:
       interval: 5s
       retries: 5
     restart: always
-#    ports:
-#      - "5432:5432"
 
   clickhouse:
     container_name: "clickhouse"
@@ -97,10 +94,6 @@ services:
       CLICKHOUSE_USER: "${CLICKHOUSE_USER}"
       CLICKHOUSE_PASSWORD: "${CLICKHOUSE_PASSWORD}"
       CLICKHOUSE_DB: "${CLICKHOUSE_DB}"
-#    ports:
-#      - "9000:9000" # for native clickhouse client
-#      - "8123:8123" # for HTML client
-#      - "9005:9005" # for postgres client
 
   postgres:
     image: postgres:13
@@ -169,18 +162,6 @@ services:
       _AIRFLOW_WWW_USER_CREATE: 'true'
       _AIRFLOW_WWW_USER_USERNAME: ${_AIRFLOW_WWW_USER_USERNAME:-airflow}
       _AIRFLOW_WWW_USER_PASSWORD: ${_AIRFLOW_WWW_USER_PASSWORD:-airflow}
-
-#  flower:
-#    <<: *airflow-common
-#    command: celery flower
-#    ports:
-#      - 5555:5555
-#    healthcheck:
-#      test: ["CMD", "curl", "--fail", "http://localhost:5555/"]
-#      interval: 10s
-#      timeout: 10s
-#      retries: 5
-#    restart: always
 
 volumes:
   postgres-db-volume:
