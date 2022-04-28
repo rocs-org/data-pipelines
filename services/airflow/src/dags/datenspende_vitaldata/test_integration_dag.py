@@ -4,7 +4,7 @@ from datetime import date
 import pandas as pd
 from src.lib.dag_helpers import execute_query_and_return_dataframe
 
-from src.dags.datenspende_vitaldata.post_processing.aggregate_statistics_test import (
+from src.dags.datenspende_vitaldata.post_processing.shared_test import (
     SECOND_TEST_USER_DATA,
 )
 
@@ -28,24 +28,25 @@ def test_datenspende_vitals_dag_writes_correct_results_to_db(pg_context: DBConte
         )
         == 0
     )
-    answers_from_db = query_all_elements(
+    vitals_from_db = query_all_elements(
         pg_context, "SELECT * FROM datenspende.vitaldata;"
     )
-    assert answers_from_db[-1] == (
+    print(vitals_from_db[-1])
+    assert vitals_from_db[-1] == (
         200,
-        date(2021, 10, 21),
-        65,
-        70,
+        date(2021, 10, 28),
+        9,
+        4601,
         6,
-        1635228999300,
+        1635284920437,
         120,
     )
-    assert len(answers_from_db) == 20
+    assert len(vitals_from_db) == 35
 
-    answers_from_db = query_all_elements(
+    vitals_from_db = query_all_elements(
         pg_context, "SELECT * FROM datenspende_derivatives.steps_ct;"
     )
-    assert len(answers_from_db) == 2
+    assert len(vitals_from_db) == 2
 
     aggregate_statistics = execute_query_and_return_dataframe(
         "SELECT * FROM datenspende_derivatives.daily_vital_statistics;", pg_context
@@ -64,6 +65,20 @@ def test_datenspende_vitals_dag_writes_correct_results_to_db(pg_context: DBConte
         .query("user_id == 100 and type == 9 and source == 6")["value"]
         .mean()
     )
+
+    aggregates = execute_query_and_return_dataframe(
+        "SELECT * FROM datenspende_derivatives.aggregates_for_standardization_by_type_source_date;",
+        pg_context,
+    )
+
+    print(aggregates)
+
+    standardized_vitals = execute_query_and_return_dataframe(
+        "SELECT * FROM datenspende_derivatives.vitals_standardized_by_daily_aggregates;",
+        pg_context,
+    )
+
+    print(standardized_vitals)
 
 
 THRYVE_FTP_URL = "http://static-files/thryve/export.7z"
