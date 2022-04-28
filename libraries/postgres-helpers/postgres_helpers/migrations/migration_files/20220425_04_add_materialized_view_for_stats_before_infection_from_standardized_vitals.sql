@@ -8,9 +8,10 @@ select
 from
 	datenspende_derivatives.vitals_standardized_by_daily_aggregates vital,
 	(
-        -- select date of first infection for users who report at least one positive test
+        -- select four days before the week during which users first reported their first infection
+	    -- for users who report at least one positive test
 		(select distinct on (user_id)
-			user_id, test_week_start
+			user_id, (test_week_start - INTERVAL '4 DAYS') test_week_start
 		from
 			datenspende_derivatives.homogenized_features
 		-- f10 is test result
@@ -36,7 +37,15 @@ from
 where
     -- select vitals before first positive test if there was a positive test, else select all up until today
 	vital.date < before_test.test_week_start and
-    vital.user_id = before_test.user_id
+    vital.user_id = before_test.user_id AND
+    vital.user_id not in (
+    select
+        user_id
+    from
+        datenspende_derivatives.excluded_users
+    where
+        project = 'scripps colaboration long covid'
+    )
 group by vital.user_id , vital.type, vital.source;
 
 COMMENT ON MATERIALIZED VIEW
