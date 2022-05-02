@@ -22,6 +22,7 @@ clickhouse-helpers = {path = "../../libraries/clickhouse-helpers", develop=true}
 isoweek = "^1.3.3"
 SQLAlchemy = "1.3.24"  # We have to pin this dependency, otherwise deleting dags for tests does not work: https://github.com/apache/airflow/issues/15354
 pathos = "^0.2.8"
+dbt-postgres = "^1.1.0"
 
 [tool.poetry.dev-dependencies]
 flake8 = "^3.9.2"
