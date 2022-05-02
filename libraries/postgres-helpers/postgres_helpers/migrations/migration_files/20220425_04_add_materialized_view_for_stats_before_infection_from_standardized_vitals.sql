@@ -36,7 +36,8 @@ from
 	) before_test
 where
     -- select vitals before first positive test if there was a positive test, else select all up until today
-	vital.date < before_test.test_week_start and
+
+    vital.date < before_test.test_week_start and
     vital.user_id = before_test.user_id AND
     vital.user_id not in (
     select

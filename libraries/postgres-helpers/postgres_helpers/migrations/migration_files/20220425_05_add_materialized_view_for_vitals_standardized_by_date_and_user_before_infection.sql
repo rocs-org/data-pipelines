@@ -11,6 +11,7 @@ from
 	datenspende_derivatives.vitals_standardized_by_daily_aggregates vital,
 	datenspende_derivatives.vital_stats_before_infection_from_vitals_standardized_by_day statistics
 where
+    statistics.std > 0 AND
     vital.user_id = statistics.user_id AND
     vital.source = statistics.source AND
     vital.type = statistics.type AND
