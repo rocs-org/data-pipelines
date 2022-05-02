@@ -8,7 +8,7 @@ select
 from
 	datenspende.vitaldata vital, datenspende_derivatives.aggregates_for_standardization_by_type_source_date statistics
 where
-
+    statistics.std > 0 AND
     vital.date = statistics.date AND
     vital.source = statistics.source AND
     vital.type = statistics.type AND

@@ -1,6 +1,6 @@
 from postgres_helpers import DBContext, execute_sql
 from src.lib.dag_helpers import execute_query_and_return_dataframe
-from src.lib.test_helpers import run_task_with_url
+from src.lib.test_helpers import run_task_with_url, run_task
 import pytest
 
 
@@ -39,9 +39,65 @@ def test_standardized_vitals_pipeline(db: DBContext):
         .dropna()
         .droplevel(level=0, axis="columns")
     )
-    print(stats)
-    assert (stats["mean"] == 0).values.all()
-    assert (stats["std"] == 1).values.all()
+    assert all([val == pytest.approx(0) for val in stats["mean"].values])
+    assert all([val == pytest.approx(1) for val in stats["std"].values])
+
+
+def test_standardized_vitals_pipeline_excludes_zero_std(db: DBContext):
+    # it may be, that users have constant vital data (for whatever reason)
+    # this means zero standard deviation which breaks standardization. We have to exclude those.
+    vitals_standardized_by_day = execute_query_and_return_dataframe(
+        """
+        SELECT
+            user_id, std_from_standardized, std_from_subtracted_mean
+        FROM
+            datenspende_derivatives.vital_stats_before_infection_from_vitals_standardized_by_day
+        WHERE
+            user_id IN (326087, 372529);
+        """,
+        db,
+    )
+    # assert standard deviations are zero
+    assert (
+        vitals_standardized_by_day[
+            ["std_from_standardized", "std_from_subtracted_mean"]
+        ].values
+        == [[0, 0], [0, 0]]
+    ).all()
+
+    # assert standardized values table is populated nonetheless
+    assert (
+        len(
+            execute_query_and_return_dataframe(
+                """
+        SELECT
+            *
+        FROM
+            datenspende_derivatives.vitals_standardized_by_date_and_user_before_infection
+        """,
+                db,
+            ).values
+        )
+        > 0
+    )
+
+    # however, not with values for users where std is zero
+    assert (
+        len(
+            execute_query_and_return_dataframe(
+                """
+        SELECT
+            *
+        FROM
+            datenspende_derivatives.vitals_standardized_by_date_and_user_before_infection
+        WHERE
+            user_id IN (326087, 372529);
+        """,
+                db,
+            ).values
+        )
+        == 0
+    )
 
 
 @pytest.fixture
@@ -56,6 +112,14 @@ def db(pg_context):
             "datenspende_surveys_v2",
             "gather_data_from_thryve",
             "http://static-files/thryve/exportStudy_reduced.7z",
+        )
+        run_task(
+            "datenspende_surveys_v2",
+            "extract_features_from_weekly_tasks",
+        )
+        run_task(
+            "datenspende_surveys_v2",
+            "extract_features_from_one_off_answers",
         )
         execute_sql(
             pg_context,
