@@ -1,19 +1,55 @@
 import datetime
 
+import ramda as R
+
 from postgres_helpers import DBContext
-from src.dags.datenspende_vitaldata.post_processing.shared import (
-    load_user_vitals,
-)
 from src.dags.datenspende_vitaldata.post_processing.pivot_tables_test import (
     setup_vitaldata_in_db,
 )
+from src.dags.datenspende_vitaldata.post_processing.shared import (
+    load_user_vitals,
+    load_distinct_user_ids,
+    load_user_batches,
+)
 
 
-def test_load_per_user_data_loads_vitals_for_existing_users(pg_context: DBContext):
+def test_load_user_batches_loads_batches(pg_context: DBContext):
+    batch_size = 2
+    setup_vitaldata_in_db("http://static-files/thryve/export_with_outlier.7z")
+    batches = load_user_batches(pg_context, batch_size)
+
+    # individual batches are of size batch_size
+    assert len(batches[0]) == batch_size
+
+    # number of batches is number of elements // batch_size plus one for the rest
+    assert len(batches) == R.pipe(R.flatten, len, lambda b: b // batch_size + 1)(
+        batches
+    )
+
+
+def test_load_user_vitals_loads_vitals_for_multiple_user_ids(pg_context: DBContext):
     setup_vitaldata_in_db()
-    print(load_user_vitals(pg_context, 100).to_dict())
-    assert load_user_vitals(pg_context, 200).to_dict() == FIRST_TEST_USER_DATA
-    assert load_user_vitals(pg_context, 100).to_dict() == SECOND_TEST_USER_DATA
+    user_ids = [100, 200]
+    vitals = load_user_vitals(pg_context, user_ids)
+    assert (vitals["user_id"].unique() == user_ids).all()
+    assert load_user_vitals(pg_context, [200]).to_dict() == FIRST_TEST_USER_DATA
+    assert load_user_vitals(pg_context, [100]).to_dict() == SECOND_TEST_USER_DATA
+
+
+def test_load_user_ids_loads_user_ids_in_list(pg_context: DBContext):
+    setup_vitaldata_in_db()
+    users = load_distinct_user_ids(pg_context)
+    print(list(users))
+    assert list(users) == [200, 100]
+
+
+def test_load_user_vitals_loads_vitals_for_multiple_user_ids(pg_context: DBContext):
+    setup_vitaldata_in_db()
+    user_ids = [100, 200]
+    vitals = load_user_vitals(pg_context, user_ids)
+    assert (vitals["user_id"].unique() == user_ids).all()
+    assert load_user_vitals(pg_context, [200]).to_dict() == FIRST_TEST_USER_DATA
+    assert load_user_vitals(pg_context, [100]).to_dict() == SECOND_TEST_USER_DATA
 
 
 FIRST_TEST_USER_DATA = {
