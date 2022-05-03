@@ -1,7 +1,6 @@
 from airflow import DAG
-from airflow.utils.dates import days_ago
 from airflow.operators.python import PythonOperator
-from datetime import timedelta
+from datetime import timedelta, datetime
 
 from src.dags.datenspende_vitaldata.post_processing import (
     rolling_window_time_series_features_pipeline,
@@ -14,9 +13,8 @@ from src.lib.dag_helpers import (
 
 
 default_args = {
-    "owner": "airflow",
-    "depends_on_past": False,
-    "email": ["dvd.hnrchs@gmail.com"],
+    "owner": "jakob",
+    "depends_on_past": True,
     "retries": 0,
     "retry": False,
     "provide_context": True,
@@ -27,7 +25,7 @@ dag = DAG(
     default_args=default_args,
     description="rolling window features of vital data",
     schedule_interval=timedelta(days=1),
-    start_date=days_ago(1, hour=22),
+    start_date=datetime(2020, 1, 1, 22),
     tags=["ROCS pipelines"],
     on_failure_callback=slack_notifier_factory(
         create_slack_error_message_from_task_context

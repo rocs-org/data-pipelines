@@ -7,7 +7,7 @@ from src.dags.datenspende_vitaldata.post_processing.pivot_tables_test import (
     setup_vitaldata_in_db,
 )
 from src.dags.datenspende_vitaldata.post_processing.shared import (
-    load_user_vitals,
+    load_user_vitals_after_date,
     load_distinct_user_ids,
     load_user_batches,
 )
@@ -30,10 +30,22 @@ def test_load_user_batches_loads_batches(pg_context: DBContext):
 def test_load_user_vitals_loads_vitals_for_multiple_user_ids(pg_context: DBContext):
     setup_vitaldata_in_db()
     user_ids = [100, 200]
-    vitals = load_user_vitals(pg_context, user_ids)
+    vitals = load_user_vitals_after_date(
+        pg_context, datetime.date(2020, 1, 1), user_ids
+    )
     assert (vitals["user_id"].unique() == user_ids).all()
-    assert load_user_vitals(pg_context, [200]).to_dict() == FIRST_TEST_USER_DATA
-    assert load_user_vitals(pg_context, [100]).to_dict() == SECOND_TEST_USER_DATA
+    assert (
+        load_user_vitals_after_date(
+            pg_context, datetime.date(2020, 1, 1), [200]
+        ).to_dict()
+        == FIRST_TEST_USER_DATA
+    )
+    assert (
+        load_user_vitals_after_date(
+            pg_context, datetime.date(2020, 1, 1), [100]
+        ).to_dict()
+        == SECOND_TEST_USER_DATA
+    )
 
 
 def test_load_user_ids_loads_user_ids_in_list(pg_context: DBContext):
@@ -41,15 +53,6 @@ def test_load_user_ids_loads_user_ids_in_list(pg_context: DBContext):
     users = load_distinct_user_ids(pg_context)
     print(list(users))
     assert list(users) == [200, 100]
-
-
-def test_load_user_vitals_loads_vitals_for_multiple_user_ids(pg_context: DBContext):
-    setup_vitaldata_in_db()
-    user_ids = [100, 200]
-    vitals = load_user_vitals(pg_context, user_ids)
-    assert (vitals["user_id"].unique() == user_ids).all()
-    assert load_user_vitals(pg_context, [200]).to_dict() == FIRST_TEST_USER_DATA
-    assert load_user_vitals(pg_context, [100]).to_dict() == SECOND_TEST_USER_DATA
 
 
 FIRST_TEST_USER_DATA = {

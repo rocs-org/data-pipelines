@@ -14,7 +14,9 @@ def test_time_series_features_calculated_rolling_window_aggregates(
     pg_context: DBContext,
 ):
     setup_vitaldata_in_db("http://static-files/thryve/export_time_series.7z")
-    rolling_window_time_series_features_pipeline()
+    rolling_window_time_series_features_pipeline(
+        **{"execution_date": datetime.date(2021, 10, 25)}
+    )
 
     last_row_of_user_100 = list(
         execute_query_and_return_dataframe(
