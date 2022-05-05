@@ -25,7 +25,7 @@ from src.lib.test_helpers import if_var_exists_in_dag_conf_use_as_first_arg
 
 
 default_args = {
-    "owner": "airflow",
+    "owner": "jakob",
     "depends_on_past": False,
     "retries": 0,
     "retry": False,

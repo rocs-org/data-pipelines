@@ -1,7 +1,8 @@
-from airflow import DAG
-from airflow.utils.dates import days_ago
-from airflow.operators.python import PythonOperator
 from datetime import timedelta
+
+from airflow import DAG
+from airflow.operators.python import PythonOperator
+from airflow.utils.dates import days_ago
 
 from src.dags.datenspende_vitaldata.data_update import (
     vital_data_update_etl,
@@ -10,17 +11,14 @@ from src.dags.datenspende_vitaldata.data_update import (
 from src.dags.datenspende_vitaldata.post_processing import (
     pivot_vitaldata,
     PIVOT_TARGETS,
-    rolling_window_time_series_features_pipeline,
     BEFORE_INFECTION_AGG_DB_PARAMETERS,
 )
-from src.lib.dag_helpers.refresh_materialized_view import refresh_materialized_view
-
 from src.lib.dag_helpers import (
     create_slack_error_message_from_task_context,
     slack_notifier_factory,
 )
+from src.lib.dag_helpers.refresh_materialized_view import refresh_materialized_view
 from src.lib.test_helpers import if_var_exists_in_dag_conf_use_as_first_arg
-
 
 default_args = {
     "owner": "airflow",
@@ -66,12 +64,6 @@ t3 = PythonOperator(
         "datenspende_derivatives",
         "daily_vital_statistics",
     ],
-    dag=dag,
-)
-
-t4 = PythonOperator(
-    task_id="calculate_rolling_window_statistics_of_daily_vitals",
-    python_callable=rolling_window_time_series_features_pipeline,
     dag=dag,
 )
 
@@ -127,5 +119,4 @@ t9 = PythonOperator(
 )
 
 t1 >> [t2, t3, t5, t6]
-t1 >> t4
 t6 >> t7 >> t8 >> t9

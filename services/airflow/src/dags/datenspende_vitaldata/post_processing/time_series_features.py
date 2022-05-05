@@ -12,6 +12,9 @@ DB_PARAMETERS = [
     ["one_value_per_user_day_and_type"],
 ]
 
+USER_BATCH_SIZE = 100
+LOAD_LAST_N_DAYS = 60
+
 
 def rolling_window_statistics_of_user_vitals(
     user_vital_data: pd.DataFrame,
@@ -81,5 +84,8 @@ def cast_column_to_date(column: str, df: pd.DataFrame) -> pd.DataFrame:
 
 
 rolling_window_time_series_features_pipeline = post_processing_vitals_pipeline_factory(
-    rolling_window_statistics_of_user_vitals, DB_PARAMETERS
+    rolling_window_statistics_of_user_vitals,
+    DB_PARAMETERS,
+    USER_BATCH_SIZE,
+    LOAD_LAST_N_DAYS,
 )
