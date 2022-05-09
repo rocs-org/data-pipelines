@@ -12,7 +12,7 @@ DB_PARAMETERS = [
     ["one_value_per_user_day_and_type"],
 ]
 
-USER_BATCH_SIZE = 5000
+USER_BATCH_SIZE = 1000
 LOAD_LAST_N_DAYS = 60
 
 
