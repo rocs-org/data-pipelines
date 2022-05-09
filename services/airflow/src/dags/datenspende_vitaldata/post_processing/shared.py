@@ -46,6 +46,7 @@ def post_processing_vitals_pipeline_factory(
             )
 
             result.wait()
+            print("Done waiting for workers")
 
     return pipeline
 
