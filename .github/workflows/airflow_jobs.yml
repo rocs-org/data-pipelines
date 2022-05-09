@@ -63,8 +63,6 @@ jobs:
           git-secret reveal
       - name: Pull docker impages
         run: docker-compose pull
-      - uses: satackey/action-docker-layer-caching@v0.0.11
-        continue-on-error: true
       - name: Build docker stack
         run: make build && make setup
       - name: Wait for container health
