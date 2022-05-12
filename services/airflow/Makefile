@@ -31,7 +31,7 @@ lint:
 watch:
 	docker exec -it airflow-scheduler pytest -f --ignore ./logs -k 'not integration'
 
-watchthis:
+this:
 	docker exec -it airflow-scheduler pytest -f --ignore ./logs -k $(test)
 
 postgres_migrations:

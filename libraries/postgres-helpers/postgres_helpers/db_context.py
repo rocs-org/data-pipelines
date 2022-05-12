@@ -41,6 +41,7 @@ def create_db_context(*_) -> DBContext:
 
 def teardown_db_context(context: DBContext) -> DBContext:
     context["connection"].commit()
+    print("connection closed")
     context["connection"].close()
     return context
 
