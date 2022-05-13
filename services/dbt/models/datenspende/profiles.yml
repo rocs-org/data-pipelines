@@ -1,0 +1,12 @@
+datenspende:
+  target: always
+  outputs:
+    always:
+      type: postgres
+      threads: 4
+      host: "{{ env_var('TARGET_DB_HOSTNAME') }}"
+      port: "{{ env_var('TARGET_DB_PORT') }}"
+      user: "{{ env_var('TARGET_DB_USER') }}"
+      pass: "{{ env_var('TARGET_DB_PW') }}"
+      dbname: "{{ env_var('TARGET_DB') }}"
+      schema: datenspende_derivatives

@@ -1,0 +1,11 @@
+
+version: 2
+
+models:
+  - name: test_dbt
+    description: "A toy model to test dbt integration into Airflow"
+    columns:
+      - name: user_id
+        description: "The user id in the vitaldata db"
+        tests:
+          - not_null

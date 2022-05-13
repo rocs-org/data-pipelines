@@ -1,10 +1,11 @@
-Welcome to your new dbt project!
+Welcome to ROCS dbt setup! Here we keep all dbt models for all projects :)
 
-### Using the starter project
+### User guide
 
-Try running the following commands:
-- dbt run
-- dbt test
+- each project has its own folder in /models
+- to add a model it is enough to create a new .sql file
+- after testing it locally works (you might need to add test data) you can open a PR
+- You can ask Jakob and David for help!
 
 
 ### Resources:
