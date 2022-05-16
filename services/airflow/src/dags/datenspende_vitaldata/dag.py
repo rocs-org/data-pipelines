@@ -1,7 +1,9 @@
+import os
 from datetime import timedelta
 
 from airflow import DAG
 from airflow.operators.python import PythonOperator
+from airflow.operators.bash import BashOperator
 from airflow.utils.dates import days_ago
 
 from src.dags.datenspende_vitaldata.data_update import (
@@ -118,5 +120,17 @@ t9 = PythonOperator(
     ],
 )
 
+t10 = BashOperator(
+    task_id="run_dbt_models",
+    doc="Mock task to try dbt setup and see if it is working",
+    bash_command="dbt run --select $MODELS --project-dir $DBT_DIR --profiles-dir $DBT_DIR",
+    env={
+        "MODELS": "datenspende", #this defines the models/sql files that are executed by dbt
+        "TARGET_DB_SCHEMA": "datenspende_derivatives", #this defines the schema in which dbt outputs arrive,
+        "DBT_DIR": "/opt/airflow/src/dbt/",
+        **os.environ, #TODO necessary to carry over existing env vars, fix this by updating Airflow to >2.3 and setting the flag append_env = True
+    },
+)
+
 t1 >> [t2, t3, t5, t6]
-t6 >> t7 >> t8 >> t9
+t6 >> t7 >> t8 >> t9 >> t10
