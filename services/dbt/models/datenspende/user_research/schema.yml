@@ -1,0 +1,12 @@
+
+version: 2
+
+models:
+  - name: user_donations
+    description: "Datenspende statistics per user"
+    columns:
+      - name: user_id
+        description: "The primary key for this table"
+        tests:
+          - unique
+          - not_null
