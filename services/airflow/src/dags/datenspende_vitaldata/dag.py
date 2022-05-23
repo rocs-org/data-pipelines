@@ -128,19 +128,21 @@ t10 = BashOperator(
         "MODELS": "datenspende",  # this defines the models/sql files that are executed by dbt
         "TARGET_DB_SCHEMA": "datenspende_derivatives",  # this defines the schema in which dbt outputs arrive,
         "DBT_DIR": "/opt/airflow/src/dbt/",
+        "DBT_LOGS": "/opt/airflow/logs/dbt",
         **os.environ,  # TODO necessary to carry over existing env vars,
         # fix this by updating Airflow to >2.3 and setting the flag append_env = True
     },
 )
 
 t11 = BashOperator(
-    task_id="test_dbt_models",
+    task_id="run_dbt_tests",
     doc="Run dbt tests",
     bash_command="dbt test --select $MODELS --project-dir $DBT_DIR --profiles-dir $DBT_DIR",
     env={
         "MODELS": "datenspende",  # this defines the models/sql files that are executed by dbt
         "TARGET_DB_SCHEMA": "datenspende_derivatives",  # this defines the schema in which dbt outputs arrive,
         "DBT_DIR": "/opt/airflow/src/dbt/",
+        "DBT_LOGS": "/opt/airflow/logs/dbt",
         **os.environ,  # TODO necessary to carry over existing env vars,
         # fix this by updating Airflow to >2.3 and setting the flag append_env = True
     },
