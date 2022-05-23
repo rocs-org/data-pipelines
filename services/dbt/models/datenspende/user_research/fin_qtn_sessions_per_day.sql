@@ -1,5 +1,3 @@
-{{ config(materialized='view') }}
-
 with fin_qtn_sessions_per_day as (
 
 SELECT To_timestamp(completed_at / 1000) :: date AS cdate,
