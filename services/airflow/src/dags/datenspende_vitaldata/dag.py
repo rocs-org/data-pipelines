@@ -1,9 +1,7 @@
-import os
 from datetime import timedelta
 
 from airflow import DAG
 from airflow.operators.python import PythonOperator
-from airflow.operators.bash import BashOperator
 from airflow.utils.dates import days_ago
 
 from src.dags.datenspende_vitaldata.data_update import (
