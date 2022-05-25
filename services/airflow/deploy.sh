@@ -3,7 +3,10 @@ git checkout main
 git stash
 git pull
 git secret reveal -f
-cd services/airflow
+cd services/dbt
+poetry install
+make build
+cd ../airflow
 mv .env.prod .env
 make build
 make setup
