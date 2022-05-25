@@ -20,6 +20,7 @@ from src.lib.dag_helpers import (
     slack_notifier_factory,
 )
 from src.lib.dag_helpers.refresh_materialized_view import refresh_materialized_view
+from src.lib.dag_helpers.dbt_helpers import run_dbt_models
 from src.lib.test_helpers import if_var_exists_in_dag_conf_use_as_first_arg
 
 default_args = {
@@ -120,33 +121,17 @@ t9 = PythonOperator(
     ],
 )
 
-t10 = BashOperator(
+t10 = PythonOperator(
     task_id="run_dbt_models",
-    doc="Run dbt models",
-    bash_command="dbt run --select $MODELS --project-dir $DBT_DIR --profiles-dir $DBT_DIR",
-    env={
-        "MODELS": "datenspende",  # this defines the models/sql files that are executed by dbt
-        "TARGET_DB_SCHEMA": "datenspende_derivatives",  # this defines the schema in which dbt outputs arrive,
-        "DBT_DIR": "/opt/airflow/src/dbt/",
-        "DBT_LOGS": "/opt/airflow/logs/dbt/",
-        **os.environ,  # TODO necessary to carry over existing env vars,
-        # fix this by updating Airflow to >2.3 and setting the flag append_env = True
-    },
-)
-
-t11 = BashOperator(
-    task_id="run_dbt_tests",
-    doc="Run dbt tests",
-    bash_command="dbt test --select $MODELS --project-dir $DBT_DIR --profiles-dir $DBT_DIR",
-    env={
-        "MODELS": "datenspende",  # this defines the models/sql files that are executed by dbt
-        "TARGET_DB_SCHEMA": "datenspende_derivatives",  # this defines the schema in which dbt outputs arrive,
-        "DBT_DIR": "/opt/airflow/src/dbt/",
-        "DBT_LOGS": "/opt/airflow/logs/dbt/",
-        **os.environ,  # TODO necessary to carry over existing env vars,
-        # fix this by updating Airflow to >2.3 and setting the flag append_env = True
-    },
+    doc="""
+    1) Run the dbt models selected in the op_args against the specified target schema
+    """,
+    python_callable=run_dbt_models,
+    op_args=[
+        "datenspende",
+        "datenspende_derivatives",
+    ],
 )
 
 t1 >> [t2, t3, t5, t6]
-t6 >> t7 >> t8 >> t9 >> t10 >> t11
+t6 >> t7 >> t8 >> t9 >> t10
