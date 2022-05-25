@@ -17,8 +17,8 @@ from src.lib.dag_helpers import (
     create_slack_error_message_from_task_context,
     slack_notifier_factory,
 )
-from src.lib.dag_helpers.refresh_materialized_view import refresh_materialized_view
-from src.lib.dag_helpers.dbt_helpers import run_dbt_models
+from src.lib.dag_helpers import refresh_materialized_view
+from src.lib.dag_helpers import run_dbt_models
 from src.lib.test_helpers import if_var_exists_in_dag_conf_use_as_first_arg
 
 default_args = {
@@ -131,5 +131,5 @@ t10 = PythonOperator(
     ],
 )
 
-t1 >> [t2, t3, t5, t6]
-t6 >> t7 >> t8 >> t9 >> t10
+t1 >> [t2, t3, t5, t6, t10]
+t6 >> t7 >> t8 >> t9

@@ -2,16 +2,6 @@
 version: 2
 
 models:
-  - name: fin_qtn_sessions_per_day
-    description: Number of finished questionnaire sessions per day per study
-    columns:
-      - name: cdate
-        description: calendar date
-      - name: study_name
-        description: Study name
-      - name: fin_qtn_sessions
-        description: The number of finished questionnaire sessions on date cdate for study study_name
-
   - name: vitaldata_don_per_day
     description: Number of daily vitaldata donations/donors per vital type
     columns:

@@ -1,6 +1,6 @@
 {{ config(materialized='table') }}
 
-with user_donations as (
+with user_vital_don_stats as (
 
 SELECT user_id,
        Min(date)            AS first_vital,
@@ -12,4 +12,4 @@ GROUP  BY user_id
 )
 
 select *
-from user_donations
+from user_vital_don_stats
