@@ -1,0 +1,33 @@
+
+# Name your project! Project names should contain only lowercase characters
+# and underscores. A good package name should reflect your organization's
+# name or the intended use of these models
+name: 'data_pipelines'
+version: '1.0.0'
+config-version: 2
+
+# This setting configures which "profile" dbt uses for this project.
+profile: 'data-pipelines'
+
+# These configurations specify where dbt should look for different types of files.
+# The `model-paths` config, for example, states that models in this project can be
+# found in the "models/" directory. You probably won't need to change these!
+model-paths: ["models"]
+analysis-paths: ["analyses"]
+test-paths: ["tests"]
+seed-paths: ["seeds"]
+macro-paths: ["macros"]
+snapshot-paths: ["snapshots"]
+
+log-path: "{{ env_var('DBT_LOGS', 'logs') }}"
+target-path: "{{ env_var('DBT_LOGS', 'target') }}"
+clean-targets:         # directories to be removed by `dbt clean`
+  - "target"
+  - "logs"
+  - "dbt_packages"
+
+
+models:
+  data_pipelines:
+    # Config indicated by + and applies to all files under models/
+    +materialized: table

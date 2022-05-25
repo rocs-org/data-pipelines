@@ -17,7 +17,8 @@ from src.lib.dag_helpers import (
     create_slack_error_message_from_task_context,
     slack_notifier_factory,
 )
-from src.lib.dag_helpers.refresh_materialized_view import refresh_materialized_view
+from src.lib.dag_helpers import refresh_materialized_view
+from src.lib.dag_helpers import run_dbt_models
 from src.lib.test_helpers import if_var_exists_in_dag_conf_use_as_first_arg
 
 default_args = {
@@ -118,5 +119,17 @@ t9 = PythonOperator(
     ],
 )
 
-t1 >> [t2, t3, t5, t6]
+t10 = PythonOperator(
+    task_id="run_dbt_models",
+    doc="""
+    1) Run the dbt models selected in the op_args against the specified target schema
+    """,
+    python_callable=run_dbt_models,
+    op_args=[
+        "datenspende",
+        "datenspende_derivatives",
+    ],
+)
+
+t1 >> [t2, t3, t5, t6, t10]
 t6 >> t7 >> t8 >> t9

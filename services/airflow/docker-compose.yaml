@@ -45,6 +45,7 @@ x-airflow-common:
     - ../../libraries:/libraries
     - ../../libraries/postgres-helpers/postgres_helpers/migrations/migration_files:/home/airflow/.local/lib/python3.8/site-packages/postgres_helpers/migrations/migration_files
     - ./src:/opt/airflow/src
+    - ../dbt:/opt/airflow/dbt
     - airflow-logs-volume:/opt/airflow/logs
     - ./setup.cfg:/opt/airflow/setup.cfg
     - ./pyproject.toml:/opt/airflow/pyproject.toml

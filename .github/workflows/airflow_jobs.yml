@@ -61,6 +61,22 @@ jobs:
         run: |
           sudo apt install git-secret
           git-secret reveal
+
+      - name: Set up python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+      - name: Setup Poetry
+        uses: abatilo/actions-poetry@v2.0.0
+        with:
+          poetry-version: 1.1.11
+      - name: Build dbt dependencies
+        run: |
+          cd ../dbt
+          poetry install
+          make build
+          cd ../airflow
+
       - name: Pull docker impages
         run: docker-compose pull
       - name: Build docker stack
@@ -85,6 +101,22 @@ jobs:
       - name: Reveal secrets
         run: |
           git-secret reveal
+
+      - name: Set up python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+      - name: Setup Poetry
+        uses: abatilo/actions-poetry@v2.0.0
+        with:
+          poetry-version: 1.1.11
+      - name: Build dbt dependencies
+        run: |
+          cd ../dbt
+          poetry install
+          make build
+          cd ../airflow
+
       - name: Pull docker images
         run: |
           docker-compose --version

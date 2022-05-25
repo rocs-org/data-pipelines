@@ -80,5 +80,15 @@ def test_datenspende_vitals_dag_writes_correct_results_to_db(pg_context: DBConte
 
     print(standardized_vitals)
 
+    user_vital_don_stats = query_all_elements(
+        pg_context, "SELECT * FROM datenspende_derivatives.user_vital_don_stats;"
+    )
+    assert len(user_vital_don_stats) == 2
+
+    vitaldata_don_per_day = query_all_elements(
+        pg_context, "SELECT * FROM datenspende_derivatives.vitaldata_don_per_day;"
+    )
+    assert len(vitaldata_don_per_day) == 20
+
 
 THRYVE_FTP_URL = "http://static-files/thryve/export.7z"

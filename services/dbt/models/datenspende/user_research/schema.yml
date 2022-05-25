@@ -1,0 +1,25 @@
+
+version: 2
+
+models:
+  - name: vitaldata_don_per_day
+    description: Number of daily vitaldata donations/donors per vital type
+    columns:
+      - name: cdate
+        description: calendar date
+      - name: vital_type
+        description: vital data type
+      - name: donors
+        description: The number of daily vitaldata donors/donations (synonymous) per vital type
+
+  - name: user_vital_don_stats
+    description: Overview over first, last, and total vitaldata donations made per user
+    columns:
+      - name: user_id
+        description: user id
+      - name: first_vital
+        description: first day of vital donations
+      - name: last_vital
+        description: last day of vital donations
+      - name: days_w_vital
+        description: overall number of days with vital donations
