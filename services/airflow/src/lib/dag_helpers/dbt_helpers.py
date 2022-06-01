@@ -23,6 +23,6 @@ def run_dbt_models(models: str, target_db_schema: str, **kwargs) -> None:
         ],
         capture_output=True,
         text=True,
+        check=True,
     )
     print(result.stdout)
-    print(result.stderr)
