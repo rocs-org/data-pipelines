@@ -70,6 +70,7 @@ def extract_process_load_vital_data_for_user_batch(
     db_parameters,
     user_id_interval: Interval,
 ) -> None:
+    print(user_id_interval)
     R.pipe(
         load_user_vitals_after_date(before, after),
         aggregator,

@@ -13,7 +13,7 @@ DB_PARAMETERS = [
     ["one_value_per_user_day_and_type"],
 ]
 
-USER_BATCH_SIZE = 10000
+USER_BATCH_SIZE = 20000
 LOAD_LAST_N_DAYS = 57
 
 
@@ -47,11 +47,6 @@ def merge_dataframes(df1: pd.DataFrame, df2: pd.DataFrame) -> pd.DataFrame:
 
 @R.curry
 def calculate_8_week_statistics(execution_date: date, df: pd.DataFrame) -> pd.DataFrame:
-    print(
-        df.query(
-            f"date > {datetime.strftime(execution_date - timedelta(days=57), '%Y%m%d')}"
-        )
-    )
     return (
         df.query(
             f"date > {datetime.strftime(execution_date - timedelta(days=57), '%Y%m%d')}"
