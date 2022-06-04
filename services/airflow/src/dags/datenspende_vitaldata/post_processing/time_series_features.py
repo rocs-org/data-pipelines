@@ -3,6 +3,7 @@ from typing import List
 import pandas as pd
 import ramda as R
 from pandas.core import groupby
+from datetime import date, timedelta, datetime
 
 from .shared import post_processing_vitals_pipeline_factory
 
@@ -16,17 +17,18 @@ USER_BATCH_SIZE = 10000
 LOAD_LAST_N_DAYS = 57
 
 
+@R.curry
 def rolling_window_statistics_of_user_vitals(
+    execution_date: date,
     user_vital_data: pd.DataFrame,
 ) -> pd.DataFrame:
     return R.pipe(
         cast_column_to_date("date"),
-        lambda df: df.groupby(["user_id", "type", "source"]),
         R.converge(
             merge_dataframes,
             [
-                calculate_8_week_statistics,
-                calculate_one_week_statistics,
+                calculate_8_week_statistics(execution_date),
+                calculate_one_week_statistics(execution_date),
             ],
         ),
     )(user_vital_data)
@@ -43,9 +45,19 @@ def merge_dataframes(df1: pd.DataFrame, df2: pd.DataFrame) -> pd.DataFrame:
     return pd.merge(df1, df2, how="outer", on=["user_id", "type", "source", "date"])
 
 
-def calculate_8_week_statistics(df: pd.DataFrame) -> pd.DataFrame:
+@R.curry
+def calculate_8_week_statistics(execution_date: date, df: pd.DataFrame) -> pd.DataFrame:
+    print(
+        df.query(
+            f"date > {datetime.strftime(execution_date - timedelta(days=57), '%Y%m%d')}"
+        )
+    )
     return (
-        df.rolling("56D", min_periods=30, on="date")
+        df.query(
+            f"date > {datetime.strftime(execution_date - timedelta(days=57), '%Y%m%d')}"
+        )
+        .groupby(["user_id", "type", "source"])
+        .rolling("56D", min_periods=30, on="date")
         .agg({"value": ["mean", "min", "max", "median"]})
         .droplevel(level=0, axis="columns")
         .reset_index()
@@ -60,9 +72,16 @@ def calculate_8_week_statistics(df: pd.DataFrame) -> pd.DataFrame:
     )
 
 
-def calculate_one_week_statistics(df: pd.DataFrame) -> pd.DataFrame:
+@R.curry
+def calculate_one_week_statistics(
+    execution_date: date, df: pd.DataFrame
+) -> pd.DataFrame:
     return (
-        df.rolling("7D", min_periods=3, on="date")
+        df.query(
+            f"date > {datetime.strftime(execution_date - timedelta(days=8), '%Y%m%d')}"
+        )
+        .groupby(["user_id", "type", "source"])
+        .rolling("7D", min_periods=3, on="date")
         .agg({"value": ["mean", "min", "max", "median"]})
         .droplevel(level=0, axis="columns")
         .reset_index()
@@ -79,7 +98,7 @@ def calculate_one_week_statistics(df: pd.DataFrame) -> pd.DataFrame:
 
 @R.curry
 def cast_column_to_date(column: str, df: pd.DataFrame) -> pd.DataFrame:
-    df[column] = pd.to_datetime(df[column], format="%Y-%m-%d")
+    df[column] = df[column].apply(pd.to_datetime)
     return df.sort_values("date")
 
 
