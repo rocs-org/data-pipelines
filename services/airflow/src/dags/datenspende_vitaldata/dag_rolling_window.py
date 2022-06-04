@@ -15,8 +15,8 @@ from src.lib.dag_helpers import (
 default_args = {
     "owner": "jakob",
     "depends_on_past": False,
-    "retries": 0,
-    "retry": False,
+    "retries": 2,
+    "retry": True,
     "provide_context": True,
 }
 
