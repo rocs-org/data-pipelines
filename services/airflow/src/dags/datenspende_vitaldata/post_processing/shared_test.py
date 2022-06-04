@@ -1,58 +1,52 @@
 import datetime
 
-import ramda as R
-
 from postgres_helpers import DBContext
 from src.dags.datenspende_vitaldata.post_processing.pivot_tables_test import (
     setup_vitaldata_in_db,
 )
 from src.dags.datenspende_vitaldata.post_processing.shared import (
     load_user_vitals_after_date,
-    load_distinct_user_ids,
-    load_user_batches,
+    load_min_user_id,
+    load_max_user_id,
+    get_user_id_intervals,
+    Interval,
 )
 
 
-def test_load_user_batches_loads_batches(pg_context: DBContext):
-    batch_size = 2
-    setup_vitaldata_in_db("http://static-files/thryve/export_with_outlier.7z")
-    batches = load_user_batches(pg_context, batch_size)
+def test_get_user_id_intervals(pg_context: DBContext):
+    setup_vitaldata_in_db()
+    assert get_user_id_intervals(pg_context, 50) == [
+        {"min": 100, "max": 149},
+        {"min": 150, "max": 199},
+        {"min": 200, "max": 200},
+    ]
 
-    # individual batches are of size batch_size
-    assert len(batches[0]) == batch_size
 
-    # number of batches is number of elements // batch_size plus one for the rest
-    assert len(batches) == R.pipe(R.flatten, len, lambda b: b // batch_size + 1)(
-        batches
-    )
+def test_load_min_max_user_id(pg_context: DBContext):
+    setup_vitaldata_in_db()
+    assert load_min_user_id(pg_context) == 100
+    assert load_max_user_id(pg_context) == 200
 
 
 def test_load_user_vitals_loads_vitals_for_multiple_user_ids(pg_context: DBContext):
     setup_vitaldata_in_db()
-    user_ids = [100, 200]
+    user_id_interval: Interval = {"min": 100, "max": 200}
     vitals = load_user_vitals_after_date(
-        pg_context, datetime.date(2020, 1, 1), user_ids
+        pg_context, datetime.date(2020, 1, 1), user_id_interval
     )
-    assert (vitals["user_id"].unique() == user_ids).all()
+    assert (vitals["user_id"].unique() == [100, 200]).all()
     assert (
         load_user_vitals_after_date(
-            pg_context, datetime.date(2020, 1, 1), [200]
+            pg_context, datetime.date(2020, 1, 1), {"min": 200, "max": 200}
         ).to_dict()
         == FIRST_TEST_USER_DATA
     )
     assert (
         load_user_vitals_after_date(
-            pg_context, datetime.date(2020, 1, 1), [100]
+            pg_context, datetime.date(2020, 1, 1), {"min": 100, "max": 100}
         ).to_dict()
         == SECOND_TEST_USER_DATA
     )
-
-
-def test_load_user_ids_loads_user_ids_in_list(pg_context: DBContext):
-    setup_vitaldata_in_db()
-    users = load_distinct_user_ids(pg_context)
-    print(list(users))
-    assert list(users) == [200, 100]
 
 
 FIRST_TEST_USER_DATA = {
