@@ -31,17 +31,23 @@ def test_load_min_max_user_id(pg_context: DBContext):
 def test_load_user_vitals_loads_vitals_for_multiple_user_ids(pg_context: DBContext):
     setup_vitaldata_in_db()
     user_id_interval: Interval = {"min": 100, "max": 200}
-    vitals = load_user_vitals_after_date(datetime.date(2020, 1, 1), user_id_interval)
+    vitals = load_user_vitals_after_date(
+        datetime.date(2022, 1, 1), datetime.date(2020, 1, 1), user_id_interval
+    )
     assert (vitals["user_id"].unique() == [100, 200]).all()
     assert (
         load_user_vitals_after_date(
-            datetime.date(2020, 1, 1), {"min": 200, "max": 200}
+            datetime.date(2022, 1, 1),
+            datetime.date(2020, 1, 1),
+            {"min": 200, "max": 200},
         ).to_dict()
         == FIRST_TEST_USER_DATA
     )
     assert (
         load_user_vitals_after_date(
-            datetime.date(2020, 1, 1), {"min": 100, "max": 100}
+            datetime.date(2022, 1, 1),
+            datetime.date(2020, 1, 1),
+            {"min": 100, "max": 100},
         ).to_dict()
         == SECOND_TEST_USER_DATA
     )
