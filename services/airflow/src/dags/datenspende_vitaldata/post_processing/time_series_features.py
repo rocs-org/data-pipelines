@@ -49,7 +49,7 @@ def merge_dataframes(df1: pd.DataFrame, df2: pd.DataFrame) -> pd.DataFrame:
 def calculate_8_week_statistics(execution_date: date, df: pd.DataFrame) -> pd.DataFrame:
     return (
         df.query(
-            f"date > {datetime.strftime(execution_date - timedelta(days=57), '%Y%m%d')}"
+            f"date > {datetime.strftime(execution_date - timedelta(days=56), '%Y%m%d')}"
         )
         .groupby(["user_id", "type", "source"])
         .rolling("56D", min_periods=30, on="date")
@@ -73,7 +73,7 @@ def calculate_one_week_statistics(
 ) -> pd.DataFrame:
     return (
         df.query(
-            f"date > {datetime.strftime(execution_date - timedelta(days=8), '%Y%m%d')}"
+            f"date > {datetime.strftime(execution_date - timedelta(days=7), '%Y%m%d')}"
         )
         .groupby(["user_id", "type", "source"])
         .rolling("7D", min_periods=3, on="date")
