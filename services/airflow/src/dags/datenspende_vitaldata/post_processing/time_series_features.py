@@ -12,8 +12,8 @@ DB_PARAMETERS = [
     ["one_value_per_user_day_and_type"],
 ]
 
-USER_BATCH_SIZE = 1000
-LOAD_LAST_N_DAYS = 60
+USER_BATCH_SIZE = 10000
+LOAD_LAST_N_DAYS = 57
 
 
 def rolling_window_statistics_of_user_vitals(
