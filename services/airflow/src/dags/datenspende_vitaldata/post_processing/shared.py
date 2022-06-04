@@ -17,7 +17,7 @@ from postgres_helpers import (
 )
 from src.lib.dag_helpers import (
     execute_query_and_return_dataframe,
-    upsert_pandas_dataframe_to_table_in_schema_with_db_context,
+    connect_to_db_and_upsert_pandas_dataframe_on_constraint,
 )
 from src.lib.test_helpers import set_env_variable_from_dag_config_if_present
 
@@ -65,15 +65,11 @@ class Interval(TypedDict):
 def extract_process_load_vital_data_for_user_batch(
     aggregator, after: datetime.date, db_parameters, user_id_interval: Interval
 ) -> None:
-    db_context = create_db_context()
     R.pipe(
-        load_user_vitals_after_date(db_context, after),
+        load_user_vitals_after_date(after),
         aggregator,
-        upsert_pandas_dataframe_to_table_in_schema_with_db_context(
-            db_context, *db_parameters
-        ),
+        connect_to_db_and_upsert_pandas_dataframe_on_constraint(*db_parameters),
     )(user_id_interval)
-    teardown_db_context(db_context)
 
 
 def get_user_id_intervals(db_context: DBContext, interval_size: int) -> List[Interval]:
@@ -101,11 +97,12 @@ def load_max_user_id(db_context: DBContext) -> int:
 
 @R.curry
 def load_user_vitals_after_date(
-    db_context: DBContext,
     after: datetime.date,
     user_id_interval: Interval,
 ) -> pd.DataFrame:
-    return execute_query_and_return_dataframe(
+
+    db_context = create_db_context()
+    user_vitals = execute_query_and_return_dataframe(
         SQL(
             """
             SELECT
@@ -125,3 +122,5 @@ def load_user_vitals_after_date(
         ),
         db_context,
     )
+    teardown_db_context(db_context)
+    return user_vitals
