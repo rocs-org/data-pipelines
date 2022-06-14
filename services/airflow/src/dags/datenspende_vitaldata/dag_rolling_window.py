@@ -14,7 +14,7 @@ from src.lib.dag_helpers import (
 
 default_args = {
     "owner": "jakob",
-    "depends_on_past": False,
+    "depends_on_past": True,
     "retries": 2,
     "retry": True,
     "provide_context": True,
@@ -25,7 +25,7 @@ dag = DAG(
     default_args=default_args,
     description="rolling window features of vital data",
     schedule_interval=timedelta(days=1),
-    start_date=datetime(2020, 1, 1, 22),
+    start_date=datetime(2021, 10, 1, 22),
     tags=["ROCS pipelines"],
     on_failure_callback=slack_notifier_factory(
         create_slack_error_message_from_task_context
