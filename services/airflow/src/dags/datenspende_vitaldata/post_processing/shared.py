@@ -74,6 +74,7 @@ def extract_process_load_vital_data_for_user_batch(
     R.pipe(
         load_user_vitals_after_date(before, after),
         aggregator,
+        R.tap(lambda df: print(df.info(memory_usage=True))),
         connect_to_db_and_upsert_pandas_dataframe_on_constraint(*db_parameters),
     )(user_id_interval)
 

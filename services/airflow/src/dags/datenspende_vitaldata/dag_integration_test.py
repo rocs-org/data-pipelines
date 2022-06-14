@@ -11,7 +11,7 @@ from src.dags.datenspende_vitaldata.post_processing.shared_test import (
 from src.lib.test_helpers import execute_dag
 
 
-def test_dag_loads_with_no_errors():
+def test_datenspende_vitals_dag_loads_with_no_errors():
     dag_bag = DagBag(include_examples=False)
     dag_bag.process_file("dag.py")
     assert len(dag_bag.import_errors) == 0
