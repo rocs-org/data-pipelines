@@ -46,9 +46,4 @@ where
         where
                 project = 'scripps colaboration long covid'
     )
-group by vital.user_id , vital.type, vital.source;
-
-COMMENT ON MATERIALIZED VIEW
-    datenspende_derivatives.vital_stats_before_infection_from_vitals_standardized_by_day
-    IS
-        'standardize vitals by date, source and type. Then aggregate over groups by user, type and source where dates are before first infection (if infected, else all dates)'
+group by vital.user_id , vital.type, vital.source

@@ -96,7 +96,7 @@ models:
         description: z-scored vital data with aggregates over all user ids at a given date for fixed vital type and source
         tests:
           - not_null
-  - name: aggregates_of_vitals_before_infection_from_data_standardized_by_day
+  - name: agg_before_infection_from_vitals_std_by_day
     description: |
       Aggregates (mean, std) of standardized vital data before first infection.
       
@@ -136,7 +136,7 @@ models:
       - name: std_from_subtracted_mean
         type: FLOAT
         description: Standard deviation over user ids for detrended vitals (by removing the daily mean) before first infection
-  - name: vitals_standardized_by_date_and_user_before_infection
+  - name: vitals_std_by_date_and_user_before_infection
     description: |
       Vital data detrended by 
       

@@ -16,3 +16,6 @@ docs:
 
 build:
 	poetry run dbt deps
+
+run:
+	poetry run dbt --profiles-dir . run

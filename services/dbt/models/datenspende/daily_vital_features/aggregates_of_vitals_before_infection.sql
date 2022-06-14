@@ -43,4 +43,4 @@ where
         where
                 project = 'scripps colaboration long covid'
     )
-group by vital.user_id , vital.type, vital.source;
+group by vital.user_id , vital.type, vital.source

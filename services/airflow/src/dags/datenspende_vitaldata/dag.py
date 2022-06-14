@@ -4,7 +4,6 @@ from airflow import DAG
 from airflow.operators.python import PythonOperator
 from airflow.operators.bash import BashOperator
 from airflow.utils.dates import days_ago
-from airflow_dbt.operators import DbtRunOperator
 
 from src.dags.datenspende_vitaldata.data_update import (
     vital_data_update_etl,

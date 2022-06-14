@@ -48,26 +48,8 @@ def test_datenspende_vitals_dag_writes_correct_results_to_db(pg_context: DBConte
     )
     assert len(vitals_from_db) == 2
 
-    aggregate_statistics = execute_query_and_return_dataframe(
-        "SELECT * FROM datenspende_derivatives.daily_vital_statistics;", pg_context
-    )
-    assert (
-        aggregate_statistics.query("user_id == 100 and type == 9 and source == 6")[
-            "std"
-        ].values[0]
-        == 0
-    )
-    assert (
-        aggregate_statistics.query("user_id == 100 and type == 9 and source == 6")[
-            "mean"
-        ].values[0]
-        == pd.DataFrame(SECOND_TEST_USER_DATA)
-        .query("user_id == 100 and type == 9 and source == 6")["value"]
-        .mean()
-    )
-
     aggregates = execute_query_and_return_dataframe(
-        "SELECT * FROM datenspende_derivatives.aggregates_for_standardization_by_type_source_date;",
+        "SELECT * FROM datenspende_derivatives.daily_aggregates_of_vitals;",
         pg_context,
     )
 

@@ -12,4 +12,4 @@ where vital.user_id not in (
     where
             project = 'scripps colaboration long covid'
 )
-group by vital.date , vital.type, vital.source;
+group by vital.date , vital.type, vital.source

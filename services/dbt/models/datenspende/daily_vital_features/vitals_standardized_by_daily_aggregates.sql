@@ -18,14 +18,4 @@ where
             {{source('datenspende_derivatives', 'excluded_users')}}
         where
                 project = 'scripps colaboration long covid'
-    );
-
-COMMENT ON COLUMN
-    datenspende_derivatives.vitals_standardized_by_daily_aggregates.standardized_value
-    IS
-        'standardized vitals over user, source and type.';
-
-COMMENT ON COLUMN
-    datenspende_derivatives.vitals_standardized_by_daily_aggregates.value_minus_mean
-    IS
-        'subtracted mean over user, source and type from vitals.'
+    )
