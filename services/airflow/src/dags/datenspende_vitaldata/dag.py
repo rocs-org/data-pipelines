@@ -2,6 +2,7 @@ from datetime import timedelta
 
 from airflow import DAG
 from airflow.operators.python import PythonOperator
+from airflow.operators.bash import BashOperator
 from airflow.utils.dates import days_ago
 from airflow_dbt.operators import DbtRunOperator
 
@@ -12,23 +13,21 @@ from src.dags.datenspende_vitaldata.data_update import (
 from src.dags.datenspende_vitaldata.post_processing import (
     pivot_vitaldata,
     PIVOT_TARGETS,
-    BEFORE_INFECTION_AGG_DB_PARAMETERS,
 )
 from src.lib.dag_helpers import (
     create_slack_error_message_from_task_context,
     slack_notifier_factory,
 )
-from src.lib.dag_helpers import refresh_materialized_view
 from src.lib.dag_helpers import run_dbt_models
 from src.lib.test_helpers import if_var_exists_in_dag_conf_use_as_first_arg
 
 default_args = {
     "owner": "airflow",
     "depends_on_past": False,
-    "email": ["dvd.hnrchs@gmail.com"],
     "retries": 0,
     "retry": False,
     "provide_context": True,
+    "dir": "/opt/airflow/dbt/",
 }
 
 dag = DAG(
@@ -59,17 +58,17 @@ t2 = PythonOperator(
     op_args=PIVOT_TARGETS,
 )
 
-t10 = PythonOperator(
+t3 = BashOperator(dag=dag, task_id="where_am_i", bash_command="pwd")
+
+t4 = PythonOperator(
     dag=dag,
     task_id="run_dbt_models",
     doc="""
     1) Run the dbt models selected in the op_args against the specified target schema
     """,
     python_callable=run_dbt_models,
-    op_args=[
-        "datenspende",
-        "datenspende_derivatives",
-    ],
+    op_args=["datenspende", "datenspende_derivatives", "/opt/airflow/dbt/"],
 )
 
-t1 >> [t2, t10]
+
+t1 >> [t2, t3, t4]

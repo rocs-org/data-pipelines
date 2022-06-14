@@ -3,11 +3,12 @@ from returns.curry import curry
 import json
 import os
 import ramda as R
-from typing import Callable, Dict
+from typing import Callable
+from airflow.utils.context import Context
 
 
-MessageCreator = Callable[[Dict], str]
-SlackNotifier = Callable[[Dict], None]
+MessageCreator = Callable[[Context], str]
+SlackNotifier = Callable[[Context], None]
 
 
 def slack_notifier_factory(message_creator: MessageCreator) -> SlackNotifier:
@@ -28,7 +29,7 @@ def notify_slack(webhook_url: str, message: str) -> None:
     )
 
 
-def create_slack_error_message_from_task_context(context: dict) -> str:
+def create_slack_error_message_from_task_context(context: Context) -> str:
     return """
         :red_circle: Task Failed.\n
         *Task*: {task}\n
