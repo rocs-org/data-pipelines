@@ -1,0 +1,7 @@
+[build]
+publish = "target"
+command = """
+pip install poetry
+poetry install -v
+make build-docs
+"""
