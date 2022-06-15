@@ -1,6 +1,8 @@
 [build]
 publish = "target"
 command = """
+echo -n "$GPG_KEY" | tr ',' '\n' | gpg --import
+
 pip install poetry
 poetry install -v
 make build-docs
