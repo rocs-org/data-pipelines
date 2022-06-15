@@ -5,7 +5,7 @@ data-pipelines:
       type: postgres
       threads: 4
       host: "{{ env_var('TARGET_DB_HOSTNAME') }}"
-      port: "{{env_var('TARGET_DB_PORT') | as_number }}"
+      port: "{{ env_var('TARGET_DB_PORT') | as_number }}"
       user: "{{ env_var('TARGET_DB_USER') }}"
       pass: "{{ env_var('TARGET_DB_PW') }}"
       dbname: "{{ env_var('TARGET_DB') }}"
