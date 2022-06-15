@@ -2,6 +2,7 @@ from datetime import timedelta
 
 from airflow import DAG
 from airflow.operators.python import PythonOperator
+from airflow.operators.bash import BashOperator
 from airflow.utils.dates import days_ago
 
 from src.dags.datenspende_vitaldata.data_update import (
@@ -11,23 +12,21 @@ from src.dags.datenspende_vitaldata.data_update import (
 from src.dags.datenspende_vitaldata.post_processing import (
     pivot_vitaldata,
     PIVOT_TARGETS,
-    BEFORE_INFECTION_AGG_DB_PARAMETERS,
 )
 from src.lib.dag_helpers import (
     create_slack_error_message_from_task_context,
     slack_notifier_factory,
 )
-from src.lib.dag_helpers import refresh_materialized_view
 from src.lib.dag_helpers import run_dbt_models
 from src.lib.test_helpers import if_var_exists_in_dag_conf_use_as_first_arg
 
 default_args = {
     "owner": "airflow",
     "depends_on_past": False,
-    "email": ["dvd.hnrchs@gmail.com"],
     "retries": 0,
     "retry": False,
     "provide_context": True,
+    "dir": "/opt/airflow/dbt/",
 }
 
 dag = DAG(
@@ -58,78 +57,17 @@ t2 = PythonOperator(
     op_args=PIVOT_TARGETS,
 )
 
-t3 = PythonOperator(
-    task_id="calculate_aggregate_per_user_statistics_of_daily_vitals",
-    python_callable=refresh_materialized_view,
-    op_args=[
-        "datenspende_derivatives",
-        "daily_vital_statistics",
-    ],
+t3 = BashOperator(dag=dag, task_id="where_am_i", bash_command="pwd")
+
+t4 = PythonOperator(
     dag=dag,
-)
-
-t5 = PythonOperator(
-    task_id="calculate_aggregate_vitals_per_user_source_and_type_before_first_infection",
-    python_callable=refresh_materialized_view,
-    op_args=BEFORE_INFECTION_AGG_DB_PARAMETERS,
-)
-
-t6 = PythonOperator(
-    task_id="calculate_aggregates_vitals_per_source_type_and_date",
-    python_callable=refresh_materialized_view,
-    op_args=[
-        "datenspende_derivatives",
-        "aggregates_for_standardization_by_type_source_date",
-    ],
-)
-
-t7 = PythonOperator(
-    task_id="calculate_vitals_standardized_by_observation",
-    python_callable=refresh_materialized_view,
-    op_args=[
-        "datenspende_derivatives",
-        "vitals_standardized_by_daily_aggregates",
-    ],
-)
-
-t8 = PythonOperator(
-    task_id="calculate_aggregate_vitals_per_user_source_and_type_before_first_infection_from_vitals_aggregated_by",
-    doc="""
-        1) Standardize vitals grouped by date, source and type.
-        2) Calculate aggregates over groups by user, source and type from vitals standardized by date,
-           source and type for dates before first infection --  if a user was not infected, use all dates.
-        """,
-    python_callable=refresh_materialized_view,
-    op_args=[
-        "datenspende_derivatives",
-        "vital_stats_before_infection_from_vitals_standardized_by_day",
-    ],
-)
-
-t9 = PythonOperator(
-    task_id="calculate_vitals_standardized_by_observation_and_user",
-    doc="""
-    1) Standardize vitals grouped by date, source and type to correct for seasonal variation
-    2) Standardize vitals grouped by user, source and type before infection to account for individually varying baseline
-    """,
-    python_callable=refresh_materialized_view,
-    op_args=[
-        "datenspende_derivatives",
-        "vitals_standardized_by_date_and_user_before_infection",
-    ],
-)
-
-t10 = PythonOperator(
     task_id="run_dbt_models",
     doc="""
     1) Run the dbt models selected in the op_args against the specified target schema
     """,
     python_callable=run_dbt_models,
-    op_args=[
-        "datenspende",
-        "datenspende_derivatives",
-    ],
+    op_args=["datenspende", "datenspende_derivatives", "/opt/airflow/dbt/"],
 )
 
-t1 >> [t2, t3, t5, t6, t10]
-t6 >> t7 >> t8 >> t9
+
+t1 >> [t2, t3, t4]

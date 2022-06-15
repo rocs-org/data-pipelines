@@ -5,7 +5,7 @@ with vitaldata_don_per_day as (
 SELECT   date                    AS cdate,
          "type"                  AS vital_type,
          Count(DISTINCT user_id) AS donors
-FROM     datenspende.vitaldata
+FROM     {{source('datenspende', 'vitaldata')}}
 GROUP BY cdate, vital_type
 
 )

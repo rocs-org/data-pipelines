@@ -1,0 +1,198 @@
+
+version: 2
+
+models:
+  - name: aggregates_of_vitals_before_infection
+    description: |
+      Mean and standard deviation of daily vitals before first infection averaged over days with user id, type and source constant
+    meta:
+      owner: "@jakobkolb"
+    columns:
+      - name: user_id
+        type: INTEGER
+        description: User ID
+      - name: type
+        type: INTEGER
+        description: |
+          vital data type: 
+          
+          * 9 : steps 
+          * 43 : sleep duration 
+          * 52 : sleep onset 
+          * 53 : sleep offset 
+          * 65 : resting heartrate
+      - name: source
+        type: INTEGER
+        description: |
+          vital data source
+      - name: mean
+        type: FLOAT
+        description: mean of vital data up to four days before the week when the user reported the first positive test for COVID
+      - name: std
+        type: FLOAT
+        description: standard deviation of vital data up to four days before the week when the user reported the first positive test for COVID
+  - name: daily_aggregates_of_vitals
+    description: |
+      Mean and standard deviation of daily vitals averaged over user ids with date, type and source constant. Excluding users given by the "scripps colaboration long covid" criterium
+    meta:
+      owner: "@jakobkolb"
+    columns:
+      - name: date
+        type: DATE
+        description: date (YY-MM-DD)
+      - name: type
+        type: INTEGER
+        description: |
+          vital data type: 
+          
+          * 9 : steps 
+          * 43 : sleep duration 
+          * 52 : sleep onset 
+          * 53 : sleep offset 
+          * 65 : resting heartrate
+      - name: source
+        type: INTEGER
+        description: |
+          vital data source
+      - name: mean
+        type: FLOAT
+        description: mean of vital data of given type and source at a given day over all included users
+      - name: std
+        type: FLOAT
+        description: standard deviation of vital data of given type and source at a given day over all included users
+  - name: vitals_standardized_by_daily_aggregates
+    description: |
+      Daily vital data detrended by either z scoring with daily aggregates or subtracting daily means
+    meta:
+      owner: "@jakobkolb"
+    columns:
+      - name: user_id
+        type: INTEGER
+        description: user ID
+      - name: date
+        type: DATE
+        description: date (YY-MM-DD)
+      - name: type
+        type: INTEGER
+        description: |
+          vital data type: 
+          
+          * 9 : steps 
+          * 43 : sleep duration 
+          * 52 : sleep onset 
+          * 53 : sleep offset 
+          * 65 : resting heartrate
+      - name: source
+        type: INTEGER
+        description: |
+          vital data source
+      - name: value_minus_mean
+        type: FLOAT
+        description: value of vitals of a given user type and source at a given day minus the daily average over all user ids of this vital type and source at the given day.
+        tests:
+          - not_null
+      - name: standardized_value
+        type: FLOAT
+        description: z-scored vital data with aggregates over all user ids at a given date for fixed vital type and source
+        tests:
+          - not_null
+  - name: agg_before_infection_from_vitals_std_by_day
+    description: |
+      Aggregates (mean, std) of standardized vital data before first infection.
+      
+      pipeline
+      * Take vital data that was standardized with aggregates over user id for constant date, type and source
+      * for each user, select the part that is dated before their first reported infection  (if infected, else all dates),
+      * take mean and standard deviation over dates with fixed user id, source and type.
+    meta:
+      owner: "@jakobkolb"
+    columns:
+      - name: user_id
+        type: INTEGER
+        description: user ID
+      - name: type
+        type: INTEGER
+        description: |
+          vital data type: 
+          
+          * 9 : steps 
+          * 43 : sleep duration 
+          * 52 : sleep onset 
+          * 53 : sleep offset 
+          * 65 : resting heartrate
+      - name: source
+        type: INTEGER
+        description: |
+          vital data source
+      - name: mean_from_standardized
+        type: FLOAT
+        description: Mean over user ids for standardized vitals before first infection
+      - name: std_from_standardized
+        type: FLOAT
+        description: Standard deviation over user ids for standardized vitals before first infection
+      - name: mean_from_subtracted_mean
+        type: FLOAT
+        description: Mean over user ids for detrended vitals (by removing the daily mean) before first infection
+      - name: std_from_subtracted_mean
+        type: FLOAT
+        description: Standard deviation over user ids for detrended vitals (by removing the daily mean) before first infection
+  - name: vitals_std_by_date_and_user_before_infection
+    description: |
+      Vital data detrended by 
+      
+      1) removing seasonal variations that affect the entire user population by either subtracting the daily mean over all users or z-scoring with daily mean and standard deviation over all users
+      2) removing user specific baseline by either removing the mean or z-scoring with aggregates over that users vital data from before their first reported infection (or all data, if they didn't report an infection)
+    meta:
+      owner: "@jakobkolb"
+    columns:
+      - name: user_id
+        type: INTEGER
+        description: User ID
+      - name: date
+        type: DATE
+        description: date (YY-MM-DD)
+      - name: type
+        type: INTEGER
+        description: |
+          vital data type: 
+
+          * 9 : steps 
+          * 43 : sleep duration 
+          * 52 : sleep onset 
+          * 53 : sleep offset 
+          * 65 : resting heartrate
+      - name: source
+        type: INTEGER
+        description: |
+          vital data source
+      - name: standardized_value
+        type: FLOAT
+        description: |
+          1) calculate average and standard deviation over users for equal date, source and type
+          2) subtract average and divide by standard deviation to correct for annual cyclic drift and changes in wearable software
+          3) calculate average and standard deviation over dates before first infection (if not infected, over all dates) for equal user source and type,
+          4) subtract average and divide by standard deviation to correct for individually different baseline levels in vitals.
+      - name: value_minus_mean_from_standardized
+        type: FLOAT
+        description: |
+          1) calculate average and standard deviation over users for equal date, source and type
+          2) subtract average and divide by standard deviation to correct for annual cyclic drift and changes in wearable software
+          3) average over dates before first infection (if not infected, over all dates) for equal user source and type,
+          4) subtract average to correct for individually different baseline levels in vitals.
+      - name: standardized_value_from_value_minus_mean
+        type: FLOAT
+        description: |
+          1) calculate average and standard deviation over users for equal date, source and type
+          2) subtract average deviation to correct for annual cyclic drift and changes in wearable software 
+          3) calculate average and standard deviation over dates before first infection (if not infected, over all dates) for equal user source and type,
+          4) subtract average and divide by standard deviation to correct for individually different baseline levels in vitals.
+      - name: value_minus_mean_from_value_minus_mean
+        type: FLOAT
+        description: |
+          1) calculate average and standard deviation over users for equal date, source and type
+          2) subtract average to correct for annual cyclic drift and changes in wearable software
+          3) average over dates before first infection (if not infected, over all dates) for equal user source and type,
+          4) subtract average to correct for individually different baseline levels in vitals.
+          
+        
+          

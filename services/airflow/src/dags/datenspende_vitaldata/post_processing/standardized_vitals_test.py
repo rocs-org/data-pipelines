@@ -1,5 +1,5 @@
-from postgres_helpers import DBContext, execute_sql
-from src.lib.dag_helpers import execute_query_and_return_dataframe
+from postgres_helpers import DBContext
+from src.lib.dag_helpers import execute_query_and_return_dataframe, run_dbt_models
 from src.lib.test_helpers import run_task_with_url, run_task
 import pytest
 
@@ -13,7 +13,7 @@ def test_standardized_vitals_pipeline(db: DBContext):
         SELECT
             mean
         FROM
-            datenspende_derivatives.aggregates_for_standardization_by_type_source_date
+            datenspende_derivatives.daily_aggregates_of_vitals
         WHERE
             type = 9 AND
             mean > 10000;
@@ -51,7 +51,7 @@ def test_standardized_vitals_pipeline_excludes_zero_std(db: DBContext):
         SELECT
             user_id, std_from_standardized, std_from_subtracted_mean
         FROM
-            datenspende_derivatives.vital_stats_before_infection_from_vitals_standardized_by_day
+            datenspende_derivatives.agg_before_infection_from_vitals_std_by_day
         WHERE
             user_id IN (326087, 372529);
         """,
@@ -73,7 +73,7 @@ def test_standardized_vitals_pipeline_excludes_zero_std(db: DBContext):
         SELECT
             *
         FROM
-            datenspende_derivatives.vitals_standardized_by_date_and_user_before_infection
+            datenspende_derivatives.vitals_std_by_date_and_user_before_infection
         """,
                 db,
             ).values
@@ -89,7 +89,7 @@ def test_standardized_vitals_pipeline_excludes_zero_std(db: DBContext):
         SELECT
             *
         FROM
-            datenspende_derivatives.vitals_standardized_by_date_and_user_before_infection
+            datenspende_derivatives.vitals_std_by_date_and_user_before_infection
         WHERE
             user_id IN (326087, 372529);
         """,
@@ -121,41 +121,8 @@ def db(pg_context):
             "datenspende_surveys_v2",
             "extract_features_from_one_off_answers",
         )
-        execute_sql(
-            pg_context,
-            """
-            REFRESH MATERIALIZED VIEW
-                datenspende_derivatives.daily_vital_statistics_before_infection
-            """,
-        )
-        execute_sql(
-            pg_context,
-            """
-            REFRESH MATERIALIZED VIEW
-                datenspende_derivatives.aggregates_for_standardization_by_type_source_date
-            """,
-        )
-        execute_sql(
-            pg_context,
-            """
-            REFRESH MATERIALIZED VIEW
-                datenspende_derivatives.vitals_standardized_by_daily_aggregates
-            """,
-        )
-        execute_sql(
-            pg_context,
-            """
-            REFRESH MATERIALIZED VIEW
-                datenspende_derivatives.vital_stats_before_infection_from_vitals_standardized_by_day
-            """,
-        )
-        execute_sql(
-            pg_context,
-            """
-            REFRESH MATERIALIZED VIEW
-                datenspende_derivatives.vitals_standardized_by_date_and_user_before_infection
-            """,
-        )
+        run_dbt_models("datenspende", "datenspende_derivatives", "/opt/airflow/dbt/")
+
         yield pg_context
     finally:
         pass
