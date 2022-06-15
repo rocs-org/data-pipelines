@@ -1,29 +1,2 @@
 [build]
 publish = "target"
-command = """
-echo -n "$GPG_KEY" | tr ',' '\n' | gpg --import
-
-git clone https://github.com/sobolevn/git-secret.git git-secret
-cd git-secret && make build
-PREFIX="." make install
-cd ../../../
-ls
-./services/dbt/git-secret/bin/git-secret reveal -f
-cd services/dbt
-
-wget https://swupdate.openvpn.org/community/releases/openvpn-2.5.7.tar.gz
-tar xfz openvpn-2.5.7.tar.gz
-cd openvpn-2.5.7
-./configure
-make
-make install
-
-echo "$VPN_SECRET" > vpn_secrets.conf
-
-openvpn --config ../../.github/workflows/hu-berlin.ovpn --auth-user-pass vpn_secrets.conf &&
-sleep 20
-
-pip install poetry
-poetry install -v
-make build-docs
-"""
