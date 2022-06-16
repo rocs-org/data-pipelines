@@ -5,7 +5,7 @@ select
     (vital.value - statistics.mean) value_minus_mean,
     (vital.value - statistics.mean)/statistics.std standardized_value
 from
-    "rocs"."datenspende"."vitaldata" vital, "rocs"."jakob"."daily_aggregates_of_vitals" statistics
+    "rocs"."datenspende"."vitaldata" vital, "rocs"."datenspende_derivatives"."daily_aggregates_of_vitals" statistics
 where
         statistics.std > 0 AND
         vital.date = statistics.date AND

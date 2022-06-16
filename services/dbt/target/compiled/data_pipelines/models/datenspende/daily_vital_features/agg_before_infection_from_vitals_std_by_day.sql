@@ -5,7 +5,7 @@ select
     avg(vital.standardized_value) mean_from_standardized, stddev(vital.standardized_value) std_from_standardized,
     avg(vital.value_minus_mean) mean_from_subtracted_mean, stddev(vital.value_minus_mean) std_from_subtracted_mean
 from
-    "rocs"."jakob"."vitals_standardized_by_daily_aggregates" vital,
+    "rocs"."datenspende_derivatives"."vitals_standardized_by_daily_aggregates" vital,
     (
         -- select four days before the week during which users first reported their first infection
         -- for users who report at least one positive test

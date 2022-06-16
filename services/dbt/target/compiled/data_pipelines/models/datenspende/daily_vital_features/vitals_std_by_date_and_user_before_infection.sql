@@ -7,8 +7,8 @@ select
     (vital.value_minus_mean - statistics.mean_from_subtracted_mean)/statistics.std_from_subtracted_mean standardized_value_from_value_minus_mean,
     (vital.value_minus_mean - statistics.mean_from_subtracted_mean) value_minus_mean_from_value_minus_mean
 from
-    "rocs"."jakob"."vitals_standardized_by_daily_aggregates" vital,
-    "rocs"."jakob"."agg_before_infection_from_vitals_std_by_day" statistics
+    "rocs"."datenspende_derivatives"."vitals_standardized_by_daily_aggregates" vital,
+    "rocs"."datenspende_derivatives"."agg_before_infection_from_vitals_std_by_day" statistics
 where
         statistics.std_from_standardized > 0 AND
         statistics.std_from_subtracted_mean > 0 AND
