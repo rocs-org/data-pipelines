@@ -4,6 +4,8 @@
 
 Monorepo that contains data processing related libraries and services developed at [ROCS](https://rocs.hu-berlin.de/)
 
+Data model documentation is at https://rocs-dbt-docs.netlify.app
+
 This project uses [poetry](https://python-poetry.org/) for package management and [git-secret](https://git-secret.io/) to manage secrets.
 
 ## Contribute:
