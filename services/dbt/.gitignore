@@ -1,5 +1,6 @@
 
 dbt_packages/
 logs/
+target/compiled/
 
 .env
