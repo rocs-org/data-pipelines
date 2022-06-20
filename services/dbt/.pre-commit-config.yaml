@@ -1,0 +1,7 @@
+repos:
+- repo: local
+  hooks:
+  - name: Generate dbt docs
+    id: dbt-docs-generate
+    language: system
+    entry: bash -c 'pwd && cd services/dbt && make build-docs && git add target'

@@ -2,6 +2,9 @@
 -include .env
 export $(shell sed 's/=.*//' .env)
 
+install:
+	poetry install && poetry run pre-commit install
+
 test:
 	poetry run dbt --profiles-dir . test
 
