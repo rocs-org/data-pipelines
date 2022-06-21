@@ -2,7 +2,7 @@
 version: 2
 
 models:
-  - name: aggregates_of_vitals_before_infection
+  - name: agg_before_infection
     description: |
       Mean and standard deviation of daily vitals before first infection averaged over days with user id, type and source constant
     meta:

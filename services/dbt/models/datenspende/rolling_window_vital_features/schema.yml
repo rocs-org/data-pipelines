@@ -1,0 +1,139 @@
+
+version: 2
+
+models:
+  - name: fifty_six_days
+    description: |
+      Rolling window aggregates over 56 days (8 weeks) of seasonally detrended vitals.
+    meta:
+      owner: "@jakobkolb"
+    columns:
+      - name: user_id
+        type: INTEGER
+        description: User ID
+      - name: type
+        type: INTEGER
+        description: |
+          vital data type: 
+          
+          * 9 : steps 
+          * 43 : sleep duration 
+          * 52 : sleep onset 
+          * 53 : sleep offset 
+          * 65 : resting heartrate
+      - name: source
+        type: INTEGER
+        description: |
+          vital data source
+      - name: window_start
+        type: DATE
+        description: date of first data point inside the rolling window
+      - name: window_end
+        type: DATE
+        description: date of last data point inside the rolling window
+      - name: min_value
+        type: FLOAT
+        description: min value of vitals over the 56 day window
+      - name: max_value
+        type: FLOAT
+        description: max value of vitals over the 56 day window
+      - name: mean
+        type: FLOAT
+        description: mean value of vitals over the 56 day window
+      - name: std
+        type: FLOAT
+        description: standard deviation of values of vitals over the 56 day window
+      - name: data_count
+        type: FLOAT
+        description: number of data points inside the 56 day window
+  - name: seven_days
+    description: |
+      Rolling window aggregates over 7 days (1 week) of seasonally detrended vitals.
+    meta:
+      owner: "@jakobkolb"
+    columns:
+      - name: user_id
+        type: INTEGER
+        description: User ID
+      - name: type
+        type: INTEGER
+        description: |
+          vital data type: 
+
+          * 9 : steps 
+          * 43 : sleep duration 
+          * 52 : sleep onset 
+          * 53 : sleep offset 
+          * 65 : resting heartrate
+      - name: source
+        type: INTEGER
+        description: |
+          vital data source
+      - name: window_start
+        type: DATE
+        description: date of first data point inside the rolling window
+      - name: window_end
+        type: DATE
+        description: date of last data point inside the rolling window
+      - name: min_value
+        type: FLOAT
+        description: min value of vitals over the 7 day window
+      - name: max_value
+        type: FLOAT
+        description: max value of vitals over the 7 day window
+      - name: mean
+        type: FLOAT
+        description: mean value of vitals over the 7 day window
+      - name: std
+        type: FLOAT
+        description: standard deviation of values of vitals over the 7 day window
+      - name: data_count
+        type: FLOAT
+        description: number of data points inside the 7 day window
+  - name: vital_features
+    description: |
+      Time series features derived from rolling window aggregates of vital data
+    meta:
+      owner: '@jakobkolb'
+    columns:
+      - name: user_id
+        type: INTEGER
+        description: User ID
+      - name: type
+        type: INTEGER
+        description: |
+          vital data type: 
+          
+          * 9 : steps 
+          * 43 : sleep duration 
+          * 52 : sleep onset 
+          * 53 : sleep offset 
+          * 65 : resting heartrate
+      - name: source
+        type: INTEGER
+        description: |
+          vital data source
+      - name: date
+        type: DATE
+        description: The first day of the corresponding test and symptom survey week
+      - name: signal_mean
+        type: FLOAT
+        description: |
+          mean of signal window minus mean of baseline window divided by standard 
+          deviation of vital data before the first infection
+      - name: signal_max
+        type: FLOAT
+        description: |
+          max of signal window minus mean of baseline window divided by standard 
+          deviation of vital data before the first infection
+      - name: signal_min
+        type: FLOAT
+        description: |
+          min of signal window minus mean of baseline window divided by standard 
+          deviation of vital data before the first infection
+      - name: signal_count
+        type: INTEGER
+        description: Number of data points in the **signal** window
+      - name: baseline_count
+        type: INTEGER
+        description: Number of data points in the **baseline** window
