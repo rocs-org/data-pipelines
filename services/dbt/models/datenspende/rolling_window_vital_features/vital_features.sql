@@ -1,10 +1,10 @@
 {{config(tags=['nowcast', 'tabular'])}}
 
 SELECT
-        features.user_id, signal.type, signal.source, features.date,
-        (signal.mean - baseline.mean) / stats.std signal_mean,
-        (signal.max - baseline.mean) / stats.std signal_max,
-        (signal.min - baseline.mean) / stats.std signal_mean,
+        features.user_id, signal.type, signal.source, features.test_week_start date,
+        (signal.mean - baseline.mean) / stats.std_from_subtracted_mean signal_mean,
+        (signal.max_value - baseline.mean) / stats.std_from_subtracted_mean signal_max,
+        (signal.min_value - baseline.mean) / stats.std_from_subtracted_mean signal_min,
         signal.data_count signal_count, baseline.data_count baseline_count
 FROM
     {{ ref('fifty_six_days')}} baseline,
@@ -31,4 +31,4 @@ WHERE
         features.test_week_start - integer '4' = baseline.window_end AND
         features.test_week_start - integer '3' = signal.window_start AND
   -- dont devide by zero
-        stats.std > 0
+        stats.std_from_subtracted_mean > 0
