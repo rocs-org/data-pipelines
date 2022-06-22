@@ -51,7 +51,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.pytest.ini_options]
 env_files =".env"
-looponfailroots = 'src'
+looponfailroots = ['src', 'dbt']
 python_files = ['*_test.py', 'test_*.py']
 
 
