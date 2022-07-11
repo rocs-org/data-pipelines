@@ -4,6 +4,7 @@ from typing import List
 from datetime import datetime, timedelta
 from src.dags.datenspende.case_detection_features.parameters import (
     WEEKLY_QUESTIONNAIRE,
+    ONE_OFF_QUESTIONNAIRE,
     FEATURE_MAPPING,
 )
 from postgres_helpers import create_db_context
@@ -22,8 +23,20 @@ def restructure_features(
 
     # select and restructure test results
     test_results_answers = select_answers_by_question_ids(
-        [questions["test_result"], questions["vaccination_status"]], data
+        [
+            questions["test_result"],
+            questions["vaccination_status"],
+            questions["test_type"],
+        ],
+        data,
     )
+
+    # map test types for one off surveys
+    if questionnaire == ONE_OFF_QUESTIONNAIRE:
+        print(test_results_answers[questions["test_type"]])
+        test_results_answers[questions["test_type"]] = test_results_answers[
+            questions["test_type"]
+        ].replace({394: 547, 395: 547, 396: None})
 
     # select and restructure info about bodies
     body_info_answers = select_first_answer_by_question_ids(

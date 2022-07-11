@@ -25,7 +25,7 @@ def test_datenspende_upload_writes_all_dataframe_to_database(pg_context: DBConte
         number_of_elements_returned_from(pg_context)(
             "SELECT * FROM datenspende.answers"
         )
-        == 5765
+        == 5766
     )
 
     assert (

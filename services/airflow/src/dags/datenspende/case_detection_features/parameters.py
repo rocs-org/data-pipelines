@@ -4,6 +4,7 @@ ONE_OFF_QUESTIONNAIRE = 10
 ONE_OFF_QUESTIONS = {
     "test_result": 129,  # True/False/NULL
     "vaccination_status": 121,  # True/False/NULL
+    "test_type": 81,  # 547: PRC, 548: Antigen, 549: Antibody, 550: Unknown
     "symptoms": [86],  # True/False/NULL
     "age": 133,  # INT/NULL
     "sex": 127,  # STR/NULL
@@ -13,6 +14,7 @@ ONE_OFF_QUESTIONS = {
 }
 WEEKLY_QUESTIONS = {
     "test_result": 10,  # True/False/NULL
+    "test_type": 91,  # 547: PRC, 548: Antigen, 549: Antibody, 550: Unknown
     "vaccination_status": 30,  # True/False/NULL
     "symptoms": [8, 137],
     "age": 133,
@@ -36,6 +38,7 @@ ONE_OFF_FEATURE_EXTRACTION_ARGS = [
 
 # map feature ids between one off survey and weekly survey
 FEATURE_MAPPING = {
+    81: 91,  # Test type
     30: 121,  # Vaccination status
     129: 10,  # Test result
     452: 40,  # Schüttelfrost
