@@ -38,7 +38,7 @@ def test_datenspende_dag_writes_correct_results_to_db(pg_context: DBContext):
         130,
         "",
     )
-    assert len(answers_from_db) == 5765
+    assert len(answers_from_db) == 5766
 
     connection = R.prop("connection", pg_context)
 

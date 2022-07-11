@@ -20,7 +20,6 @@ def test_extract_features_from_tests_and_symptoms_questionnarie(prepared_db):
     features = loader("")
 
     assert isinstance(features, pd.DataFrame)
-    assert len(features.index) == 474
     assert (
         len(features.groupby(["user_id"])) == 91
     )  # Individuals that reported a (positive or negative) test result
@@ -54,6 +53,12 @@ def test_extract_features_from_weekly_questionnarie(prepared_db):
         "Wie groß sind Sie, wenn Sie keine Schuhe tragen (in cm)?",
         "170cm bis 174cm",
     ]
+
+    # test user 224410 answered question 91
+    assert (
+        features.query("user_id == 224410 and question_id == 91").iloc[0]["answer"]
+        == "Antigen-Schnelltest"
+    )
 
 
 @pytest.fixture

@@ -50,7 +50,7 @@ def test_feature_task_on_one_off_survey_results(pg_context: DBContext):
     connection.close()
 
     # same number of features that we put on
-    assert len(feature_names_from_db) == 19
+    assert len(feature_names_from_db) == 20
     assert len(features_from_db) == 49
 
     # features from db have expected format
@@ -59,6 +59,9 @@ def test_feature_task_on_one_off_survey_results(pg_context: DBContext):
         "f10",
         True,
     ]
+
+    # assert value of f91 is between 547 and 550
+    assert 547 <= features_from_db.iloc[0]["f91"] <= 550
 
 
 def test_feature_task_on_weeekly_survey_results(pg_context: DBContext):
@@ -75,6 +78,15 @@ def test_feature_task_on_weeekly_survey_results(pg_context: DBContext):
 
     # load freature values and descriptions from postgres_helpers
     connection = R.prop("connection", pg_context)
+
+    print(
+        pd.read_sql(
+            """
+            SELECT user_id, question, element FROM datenspende.answers WHERE user_id = '224410' and questionnaire = 2;
+            """,
+            connection,
+        )
+    )
     features_from_db = pd.read_sql(
         """
         SELECT
@@ -84,7 +96,7 @@ def test_feature_task_on_weeekly_survey_results(pg_context: DBContext):
         ;
         """,
         connection,
-    ).dropna(axis=1, how="all")
+    )
 
     feature_names_from_db = pd.read_sql(
         """
@@ -99,14 +111,16 @@ def test_feature_task_on_weeekly_survey_results(pg_context: DBContext):
 
     connection.close()
 
-    print(list(feature_names_from_db.sort_values("id").iloc[0].values))
     # same number of features that we put on
-    assert len(feature_names_from_db) == 11
+    assert len(feature_names_from_db) == 12
     assert len(features_from_db) == 7
 
-    # features from db have expected format
+    # feature names from db have expected format
     assert list(feature_names_from_db.sort_values("id").iloc[0].values) == [
         "Wie war das letzte Testergebnis?",
         "f10",
         True,
     ]
+
+    # assert value of f91 is between 547 and 550
+    assert 547 <= features_from_db.iloc[0]["f91"] <= 550
