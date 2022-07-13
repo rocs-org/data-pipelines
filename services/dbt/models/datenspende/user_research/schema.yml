@@ -2,18 +2,34 @@
 version: 2
 
 models:
-  - name: vitaldata_don_per_day
-    description: Number of daily vitaldata donations/donors per vital type
+  - name: vitaldata_per_day
+    description: Number of daily vitaldata donors of vital type per date
+    meta:
+      owner: "@david"
     columns:
-      - name: cdate
-        description: calendar date
+      - name: date
+        description: calendar date of vital data points
       - name: vital_type
         description: vital data type
-      - name: donors
-        description: The number of daily vitaldata donors/donations (synonymous) per vital type
+      - name: users
+        description: the number of users with vitaldata of vital type on date
 
-  - name: user_vital_don_stats
+  - name: surveys_per_day
+    description: Number of users who finished a questionnaire session of study on date
+    meta:
+      owner: "@david"
+    columns:
+      - name: date
+        description: calendar date of finished questionnaire sessions
+      - name: study
+        description: study in which questionnaire was filled
+      - name: users
+        description: the number of users with finished questionnaire sessions in study on date
+
+  - name: user_vital_stats
     description: Overview over first, last, and total vitaldata donations made per user
+    meta:
+      owner: "@david"
     columns:
       - name: user_id
         description: user id
@@ -21,5 +37,35 @@ models:
         description: first day of vital donations
       - name: last_vital
         description: last day of vital donations
-      - name: days_w_vital
+      - name: days_with_vital
         description: overall number of days with vital donations
+      - name: days_since_vital
+        description: days since last vital donation
+      - name: vital_last_30
+        description: days with vital data in last 30 days
+      - name: vital_last_60
+        description: days with vital data in last 60 days
+      - name: vital_last_90
+        description: days with vital data in last 90 days
+
+  - name: user_survey_stats
+    description: Overview over first, last, and total survey donations made per user as indicated by finished questionnaire sessions
+    meta:
+      owner: "@david"
+    columns:
+      - name: user_id
+        description: user id
+      - name: first_survey
+        description: first day of survey data
+      - name: last_survey
+        description: last day of survey data
+      - name: days_with_survey
+        description: overall number of days with survey data
+      - name: days_since_survey
+        description: days since last survey
+      - name: survey_last_30
+        description: days with survey data in last 30 days
+      - name: survey_last_60
+        description: days with survey data in last 60 days
+      - name: survey_last_90
+        description: days with survey data in last 90 days
