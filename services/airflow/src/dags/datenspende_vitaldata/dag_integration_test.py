@@ -159,15 +159,25 @@ def test_datenspende_vitals_dag_writes_correct_results_to_db(pg_context: DBConte
     for value in df["std2"].values:
         assert value == approx(1, abs=TOLERANCE)
 
-    user_vital_don_stats = query_all_elements(
-        pg_context, "SELECT * FROM datenspende_derivatives.user_vital_don_stats;"
+    user_vital_stats = query_all_elements(
+        pg_context, "SELECT * FROM datenspende_derivatives.user_vital_stats;"
     )
-    assert len(user_vital_don_stats) == 4
+    assert len(user_vital_stats) == 4
 
-    vitaldata_don_per_day = query_all_elements(
-        pg_context, "SELECT * FROM datenspende_derivatives.vitaldata_don_per_day;"
+    vitaldata_per_day = query_all_elements(
+        pg_context, "SELECT * FROM datenspende_derivatives.vitaldata_per_day;"
     )
-    assert len(vitaldata_don_per_day) == 20
+    assert len(vitaldata_per_day) == 20
+
+    user_survey_stats = query_all_elements(
+        pg_context, "SELECT * FROM datenspende_derivatives.user_survey_stats;"
+    )
+    assert len(user_survey_stats) == 4
+
+    surveys_per_day = query_all_elements(
+        pg_context, "SELECT * FROM datenspende_derivatives.surveys_per_day;"
+    )
+    assert len(surveys_per_day) == 20
 
 
 TOLERANCE = 1e-8
