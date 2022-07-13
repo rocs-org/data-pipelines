@@ -5,7 +5,7 @@ models:
   - name: vitaldata_per_day
     description: Number of daily vitaldata donors of vital type per date
     meta:
-      owner: "@david"
+      owner: "@davhin"
     columns:
       - name: date
         description: calendar date of vital data points
@@ -17,7 +17,7 @@ models:
   - name: surveys_per_day
     description: Number of users who finished a questionnaire session of study on date
     meta:
-      owner: "@david"
+      owner: "@davhin"
     columns:
       - name: date
         description: calendar date of finished questionnaire sessions
@@ -29,7 +29,7 @@ models:
   - name: user_vital_stats
     description: Overview over first, last, and total vitaldata donations made per user
     meta:
-      owner: "@david"
+      owner: "@davhin"
     columns:
       - name: user_id
         description: user id
@@ -51,7 +51,7 @@ models:
   - name: user_survey_stats
     description: Overview over first, last, and total survey donations made per user as indicated by finished questionnaire sessions
     meta:
-      owner: "@david"
+      owner: "@davhin"
     columns:
       - name: user_id
         description: user id
