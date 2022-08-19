@@ -1,0 +1,50 @@
+version: 2
+
+sources:
+  - name: datenspende
+    schema: datenspende
+    description: Raw data of the data donation project.
+    tags: ['thryve']
+    tables:
+      - name: vitaldata
+        tags: ['time-series']
+        description: '{{ doc("vitaldata_desc") }}'
+        columns:
+        - name: user_id
+          description: The id of the Datenspende user who contributed the data, e.g. 12345
+        - name: date
+          description: The calendar date on which the pair (type, value) was recorded, e.g. 2021-05-23
+        - name: type
+          description: The data type. 9 ist Steps, 43 is SleepDuration, 52 is SleepStart, 53 is SleepEnd, 65 is HeartRateResting, 66 is HeartRateSleep
+        - name: value
+          description: The value of the vital data recorded, e.g. 9235 for the step count
+        - name: source
+          description: The id of the wearable that was used to record the data, e.g. Fitbit, GoogleFit, Apple Watch
+        - name: created_at
+          description: The epoch at which the pair (type, value) was recorded
+        - name: timezone_offset
+          description: The offset in timezone relative to the current German timezone          
+      - name: users
+        tags: ['tabular']
+      - name: questions
+        tags: ['tabular']
+      - name: questionnaires
+        tags: ['tabular']
+      - name: questionnaire_session
+        tags: ['tabular']
+      - name: question_to_questionnaire
+        tags: ['tabular']
+      - name: choice
+        tags: ['tabular']
+      - name: answers
+        tags: ['tabular']
+
+  - name: datenspende_derivatives
+    schema: datenspende_derivatives
+    description: post processed data from the data donation project
+    tables:
+      - name: excluded_users
+        tags: ['tabular']
+      - name: homogenized_features
+        tags: ['tabular']
+
