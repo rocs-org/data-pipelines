@@ -5,19 +5,17 @@ USER root
 RUN apt update && \
     apt install -y git
 
+#
+#RUN mkdir ../../libraries
+#
+#RUN chown -R airflow:root /usr/local/src
 
-RUN mkdir ../../libraries
-
-RUN chown -R airflow:root /usr/local/src
-
+# copy dbt files
+COPY services/dbt /opt/airflow/dbt
 RUN mkdir -p /opt/airflow/dbt/logs
 RUN chown -R airflow /opt/airflow/dbt
 
 USER airflow
-
-RUN pip install --upgrade setuptools
-
-# test if airflow is allowed to write to the /opt/airflow folder
 
 ARG YOUR_ENV
 
@@ -28,8 +26,6 @@ ENV PYTHONFAULTHANDLER=1 \
     POETRY_VERSION=1.1.11
 
 RUN pip install "poetry==$POETRY_VERSION"
-
-RUN python3 --version
 
 WORKDIR /opt/airflow/
 
@@ -45,9 +41,8 @@ RUN cd /opt/airflow && \
 
 RUN pip install --upgrade setuptools
 
-# copy dbt and dag files into the container
+# copy dag files into the container
 COPY services/airflow/src /opt/airflow/src
-COPY services/dbt/* /opt/airflow/dbt/
 
 # install dbt dependencies
 RUN cd /opt/airflow/dbt && \
