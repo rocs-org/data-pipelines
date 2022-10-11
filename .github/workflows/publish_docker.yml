@@ -6,8 +6,14 @@
 name: Publish Docker image
 
 on:
+  # shedule every week
+  schedule:
+      - cron: '0 0 * * 0'
+  # on push to main branch
   push:
     branches: [ main ]
+  # manually
+  workflow_dispatch:
 
 jobs:
   push_to_registry:
@@ -18,11 +24,11 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Build docker image
-        run: docker build -t airflow:latest . -f services/airflow/docker/airflow/Dockerfile
+        run: docker build -t rocs-airflow:latest . -f services/airflow/docker/airflow/Dockerfile
 
       - name: Publish docker image to github packages
         if: github.event_name == 'schedule' || github.event_name == 'push'
         run: |
           echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
-          docker tag rocs_airflow:latest ghcr.io/${{ github.repository_owner }}/rocs_airflow:latest
-          docker push ghcr.io/${{ github.repository_owner }}/rocs_airflow:latest
+          docker tag rocs-airflow:latest ghcr.io/${{ github.repository_owner }}/rocs-airflow:latest
+          docker push ghcr.io/${{ github.repository_owner }}/rocs-airflow:latest
