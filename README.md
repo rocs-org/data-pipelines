@@ -1,6 +1,6 @@
 # data-pipelines
 
-[![tests](https://github.com/rocs-org/data-pipelines/actions/workflows/airflow_jobs.yml/badge.svg)](https://github.com/rocs-org/data-pipelines/actions/workflows/airflow_jobs.yml) [![CD](https://github.com/rocs-org/data-pipelines/actions/workflows/CD.yml/badge.svg?branch=main)](https://github.com/rocs-org/data-pipelines/actions/workflows/CD.yml) [![Publish Docker image](https://github.com/rocs-org/data-pipelines/actions/workflows/publish_docker.yml/badge.svg?branch=main)](https://github.com/rocs-org/data-pipelines/actions/workflows/publish_docker.yml) 
+[![tests](https://github.com/rocs-org/data-pipelines/actions/workflows/airflow_jobs.yml/badge.svg)](https://github.com/rocs-org/data-pipelines/actions/workflows/airflow_jobs.yml) [![Publish Docker image](https://github.com/rocs-org/data-pipelines/actions/workflows/publish_docker.yml/badge.svg?branch=main)](https://github.com/rocs-org/data-pipelines/actions/workflows/publish_docker.yml) 
 
 Monorepo that contains data processing related libraries and services developed at [ROCS](https://rocs.hu-berlin.de/)
 
