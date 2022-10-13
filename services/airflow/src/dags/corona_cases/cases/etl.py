@@ -9,7 +9,7 @@ from src.lib.dag_helpers import connect_to_db_and_truncate_insert_pandas_datafra
 from src.lib.test_helpers import set_env_variable_from_dag_config_if_present
 
 
-URL = "https://github.com/robert-koch-institut/SARS-CoV-2_Infektionen_in_Deutschland/blob/master/Aktuell_Deutschland_SarsCov2_Infektionen.csv?raw=true"  # noqa: E501
+URL = "https://github.com/robert-koch-institut/SARS-CoV-2-Infektionen_in_Deutschland/blob/main/Aktuell_Deutschland_SarsCov2_Infektionen.csv?raw=true"  # noqa: E501
 SCHEMA = "coronacases"
 TABLE = "german_counties_more_info"
 
