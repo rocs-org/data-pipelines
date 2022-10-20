@@ -17,9 +17,10 @@ CASES_ARGS = [URL, SCHEMA, TABLE]
 
 @curry
 def etl_covid_cases(url: str, schema: str, table: str, **kwargs) -> DBContext:
+    print("load cases from ", url)
     return R.pipe(
         set_env_variable_from_dag_config_if_present("TARGET_DB"),
-        lambda *args: pd.read_csv(url, sep=",", header=0),
+        lambda *args: pd.read_csv(url),
         transform_dataframe,
         connect_to_db_and_truncate_insert_pandas_dataframe(schema, table),
         R.path(["credentials", "database"]),
