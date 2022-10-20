@@ -15,7 +15,7 @@ from postgres_helpers import (
     execute_sql,
     query_all_elements,
 )
-from src.lib.dag_helpers import download_csv
+import pandas as pd
 
 
 URL = "http://static-files/static/coronacases.csv"
@@ -49,7 +49,7 @@ def test_corona_cases_table_is_accessible(pg_context: DBContext):
 
 
 def test_dataframe_transformer_transform_column_names_and_types():
-    df = R.pipe(download_csv, transform_dataframe)(URL)
+    df = R.pipe(pd.read_csv, transform_dataframe)(URL)
     assert Counter(df.columns) == Counter(COLUMNS)
 
     assert type(df.iloc[0]["ref_date_is_symptom_onset"]) is numpy.bool_

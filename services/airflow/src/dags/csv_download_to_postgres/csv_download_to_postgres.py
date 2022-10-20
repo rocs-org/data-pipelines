@@ -1,4 +1,5 @@
 from typing import Callable, List
+import pandas as pd
 from pandas.core.frame import DataFrame
 from returns.pipeline import pipe
 import ramda as R
@@ -13,7 +14,6 @@ from postgres_helpers import (
     execute_values,
 )
 from src.lib.dag_helpers import (
-    download_csv,
     connect_to_db_and_insert_pandas_dataframe,
 )
 from src.lib.test_helpers import (
@@ -28,7 +28,7 @@ URL = "https://drive.google.com/uc?export=download&id=1t_WFejY2lXj00Qkc-6RAFgyr4
 def download_csv_and_upload_to_postgres(url: str, table: str, **kwargs) -> DBContext:
     return R.pipe(
         set_env_variable_from_dag_config_if_present("TARGET_DB"),
-        lambda *args: download_csv(url),
+        lambda *args: pd.read_csv(url),
         transform_data({"some": "parameters"}),
         connect_to_db_and_insert_pandas_dataframe("test_tables", table),
         R.prop("credentials"),

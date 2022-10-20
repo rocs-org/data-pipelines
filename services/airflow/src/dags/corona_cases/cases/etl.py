@@ -4,7 +4,6 @@ from pandas import DataFrame
 from returns.curry import curry
 
 from postgres_helpers import DBContext
-from src.lib.dag_helpers import download_csv
 from src.lib.dag_helpers import connect_to_db_and_truncate_insert_pandas_dataframe
 from src.lib.test_helpers import set_env_variable_from_dag_config_if_present
 
@@ -20,7 +19,7 @@ CASES_ARGS = [URL, SCHEMA, TABLE]
 def etl_covid_cases(url: str, schema: str, table: str, **kwargs) -> DBContext:
     return R.pipe(
         set_env_variable_from_dag_config_if_present("TARGET_DB"),
-        lambda *args: download_csv(url),
+        lambda *args: pd.read_csv(url, sep=",", header=0),
         transform_dataframe,
         connect_to_db_and_truncate_insert_pandas_dataframe(schema, table),
         R.path(["credentials", "database"]),
@@ -28,7 +27,7 @@ def etl_covid_cases(url: str, schema: str, table: str, **kwargs) -> DBContext:
 
 
 def transform_dataframe(df: DataFrame) -> DataFrame:
-    additional_info = download_csv("http://static-files/static/countyID_mapping.csv")
+    additional_info = pd.read_csv("http://static-files/static/countyID_mapping.csv")
     df = df.join(additional_info.set_index("IdLandkreis"), on="IdLandkreis")
     renamed = df.rename(columns=COLUMN_MAPPING, inplace=False)
     renamed["date_cet"] = pd.to_datetime(renamed["date_cet"])
