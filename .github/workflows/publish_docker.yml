@@ -24,15 +24,12 @@ jobs:
       - name: Check out the repo
         uses: actions/checkout@v2
 
-      - name: Get git tag
-        uses: little-core-labs/get-git-tag@v3.0.2
-
       - name: Build docker image
-        run: docker build -t rocs-airflow:$GIT_TAG_NAME . -f services/airflow/docker/airflow/Dockerfile
+        run: docker build -t rocs-airflow:${{ github.ref_name }} . -f services/airflow/docker/airflow/Dockerfile
 
       - name: Publish docker image to github packages
         if: github.event_name == 'schedule' || github.event_name == 'push'
         run: |
           echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
-          docker tag rocs-airflow:$GIT_TAG_NAME ghcr.io/${{ github.repository_owner }}/rocs-airflow:$GIT_TAG_NAME
-          docker push ghcr.io/${{ github.repository_owner }}/rocs-airflow:$GIT_TAG_NAME
+          docker tag rocs-airflow:${{ github.ref_name }} ghcr.io/${{ github.repository_owner }}/rocs-airflow:${{ github.ref_name }}
+          docker push ghcr.io/${{ github.repository_owner }}/rocs-airflow:${{ github.ref_name }}
