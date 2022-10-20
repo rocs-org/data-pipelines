@@ -5,9 +5,8 @@ description = "pipelines gathering data to support research at ROCS"
 authors = ["Jakob J. Kolb <jakob.j.kolb@gmail.com>"]
 
 [tool.poetry.dependencies]
-python = ">=3.8,<3.12"
+python = ">=3.10,<3.12"
 returns = "^0.18.0"
-apache-airflow = "^2.1.4"
 fsspec = "^2021.7.0"
 yoyo-migrations = "^7.3.2"
 pyhumps = "^3.0.2"
@@ -20,9 +19,10 @@ py7zr = "^0.16.1"
 postgres-helpers = {path = "../../libraries/postgres-helpers", develop=true}
 clickhouse-helpers = {path = "../../libraries/clickhouse-helpers", develop=true}
 isoweek = "^1.3.3"
-SQLAlchemy = "1.3.24"  # We have to pin this dependency, otherwise deleting dags for tests does not work: https://github.com/apache/airflow/issues/15354
 pathos = "^0.2.8"
 dbt-postgres = "^1.1.0"
+apache-airflow = "^2.4.1"
+setuptools = "^65.5.0"
 
 [tool.poetry.dev-dependencies]
 flake8 = "^3.9.2"

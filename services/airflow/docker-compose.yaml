@@ -44,7 +44,7 @@ x-airflow-common:
   volumes:
 #    - ../../libraries:/libraries
 #    - ../../libraries/postgres-helpers/postgres_helpers/migrations/migration_files:/home/airflow/.local/lib/python3.8/site-packages/postgres_helpers/migrations/migration_files
-#    - ./src:/opt/airflow/src
+    - ./src:/opt/airflow/src
 #    - ../dbt:/opt/airflow/dbt
     - dbt-pkg-volume:/opt/airflow/dbt/dbt_packages
     - dbt-logs-volume:/opt/airflow/dbt/logs
