@@ -30,5 +30,5 @@ jobs:
         if: github.event_name == 'schedule' || github.event_name == 'push'
         run: |
           echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
-          docker tag rocs-airflow:latest ghcr.io/${{ github.repository_owner }}/rocs-airflow:latest
-          docker push ghcr.io/${{ github.repository_owner }}/rocs-airflow:latest
+          docker tag rocs-airflow:${ github.ref_name } ghcr.io/${{ github.repository_owner }}/rocs-airflow:latest
+          docker push ghcr.io/${{ github.repository_owner }}/rocs-airflow:${ github.ref_name }
