@@ -1,23 +1,25 @@
-import ramda as R
+import os
+
 import pandas as pd
+import ramda as R
 from pandas import DataFrame
 from returns.curry import curry
-
-from postgres_helpers import DBContext
 from src.lib.dag_helpers import connect_to_db_and_truncate_insert_pandas_dataframe
 from src.lib.test_helpers import set_env_variable_from_dag_config_if_present
 
+from postgres_helpers import DBContext
 
 URL = "https://github.com/robert-koch-institut/SARS-CoV-2-Infektionen_in_Deutschland/blob/main/Aktuell_Deutschland_SarsCov2_Infektionen.csv?raw=true"  # noqa: E501
 SCHEMA = "coronacases"
 TABLE = "german_counties_more_info"
+
+__location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
 
 CASES_ARGS = [URL, SCHEMA, TABLE]
 
 
 @curry
 def etl_covid_cases(url: str, schema: str, table: str, **kwargs) -> DBContext:
-    print("load cases from ", url)
     return R.pipe(
         set_env_variable_from_dag_config_if_present("TARGET_DB"),
         lambda *args: pd.read_csv(url),
@@ -28,7 +30,7 @@ def etl_covid_cases(url: str, schema: str, table: str, **kwargs) -> DBContext:
 
 
 def transform_dataframe(df: DataFrame) -> DataFrame:
-    additional_info = pd.read_csv("http://static-files/static/countyID_mapping.csv")
+    additional_info = pd.read_csv(os.path.join(__location__, "countyID_mapping.csv"))
     df = df.join(additional_info.set_index("IdLandkreis"), on="IdLandkreis")
     renamed = df.rename(columns=COLUMN_MAPPING, inplace=False)
     renamed["date_cet"] = pd.to_datetime(renamed["date_cet"])

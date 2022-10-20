@@ -1,11 +1,11 @@
 from datetime import datetime
-from postgres_helpers import DBContext, query_all_elements
-from airflow.models import DagBag
 
-from src.lib.test_helpers import execute_dag
+from airflow.models import DagBag
 from src.dags.corona_cases.cases import CASES_ARGS
 from src.dags.corona_cases.incidences import INCIDENCES_ARGS
+from src.lib.test_helpers import execute_dag
 
+from postgres_helpers import DBContext, query_all_elements
 
 [_, CASES_SCHEMA, CASES_TABLE] = CASES_ARGS
 [INCIDENCES_SCHEMA, INCIDENCES_TABLE] = INCIDENCES_ARGS
