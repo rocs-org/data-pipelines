@@ -20,6 +20,6 @@ ADD services/airflow/airflow.cfg services/airflow/poetry.lock services/airflow/p
 # copy libs into the container, so their paths exist for editable installs
 COPY libraries ../../libraries
 
-RUN pip install --requirement <(poetry export  --without-hashes --dev --format requirements.txt)
+RUN pip install --requirement <(poetry export --without-hashes --dev --format requirements.txt)
 
 ENV PYTHONPATH "${PYTHONPATH}:/opt/airflow/dags"
