@@ -12,7 +12,9 @@ def test_datenspende_onetime_vitals_dag_loads_with_no_errors():
     assert len(dag_bag.import_errors) == 0
 
 
-def test_datenspende_onetime_vitals_dag_writes_correct_results_to_db(pg_context: DBContext):
+def test_datenspende_onetime_vitals_dag_writes_correct_results_to_db(
+    pg_context: DBContext,
+):
     credentials = pg_context["credentials"]
 
     assert (
@@ -39,5 +41,5 @@ def test_datenspende_onetime_vitals_dag_writes_correct_results_to_db(pg_context:
 
     assert len(vitals_from_db) == 67
 
-    
+
 THRYVE_FTP_URL = "http://static-files/thryve/export_scripps.7z"
