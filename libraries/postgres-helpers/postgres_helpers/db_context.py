@@ -4,12 +4,18 @@ from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
 import os
 import ramda as R
 
+import warnings
+
 from .types import (
     Cursor,
     Connection,
     DBCredentials,
     DBContext,
     DBContextWithCursor,
+)
+
+warnings.filterwarnings(
+    "ignore", message="UserWarning: pandas only supports SQLAlchemy connectable"
 )
 
 

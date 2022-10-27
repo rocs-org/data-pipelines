@@ -3,7 +3,7 @@
 export $(shell sed 's/=.*//' .env)
 
 install:
-	poetry install && poetry run pre-commit install
+	 make build && poetry run pre-commit install
 
 test:
 	poetry run dbt --profiles-dir . test
@@ -18,7 +18,7 @@ docs:
 	make build-docs && make serve-docs
 
 build:
-	poetry run dbt deps
+	poetry install && poetry run dbt deps
 
 run:
 	poetry run dbt --profiles-dir . run

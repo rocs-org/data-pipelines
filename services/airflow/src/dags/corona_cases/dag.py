@@ -1,22 +1,21 @@
 from datetime import timedelta
+
 from airflow import DAG
-from airflow.utils.dates import days_ago
 from airflow.operators.python import PythonOperator
 from airflow.sensors.external_task import ExternalTaskSensor
-
+from airflow.utils.dates import days_ago
 from src.dags.corona_cases.cases import etl_covid_cases, CASES_ARGS
 from src.dags.corona_cases.incidences import (
     calculate_incidence_post_processing,
     INCIDENCES_ARGS,
 )
-from src.lib.test_helpers import (
-    if_var_exists_in_dag_conf_use_as_first_arg,
-)
 from src.lib.dag_helpers import (
     slack_notifier_factory,
     create_slack_error_message_from_task_context,
 )
-
+from src.lib.test_helpers import (
+    if_var_exists_in_dag_conf_use_as_first_arg,
+)
 
 default_args = {
     "owner": "airflow",

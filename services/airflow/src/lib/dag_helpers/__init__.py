@@ -1,4 +1,4 @@
-from .download_helpers import download_csv, download_7zfile, unzip_7zfile
+from .download_helpers import download_7zfile, unzip_7zfile
 from .transform_helpers import rename_columns_convert_camel_to_snake_case
 from .write_dataframe_to_postgres import (
     connect_to_db_and_insert_pandas_dataframe,
@@ -19,7 +19,6 @@ from .refresh_materialized_view import refresh_materialized_view
 from .dbt_helpers import run_dbt_models
 
 __all__ = [
-    "download_csv",
     "download_7zfile",
     "unzip_7zfile",
     "rename_columns_convert_camel_to_snake_case",

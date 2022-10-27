@@ -13,9 +13,6 @@ from clickhouse_helpers import (
     teardown_db_context,
     insert_dataframe,
 )
-from src.lib.dag_helpers import (
-    download_csv,
-)
 from src.lib.test_helpers import (
     set_env_variable_from_dag_config_if_present,
     if_var_exists_in_dag_conf_use_as_first_arg,
@@ -30,7 +27,7 @@ def download_csv_and_upload_to_clickhouse(
 ) -> DBCredentials:
     return R.pipe(
         set_env_variable_from_dag_config_if_present("CLICKHOUSE_DB"),
-        lambda *args: download_csv(url),
+        lambda *args: pd.read_csv(url),
         load_df_to_clickhouse(table),
     )(kwargs)
 

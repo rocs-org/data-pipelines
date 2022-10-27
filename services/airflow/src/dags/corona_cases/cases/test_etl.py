@@ -1,5 +1,16 @@
+import datetime
+from collections import Counter
+
 import numpy
+import pandas as pd
+import ramda as R
 from psycopg2 import sql
+
+from postgres_helpers import (
+    DBContext,
+    execute_sql,
+    query_all_elements,
+)
 from .etl import (
     etl_covid_cases,
     transform_dataframe,
@@ -7,16 +18,6 @@ from .etl import (
     TABLE,
     SCHEMA,
 )
-import datetime
-from collections import Counter
-import ramda as R
-from postgres_helpers import (
-    DBContext,
-    execute_sql,
-    query_all_elements,
-)
-from src.lib.dag_helpers import download_csv
-
 
 URL = "http://static-files/static/coronacases.csv"
 
@@ -49,7 +50,7 @@ def test_corona_cases_table_is_accessible(pg_context: DBContext):
 
 
 def test_dataframe_transformer_transform_column_names_and_types():
-    df = R.pipe(download_csv, transform_dataframe)(URL)
+    df = R.pipe(pd.read_csv, transform_dataframe)(URL)
     assert Counter(df.columns) == Counter(COLUMNS)
 
     assert type(df.iloc[0]["ref_date_is_symptom_onset"]) is numpy.bool_
