@@ -6,6 +6,3 @@
 **/__pycache__
 **/.pytest__cache
 .gitsecret/keys/random_seed
-
-# environments
-.github/workflows/hu-berlin.ovpn
