@@ -14,8 +14,8 @@ FROM   {{source('datenspende', 'questionnaire_session')}}
 )
 
 SELECT user_id,
-       Min(date)                AS first_survey,
-       Max(date)                AS last_survey,
+       Min(date)                AS first_survey_date,
+       Max(date)                AS last_survey_date,
        CURRENT_DATE - Max(date) AS days_since_survey,
        Count(DISTINCT date)     AS days_with_survey,
        Count(DISTINCT date) filter (WHERE date > (CURRENT_DATE - INTERVAL '30 days')) AS survey_last_30,

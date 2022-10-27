@@ -11,6 +11,6 @@ FROM   {{source('datenspende', 'questionnaire_session')}}
 
 select date,
        study,
-       COUNT(DISTINCT user_id) AS users
+       COUNT(DISTINCT user_id) AS number_of_users
 from surveys_per_day_pre
 group by date, study

@@ -11,7 +11,7 @@ models:
         description: calendar date of vital data points
       - name: vital_type
         description: vital data type
-      - name: users
+      - name: number_of_users
         description: the number of users with vitaldata of vital type on date
 
   - name: surveys_per_day
@@ -23,7 +23,7 @@ models:
         description: calendar date of finished questionnaire sessions
       - name: study
         description: study in which questionnaire was filled
-      - name: users
+      - name: number_of_users
         description: the number of users with finished questionnaire sessions in study on date
 
   - name: user_vital_stats
@@ -33,9 +33,9 @@ models:
     columns:
       - name: user_id
         description: user id
-      - name: first_vital
+      - name: first_vital_date
         description: first day of vital donations
-      - name: last_vital
+      - name: last_vital_date
         description: last day of vital donations
       - name: days_with_vital
         description: overall number of days with vital donations
@@ -55,9 +55,9 @@ models:
     columns:
       - name: user_id
         description: user id
-      - name: first_survey
+      - name: first_survey_date
         description: first day of survey data
-      - name: last_survey
+      - name: last_survey_date
         description: last day of survey data
       - name: days_with_survey
         description: overall number of days with survey data

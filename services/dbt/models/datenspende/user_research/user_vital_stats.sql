@@ -14,8 +14,8 @@ FROM   {{source('datenspende', 'vitaldata')}}
 )
 
 SELECT user_id,
-       Min(date)                AS first_vital,
-       Max(date)                AS last_vital,
+       Min(date)                AS first_vital_date,
+       Max(date)                AS last_vital_date,
        CURRENT_DATE - Max(date) AS days_since_vital,
        Count(DISTINCT date)     AS days_with_vital,
        Count(DISTINCT date) filter (WHERE date > (CURRENT_DATE - INTERVAL '30 days')) AS vital_last_30,
