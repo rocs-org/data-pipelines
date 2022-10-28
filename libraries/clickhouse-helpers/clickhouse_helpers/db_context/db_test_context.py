@@ -15,8 +15,8 @@ from clickhouse_helpers.types import DBContext
 
 
 @pytest.fixture
-def db_context():
-    context = create_test_db_context()
+def db_context(**kwargs):
+    context = create_test_db_context(**kwargs)
     migrate(context)
 
     test_credentials = context["credentials"]
@@ -37,13 +37,13 @@ def teardown_test_db_context(context: DBContext) -> DBContext:
     return context
 
 
-def create_test_db_context() -> DBContext:
+def create_test_db_context(**kwargs) -> DBContext:
     return R.pipe(
-        lambda *_: create_db_context(),
+        lambda kwargs: create_db_context(**kwargs),
         _create_random_db_name,
         _create_database,
         _update_connection_in_context,
-    )("")
+    )(kwargs)
 
 
 def _create_random_db_name(context: DBContext) -> DBContext:

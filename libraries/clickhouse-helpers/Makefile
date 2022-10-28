@@ -20,5 +20,5 @@ stylecheck:
 watch:
 	poetry run pytest -f
 
-watchthis:
-	poetry run pytest -f -k $(TEST)
+this:
+	poetry run pytest -f -k $(test)
