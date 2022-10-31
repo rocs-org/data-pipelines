@@ -2,9 +2,9 @@ from airflow import DAG
 from airflow.operators.python import PythonOperator
 from airflow.utils.dates import days_ago
 
+
 from src.dags.datenspende_vitaldata_onetime_update.onetime_data_update_task import (
     ONETIME_VITAL_DATA_UPDATE_ARGS,
-    go_msg,
 )
 from src.dags.datenspende_vitaldata.data_update.data_update_task import (
     vital_data_update_etl,
@@ -28,18 +28,12 @@ dag = DAG(
     "datenspende_vitaldata_onetime_update",
     default_args=default_args,
     description="Onetime ETL vital data from thryve for data fixes",
-    schedule_interval=None,
+    schedule_interval="@once",
     start_date=days_ago(1, hour=2),
     tags=["ROCS pipelines"],
     on_failure_callback=slack_notifier_factory(
         create_slack_error_message_from_task_context
     ),
-)
-
-t0 = PythonOperator(
-    task_id="go_message",
-    python_callable=go_msg,
-    dag=dag,
 )
 
 t1 = PythonOperator(
@@ -51,4 +45,4 @@ t1 = PythonOperator(
     op_args=ONETIME_VITAL_DATA_UPDATE_ARGS,
 )
 
-t0 >> t1
+t1
