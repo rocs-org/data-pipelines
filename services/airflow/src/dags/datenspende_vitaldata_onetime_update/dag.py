@@ -4,6 +4,7 @@ from airflow.utils.dates import days_ago
 
 from src.dags.datenspende_vitaldata_onetime_update.onetime_data_update_task import (
     ONETIME_VITAL_DATA_UPDATE_ARGS,
+    go_msg,
 )
 from src.dags.datenspende_vitaldata.data_update.data_update_task import (
     vital_data_update_etl,
@@ -35,6 +36,12 @@ dag = DAG(
     ),
 )
 
+t0 = PythonOperator(
+    task_id="go_message",
+    python_callable=go_msg,
+    dag=dag,
+)
+
 t1 = PythonOperator(
     task_id="gather_onetime_vital_data_from_thryve",
     python_callable=if_var_exists_in_dag_conf_use_as_first_arg(
@@ -44,4 +51,4 @@ t1 = PythonOperator(
     op_args=ONETIME_VITAL_DATA_UPDATE_ARGS,
 )
 
-t1
+t0 >> t1

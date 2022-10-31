@@ -1,9 +1,31 @@
+import subprocess
+import json
 from datetime import date
 
 from airflow.models import DagBag
 
 from postgres_helpers import DBContext, query_all_elements
 from src.lib.test_helpers import execute_dag
+
+
+def trigger_dag(dag_id: str, dag_config: dict = {}):
+    """Execute a DAG in a specific date this process wait for DAG run or fail to continue"""
+
+    # subprocess.Popen(["airflow", "dags", "delete", dag_id, "-y"])
+
+    process = subprocess.Popen(
+        [
+            "airflow",
+            "dags",
+            "trigger",
+            "-c",
+            json.dumps(dag_config),
+            dag_id,
+        ],
+    )
+    process.communicate()
+
+    return process.returncode
 
 
 def test_datenspende_onetime_vitals_dag_loads_with_no_errors():
@@ -18,9 +40,8 @@ def test_datenspende_onetime_vitals_dag_writes_correct_results_to_db(
     credentials = pg_context["credentials"]
 
     assert (
-        execute_dag(
+        trigger_dag(
             "datenspende_vitaldata_onetime_update",
-            "2021-01-01",
             {"TARGET_DB": credentials["database"], "URL": THRYVE_FTP_URL},
         )
         == 0
