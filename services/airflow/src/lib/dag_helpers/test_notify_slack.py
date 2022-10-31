@@ -8,9 +8,9 @@ from src.lib.dag_helpers.notify_slack import (
 )
 
 from airflow import DAG
-from airflow.utils.dates import days_ago
 from airflow.operators.python import PythonOperator
 from src.lib.test_helpers import get_task_context
+from pendulum import today
 
 
 @responses.activate
@@ -55,7 +55,7 @@ dag = DAG(
     DAG_ID,
     default_args=default_args,
     description="an example DAG that downloads a csv and uploads it to postgres",
-    start_date=days_ago(1),
+    start_date=today('UTC').add(days=-1),
     tags=["TEST DAG"],
     on_failure_callback=slack_notifier_factory(
         create_slack_error_message_from_task_context

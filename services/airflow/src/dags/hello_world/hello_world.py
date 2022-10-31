@@ -2,7 +2,7 @@ from datetime import timedelta
 
 from airflow import DAG
 from airflow.operators.python import PythonOperator
-from airflow.utils.dates import days_ago
+from pendulum import today
 from src.lib.airflow_fp import (
     pull_execute_push,
     pull_execute,
@@ -35,8 +35,8 @@ dag = DAG(
     "hello_world_etl",
     default_args=default_args,
     description="A hello world DAG with dumy extract, transform and load tasks",
-    schedule_interval=timedelta(days=1),
-    start_date=days_ago(2),
+    schedule=timedelta(days=1),
+    start_date=today("UTC").add(days=-2),
     tags=["example"],
 )
 

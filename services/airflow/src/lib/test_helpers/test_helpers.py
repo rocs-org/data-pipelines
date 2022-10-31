@@ -2,6 +2,7 @@ import os
 import ramda as R
 from airflow import DAG
 from airflow.operators.python import PythonOperator
+from pendulum import today
 
 from airflow.utils.dates import days_ago
 
@@ -24,7 +25,7 @@ task_id = "task_name"
 dag = DAG(
     dag_id,
     default_args=default_args,
-    start_date=days_ago(2),
+    start_date=today('UTC').add(days=-2),
     tags=["testing"],
 )
 PythonOperator(

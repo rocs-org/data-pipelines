@@ -2,7 +2,7 @@ from datetime import timedelta
 
 from airflow import DAG
 from airflow.operators.python import PythonOperator
-from airflow.utils.dates import days_ago
+from pendulum import today
 
 from src.dags.datenspende_epoch_data.data_update import (
     el_epoch_data,
@@ -26,8 +26,8 @@ dag = DAG(
     "datenspende_epoch_data_import_v1",
     default_args=default_args,
     description="ETL vital data from thryve",
-    schedule_interval=timedelta(days=1),
-    start_date=days_ago(1, hour=2),
+    schedule=timedelta(days=1),
+    start_date=today("UTC").add(days=-1, hours=-2),
     tags=["ROCS pipelines"],
     on_failure_callback=slack_notifier_factory(
         create_slack_error_message_from_task_context

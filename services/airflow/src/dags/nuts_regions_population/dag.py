@@ -1,5 +1,5 @@
 from airflow import DAG
-from airflow.utils.dates import days_ago
+from pendulum import today
 from airflow.operators.python import PythonOperator
 
 from src.dags.nuts_regions_population.nuts_regions import (
@@ -39,7 +39,7 @@ dag = DAG(
     "nuts_regions_population",
     default_args=default_args,
     description="Load population data for NUTS 2021 regions from eurostat",
-    start_date=days_ago(1),
+    start_date=today("UTC").add(days=-1),
     tags=["ROCS pipelines"],
     on_failure_callback=slack_notifier_factory(
         create_slack_error_message_from_task_context
