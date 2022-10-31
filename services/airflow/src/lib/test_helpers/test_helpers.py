@@ -4,8 +4,6 @@ from airflow import DAG
 from airflow.operators.python import PythonOperator
 from pendulum import today
 
-from airflow.utils.dates import days_ago
-
 
 from src.lib.test_helpers.helpers import (
     check_if_var_exists_in_dag_conf,
@@ -25,7 +23,7 @@ task_id = "task_name"
 dag = DAG(
     dag_id,
     default_args=default_args,
-    start_date=today('UTC').add(days=-2),
+    start_date=today("UTC").add(days=-2),
     tags=["testing"],
 )
 PythonOperator(
