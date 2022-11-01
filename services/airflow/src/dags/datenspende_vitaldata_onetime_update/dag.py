@@ -1,6 +1,6 @@
 from airflow import DAG
 from airflow.operators.python import PythonOperator
-from airflow.utils.dates import days_ago
+from pendulum import today
 
 
 from src.dags.datenspende_vitaldata_onetime_update.onetime_data_update_task import (
@@ -28,8 +28,8 @@ dag = DAG(
     "datenspende_vitaldata_onetime_update",
     default_args=default_args,
     description="Onetime ETL vital data from thryve for data fixes",
-    schedule_interval="@once",
-    start_date=days_ago(1, hour=2),
+    schedule="@once",
+    start_date=today("UTC").add(days=-1, hours=-2),
     tags=["ROCS pipelines"],
     on_failure_callback=slack_notifier_factory(
         create_slack_error_message_from_task_context
