@@ -5,7 +5,7 @@ from returns.pipeline import pipe
 import ramda as R
 from datetime import timedelta
 from airflow import DAG
-from airflow.utils.dates import days_ago
+from pendulum import today
 from airflow.operators.python import PythonOperator
 from returns.curry import curry
 
@@ -78,8 +78,8 @@ dag = DAG(
     "example_csv_to_postgres",
     default_args=default_args,
     description="an example DAG that downloads a csv and uploads it to postgres",
-    schedule_interval=timedelta(days=1),
-    start_date=days_ago(2),
+    schedule=timedelta(days=1),
+    start_date=today("UTC").add(days=-2),
     tags=["example"],
 )
 

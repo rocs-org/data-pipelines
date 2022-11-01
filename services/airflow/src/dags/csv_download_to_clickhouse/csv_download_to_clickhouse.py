@@ -4,7 +4,7 @@ import pandas as pd
 import ramda as R
 from airflow import DAG
 from airflow.operators.python import PythonOperator
-from airflow.utils.dates import days_ago
+from pendulum import today
 from returns.curry import curry
 
 from clickhouse_helpers import (
@@ -52,8 +52,8 @@ dag = DAG(
     "extract_load_to_clickhouse",
     default_args=default_args,
     description="an example DAG that downloads a csv and uploads it to clickhouse",
-    schedule_interval=timedelta(days=1),
-    start_date=days_ago(2),
+    schedule=timedelta(days=1),
+    start_date=today("UTC").add(days=-2),
     tags=["example"],
 )
 
