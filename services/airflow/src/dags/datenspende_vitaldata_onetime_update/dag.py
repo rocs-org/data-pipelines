@@ -5,7 +5,7 @@ from pendulum import today
 
 from src.dags.datenspende_vitaldata_onetime_update import (
     ONETIME_VITAL_DATA_UPDATE_ARGS,
-    vital_data_update_etl
+    vital_data_update_etl,
 )
 from src.lib.dag_helpers import (
     create_slack_error_message_from_task_context,
