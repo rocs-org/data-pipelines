@@ -3,11 +3,9 @@ from airflow.operators.python import PythonOperator
 from pendulum import today
 
 
-from src.dags.datenspende_vitaldata_onetime_update.onetime_data_update_task import (
+from src.dags.datenspende_vitaldata_onetime_update import (
     ONETIME_VITAL_DATA_UPDATE_ARGS,
-)
-from src.dags.datenspende_vitaldata.data_update.data_update_task import (
-    vital_data_update_etl,
+    vital_data_update_etl
 )
 from src.lib.dag_helpers import (
     create_slack_error_message_from_task_context,
@@ -16,7 +14,7 @@ from src.lib.dag_helpers import (
 from src.lib.test_helpers import if_var_exists_in_dag_conf_use_as_first_arg
 
 default_args = {
-    "owner": "airflow",
+    "owner": "david",
     "depends_on_past": False,
     "retries": 0,
     "retry": False,
