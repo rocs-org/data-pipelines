@@ -3,7 +3,7 @@
 # and underscores. A good package name should reflect your organization's
 # name or the intended use of these models
 name: 'data_pipelines'
-version: '1.0.0'
+version: '1.1.0'
 config-version: 2
 
 # This setting configures which "profile" dbt uses for this project.
@@ -28,6 +28,7 @@ clean-targets:         # directories to be removed by `dbt clean`
 
 
 models:
-  datenspende:
-    # Config indicated by + and applies to all files under models/
-    +materialized: table
+  data_pipelines:
+    datenspende:
+      # Config indicated by + and applies to all files under models/
+      +materialized: table

@@ -1,0 +1,148 @@
+version: 2
+
+sources:
+  - name: datenspende
+    schema: datenspende
+    description: Raw data of the data donation project.
+    tags: ['thryve']
+    tables:
+      - name: vitaldata
+        tags: ['time-series']
+        description: '{{ doc("vitaldata_desc") }}'
+        columns:
+        - name: user_id
+          description: The id of the Datenspende user who contributed the data, e.g. 12345
+        - name: date
+          description: The calendar date on which the pair (type, value) was recorded, e.g. 2021-05-23
+        - name: type
+          description: The data type. 9 ist Steps, 43 is SleepDuration, 52 is SleepStart, 53 is SleepEnd, 65 is HeartRateResting, 66 is HeartRateSleep
+        - name: value
+          description: The value of the vital data recorded, e.g. 9235 for the step count
+        - name: source
+          description: The id of the wearable that was used to record the data, e.g. Fitbit, GoogleFit, Apple Watch
+        - name: created_at
+          description: The epoch at which the pair (type, value) was recorded
+        - name: timezone_offset
+          description: The offset in timezone relative to the current German timezone          
+      - name: users
+        tags: ['tabular']
+        description: '{{ doc("users_desc") }}'
+        columns:
+        - name: user_id
+          description: Primary key. The user_id, sometimes userid, is the consistent identifier of a specific user account through all data collected from that user, wearable or otherwise
+        - name: plz
+          description: The 3-digit PLZ we keep to be able to do basic geospatial analysis of e.g. sleep patterns
+        - name: salutation
+          description: The salutation encodes the user-specified gender
+        - name: birth_date
+          description: The birth year of the user
+        - name: weight
+          description: The weight of the user in 5kg increments
+        - name: height
+          description: The height of the user in 5cm increments
+        - name: creation_timestamp
+          description: The time when the user account was created
+        - name: source
+          description: The type of linked device (e.g. Fitbit). Integer, but since a user can connect several devices not necessarily complete.
+      - name: questions
+        tags: ['tabular']
+        description: '{{ doc("questions_desc") }}'
+        columns:
+        - name: id
+          description: Question id, primary key
+        - name: type
+          description: unknown
+        - name: title
+          description: title of the question, displayed in the app
+        - name: text
+          description: question text
+        - name: description
+          description: context for the survey displayed in the app
+      - name: questionnaires
+        tags: ['tabular']
+        description: '{{ doc("questionnaires_desc") }}'
+        columns:
+        - name: id
+          description: Questionnaire id, primary key.
+        - name: name
+          description: name of the questionnaire
+        - name: description
+          description: Description of the questionnaire displayed in the app.
+        - name: hour_of_day_to_answer
+          description: which hour of day the survey is rolled out / to be answered, currently unused.
+        - name: expiration_in_minutes
+          description: minutes after serving the questionnaire til expiry.
+      - name: questionnaire_session
+        tags: ['tabular']
+        description: '{{ doc("questionnaire_session_desc") }}'
+        columns:
+        - name: id
+          description: Questionnaire session id, primary key.
+        - name: user_id
+          description: user_id from table users, relates q session to the user.
+        - name: study
+          description: To which study the questionnaire being filled out belongs.
+        - name: questionnaire
+          description: Questionnaire id from table questionnaire, relates which questionnaire is being answered.
+        - name: session_run
+          description: no description
+        - name: expiration_timestamp
+          description: Timestamp when questionnaire session expired, or would have.
+        - name: created_at
+          description: Timestamp the questionnaire session started
+        - name: completed_at
+          description: Timestamp the questionnaire session was completed, can be emtpy if session expires
+      - name: question_to_questionnaire
+        tags: ['tabular']
+        description: '{{ doc("question_to_questionnaire_desc") }}'
+        columns:
+        - name: questionnaire
+          description: Identifies the questionnaire.
+        - name: order_id
+          description: Position in the ordering on which the question appears.
+        - name: question
+          description: Question that appears in questionnaire on position order_id.
+      - name: choice
+        tags: ['tabular']
+        description: '{{ doc("choice_desc") }}'
+        columns:
+        - name: element
+          description: Primary key, identifier of the element chose as a response to a question by the user.
+        - name: question
+          description: Question to which the choice is a possible response.
+        - name: text
+          description: Text presented to the user when they select their choice.
+      - name: answers
+        tags: ['tabular']
+        description: '{{ doc("answers_desc") }}'
+        columns:
+        - name: id
+          description: primary key together with element.
+        - name: user_id
+          description: user_id from table users
+        - name: questionnaire_session
+          description: questionnaire session from table questionnaire_session
+        - name: study
+          description: study id from table questionnaire
+        - name: questionnaire
+          description: questionnaire from table questionnaire
+        - name: question
+          description: question from table question
+        - name: order_id
+          description: unclear
+        - name: created_at
+          description: timestamp when the answer to a question was entered.
+        - name: element
+          description: element from table choice.
+        - name: answer_text
+          description: answer text for freeform answers.
+
+  - name: datenspende_derivatives
+    schema: datenspende_derivatives
+    description: post processed data from the data donation project
+    tables:
+      - name: excluded_users
+        tags: ['tabular']
+      - name: homogenized_features
+        tags: ['tabular']
+

@@ -3,7 +3,7 @@ from datetime import timedelta
 from airflow import DAG
 from airflow.operators.python import PythonOperator
 from airflow.sensors.external_task import ExternalTaskSensor
-from airflow.utils.dates import days_ago
+from pendulum import today
 from src.dags.corona_cases.cases import etl_covid_cases, CASES_ARGS
 from src.dags.corona_cases.incidences import (
     calculate_incidence_post_processing,
@@ -29,8 +29,8 @@ dag = DAG(
     "corona_cases",
     default_args=default_args,
     description="Download covid cases and calculate regional 7 day incidence values.",
-    schedule_interval=timedelta(days=1),
-    start_date=days_ago(1),
+    schedule=timedelta(days=1),
+    start_date=today("UTC").add(days=-1),
     tags=["ROCS pipelines"],
     on_failure_callback=slack_notifier_factory(
         create_slack_error_message_from_task_context
