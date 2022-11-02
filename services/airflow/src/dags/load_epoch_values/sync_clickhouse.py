@@ -51,11 +51,11 @@ def extract_data_between(
 ) -> Dict[str, pd.DataFrame]:
     static_data = {}
     for table in tables:
-        query = f"SELECT * FROM {table} where {date_column_name} >= '{start_time}' and {date_column_name} <= '{end_time}'"
-        print(query)
+        q = f"SELECT * FROM {table} where {date_column_name} >= '{start_time}' and {date_column_name} <= '{end_time}'"
+        print(q)
         static_data[table] = query_dataframe(
             context,
-            query,
+            q,
         )
     return static_data
 

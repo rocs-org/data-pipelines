@@ -134,3 +134,5 @@ jobs:
         if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.debug_enabled }}
       - name: Run tests
         run: make integrationtest
+      - name: Teardown docker stack
+        run: make down

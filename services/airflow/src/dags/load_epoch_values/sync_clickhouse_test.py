@@ -41,10 +41,10 @@ def test_el_task_loads_with_no_errors(thryve_clickhouse_context, ch_context):
     tables = ["raw_DynamicEpochValue"]
     execution_date = date(2021, 9, 2)
     context = {
-        "external_table": "raw_DynamicEpochValue",
         "dag_run": {
             "conf": {
                 "prefix": "",
+                "external_table": "raw_DynamicEpochValue",
                 "CLICKHOUSE_DB": ch_context["credentials"]["database"],
                 "EXTERNAL_CLICKHOUSE_DB": thryve_clickhouse_context["credentials"][
                     "database"
