@@ -34,7 +34,7 @@ def execute_dag(dag_id: str, execution_date: str, dag_config: dict = {}):
     return process.returncode
 
 
-@curry
+@R.curry
 def set_env_variable(name: str, value):
     os.environ[name] = value
 
@@ -43,14 +43,14 @@ def get_from_dag_conf(name: str):
     return R.pipe(R.path(["dag_run", "conf"]), lambda x: x.get(name))
 
 
-@curry
+@R.curry
 def check_if_var_exists_in_dag_conf(name: str, kwargs):
     return R.try_catch(R.pipe(get_from_dag_conf(name), R.is_nil, R.not_func), R.F)(
         kwargs
     )
 
 
-@curry
+@R.curry
 def set_env_variable_from_dag_config_if_present(name: str, kwargs):
     return R.if_else(
         check_if_var_exists_in_dag_conf(name),

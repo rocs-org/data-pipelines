@@ -5,7 +5,6 @@ import py7zr
 import ramda as R
 import requests
 from requests.auth import HTTPBasicAuth
-from returns.curry import curry
 
 from src.lib.decorators import cwd_cleanup
 
@@ -30,7 +29,7 @@ def extract(
     )(url)
 
 
-@curry
+@R.curry
 def download_7zfile(access_config: dict, url):
     local_filename = "export.7z"
     with requests.get(
@@ -45,7 +44,7 @@ def download_7zfile(access_config: dict, url):
     return local_filename
 
 
-@curry
+@R.curry
 def unzip_7zfile(access_config: dict, filename: str) -> None:
     with py7zr.SevenZipFile(
         filename, "r", password=access_config["zip_password"]

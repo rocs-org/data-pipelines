@@ -7,7 +7,6 @@ import ramda as R
 import requests
 from polars.datatypes import Utf8, Int64
 from requests.auth import HTTPBasicAuth
-from returns.curry import curry
 
 from src.lib.decorators import cwd_cleanup
 
@@ -30,7 +29,7 @@ def download(access_config: dict, url: str) -> PolarsDataList:
     )(url)
 
 
-@curry
+@R.curry
 def download_file(access_config: dict, url):
     local_filename = "exportStudy.7z"
     with requests.get(
@@ -45,7 +44,7 @@ def download_file(access_config: dict, url):
     return local_filename
 
 
-@curry
+@R.curry
 def unzip_file(access_config: dict, filename: str) -> None:
     with py7zr.SevenZipFile(
         filename, "r", password=access_config["zip_password"]

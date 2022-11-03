@@ -1,6 +1,5 @@
 import pandas as pd
 import ramda as R
-from returns.curry import curry
 from postgres_helpers import query_all_elements, with_db_context
 
 INDICATORS = r"sex,unit,age,geo\time"
@@ -34,7 +33,7 @@ def transform(raw: pd.DataFrame) -> pd.DataFrame:
     )(raw)
 
 
-@curry
+@R.curry
 def set_nth_indicator_as_column(
     column_name, indicator_index, df: pd.DataFrame
 ) -> pd.DataFrame:

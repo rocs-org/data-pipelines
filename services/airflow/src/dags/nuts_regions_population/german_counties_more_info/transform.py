@@ -1,7 +1,7 @@
+import datetime
+
 import pandas as pd
 import ramda as R
-import datetime
-from returns.curry import curry
 
 
 def transform(dataframe: pd.DataFrame) -> pd.DataFrame:
@@ -13,23 +13,23 @@ def transform(dataframe: pd.DataFrame) -> pd.DataFrame:
     )(dataframe)
 
 
-@curry
+@R.curry
 def drop_rows_with_nan_in_nth_col(col: int, df: pd.DataFrame) -> pd.DataFrame:
     return df[pd.notnull(df[col])]
 
 
-@curry
+@R.curry
 def rename_columns_with_mapping(mapping: dict, df: pd.DataFrame) -> pd.DataFrame:
     return df.rename(axis="columns", mapper=mapping)
 
 
-@curry
+@R.curry
 def add_data_column(date: datetime.datetime, df: pd.DataFrame) -> pd.DataFrame:
     df["year"] = date
     return df
 
 
-@curry
+@R.curry
 def set_column_types_to(type_def: dict, df: pd.DataFrame) -> pd.DataFrame:
     return df.astype(type_def)
 

@@ -1,5 +1,4 @@
 import requests
-from returns.curry import curry
 import json
 import os
 import ramda as R
@@ -20,7 +19,7 @@ def slack_notifier_factory(message_creator: MessageCreator) -> SlackNotifier:
     )
 
 
-@curry
+@R.curry
 def notify_slack(webhook_url: str, message: str) -> None:
     requests.post(
         webhook_url,

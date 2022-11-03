@@ -1,20 +1,21 @@
-import polars
-from datetime import datetime, timedelta
-import ramda as R
-from returns.curry import curry
-from postgres_helpers import DBContext
-from typing import Any, List
 from copy import deepcopy
-from src.dags.nuts_regions_population.nuts_regions import (
-    etl_eu_regions,
-    REGIONS_ARGS,
-)
+from datetime import datetime, timedelta
+from io import StringIO
+from typing import Any, List
+
+import polars
+import ramda as R
+from postgres_helpers import DBContext
+from src.dags.corona_cases.cases import etl_covid_cases, CASES_ARGS
 from src.dags.nuts_regions_population.german_counties_more_info import (
     etl_german_counties_more_info,
     COUNTIES_ARGS,
 )
-from src.dags.corona_cases.cases import etl_covid_cases, CASES_ARGS
-from io import StringIO
+from src.dags.nuts_regions_population.nuts_regions import (
+    etl_eu_regions,
+    REGIONS_ARGS,
+)
+
 from .incidences import (
     calculate_incidence,
     aggregate_df_on_keys,
@@ -115,7 +116,7 @@ def replace_url_in_args_and_run_task(url, args, task):
     )(args)
 
 
-@curry
+@R.curry
 def assoc_to_list_position(value: Any, position: int, lst: List) -> List:
     d_list = deepcopy(lst)
     d_list[position] = value
