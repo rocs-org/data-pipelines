@@ -1,0 +1,3 @@
+,customer,type,source,day,valueType,doubleValue,longValue,booleanValue,dateValue,stringValue,generation,trustworthiness,medicalGrade,userReliability,chronologicalExactness,timezoneOffset,createdAt,outdated
+0,,0,0,1970-01-02,DOUBLE,,0,,,,,,,,,0.0,,false
+1,de192306670209578370193@datenspendeausweis.com,2001,6,1970-01-02,LONG,,1120,,,,,,,,,,2021-03-13 14:10:40+00:00,false

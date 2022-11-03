@@ -9,11 +9,11 @@ from clickhouse_helpers.types import (
 )
 
 
-def create_db_context(*_) -> DBContext:
+def create_db_context(**kwargs) -> DBContext:
     return R.pipe(
-        lambda *_: _read_db_credentials_from_env(),
+        lambda kwargs: _read_db_credentials_from_env(**kwargs),
         create_context_from_credentials,
-    )("")
+    )(kwargs)
 
 
 def teardown_db_context(context: DBContext) -> DBContext:
@@ -28,13 +28,15 @@ def with_db_context(function, *args):
     return result
 
 
-def _read_db_credentials_from_env() -> DBCredentials:
+def _read_db_credentials_from_env(**kwargs) -> DBCredentials:
+    prefix = kwargs.pop("env_prefix", "CLICKHOUSE")
     return {
-        "user": os.environ["CLICKHOUSE_USER"],
-        "password": os.environ["CLICKHOUSE_PASSWORD"],
-        "database": os.environ["CLICKHOUSE_DB"],
-        "host": os.environ["CLICKHOUSE_HOSTNAME"],
-        "port": int(os.environ["CLICKHOUSE_PORT"]),
+        "user": os.environ[f"{prefix}_USER"],
+        "password": os.environ[f"{prefix}_PASSWORD"],
+        "database": os.environ[f"{prefix}_DB"],
+        "host": os.environ[f"{prefix}_HOSTNAME"],
+        "port": int(os.environ[f"{prefix}_PORT"]),
+        **kwargs,  # allow overriding of the above and adding additional settings for the connection
     }
 
 

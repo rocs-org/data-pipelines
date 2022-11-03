@@ -18,7 +18,9 @@ def query_dataframe(context: DBContext, sql: str) -> pd.DataFrame:
 
 @R.curry
 def insert_dataframe(context: DBContext, table: str, data: pd.DataFrame):
-    return context["connection"].insert_dataframe(f"INSERT INTO {table} VALUES", data)
+    return context["connection"].insert_dataframe(
+        f"INSERT INTO {table} VALUES", data, settings=dict(types_check=True)
+    )
 
 
 @R.curry

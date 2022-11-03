@@ -125,12 +125,11 @@ jobs:
         continue-on-error: true
       - name: Build docker stack
         run: make build && make setup
-      - name: Wait for container health
-        run: bash wait-for-healthy-container.sh airflow-scheduler 300
-      - name: Run DB migrations
-        run: make migrations
       - name: Setup tmate session
         uses: mxschmitt/action-tmate@v3
         if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.debug_enabled }}
       - name: Run tests
         run: make integrationtest
+      - name: Teardown docker stack
+        if: always()
+        run: make down

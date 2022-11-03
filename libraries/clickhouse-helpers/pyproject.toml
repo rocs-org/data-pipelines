@@ -10,6 +10,7 @@ clickhouse-migrator = "^1.0.6"
 pandahouse = "^0.2.7"
 typer = "^0.4.0"
 ramda = "^0.7.3"
+clickhouse-connect = "^0.3.3"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.0.0"

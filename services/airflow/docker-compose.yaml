@@ -42,7 +42,7 @@ x-airflow-common:
     AIRFLOW__CORE__LOAD_EXAMPLES: 'false'
     AIRFLOW__API__AUTH_BACKEND: 'airflow.api.auth.backend.basic_auth'
   volumes:
-#    - ../../libraries:/libraries
+    - ../../libraries:/libraries
 #    - ../../libraries/postgres-helpers/postgres_helpers/migrations/migration_files:/home/airflow/.local/lib/python3.8/site-packages/postgres_helpers/migrations/migration_files
     - ./src:/opt/airflow/src
 #    - ../dbt:/opt/airflow/dbt
@@ -97,6 +97,19 @@ services:
       CLICKHOUSE_USER: "${CLICKHOUSE_USER}"
       CLICKHOUSE_PASSWORD: "${CLICKHOUSE_PASSWORD}"
       CLICKHOUSE_DB: "${CLICKHOUSE_DB}"
+
+  external_clickhouse:
+    container_name: "external_clickhouse"
+    image: yandex/clickhouse-server:latest
+    volumes:
+      - ./docker/clickhouse/config.yaml:/etc/clickhouse-server/config.yaml
+      - ./docker/clickhouse/users.yaml:/etc/clickhouse-server/users.d/users.yaml
+      - external_clickhouse-db-volume:/var/lib/clickhouse:rw
+    environment:
+      CLICKHOUSE_USER: "${EXTERNAL_CLICKHOUSE_USER}"
+      CLICKHOUSE_PASSWORD: "${EXTERNAL_CLICKHOUSE_PASSWORD}"
+      CLICKHOUSE_DB: "${EXTERNAL_CLICKHOUSE_DB}"
+
 
   postgres:
     image: postgres:13
@@ -171,5 +184,6 @@ volumes:
   airflow-logs-volume:
   target-db-volume:
   clickhouse-db-volume:
+  external_clickhouse-db-volume:
   dbt-logs-volume:
   dbt-pkg-volume:

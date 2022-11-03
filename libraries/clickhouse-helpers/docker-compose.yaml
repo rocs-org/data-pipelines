@@ -16,7 +16,7 @@ services:
       CLICKHOUSE_PASSWORD: "${CLICKHOUSE_PASSWORD}"
     healthcheck:
       test: [ "CMD", "wget", "--spider", "-q", "localhost:8123/ping" ]
-      interval: 30s
+      interval: 5s
       timeout: 5s
       retries: 3
     ports:

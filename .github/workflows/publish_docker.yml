@@ -6,15 +6,10 @@
 name: Publish Docker image
 
 on:
-  # shedule every week
-  schedule:
-      - cron: '0 0 * * 0'
   # on push to main branch
   push:
     tags:
       - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
-  # manually
-  workflow_dispatch:
 
 jobs:
   push_to_registry:
