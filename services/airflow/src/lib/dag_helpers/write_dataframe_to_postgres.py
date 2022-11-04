@@ -6,7 +6,6 @@ import pandas as pd
 import ramda as R
 from pandas import DataFrame
 from psycopg2 import sql
-from returns.curry import curry
 from returns.pipeline import pipe
 
 
@@ -18,7 +17,7 @@ from postgres_helpers import (
 )
 
 
-@curry
+@R.curry
 def connect_to_db_and_insert_pandas_dataframe(
     schema: str, table: str, data: pd.DataFrame
 ):
@@ -27,7 +26,7 @@ def connect_to_db_and_insert_pandas_dataframe(
     )
 
 
-@curry
+@R.curry
 def connect_to_db_and_truncate_insert_pandas_dataframe(
     schema: str, table: str, data: pd.DataFrame
 ):
@@ -41,7 +40,7 @@ def connect_to_db_and_truncate_insert_pandas_dataframe(
     )
 
 
-@curry
+@R.curry
 def connect_to_db_and_insert_polars_dataframe(
     schema: str, table: str, data: polars.DataFrame
 ):
@@ -50,7 +49,7 @@ def connect_to_db_and_insert_polars_dataframe(
     )
 
 
-@curry
+@R.curry
 def connect_to_db_and_upsert_pandas_dataframe(
     schema: str, table: str, constraint_columns: List[str], data: pd.DataFrame
 ):
@@ -66,7 +65,7 @@ def connect_to_db_and_upsert_pandas_dataframe(
     )
 
 
-@curry
+@R.curry
 def connect_to_db_and_upsert_pandas_dataframe_on_constraint(
     schema: str, table: str, constraints: List[str], data: pd.DataFrame
 ):
@@ -104,7 +103,7 @@ def build_upser_query_with_constraints(schema: str, table: str, constraints: Lis
     )
 
 
-@curry
+@R.curry
 def connect_to_db_and_upsert_polars_dataframe(
     schema: str, table: str, constraint: list, data: polars.DataFrame
 ):
@@ -120,7 +119,7 @@ def connect_to_db_and_upsert_polars_dataframe(
     )
 
 
-@curry
+@R.curry
 def _connect_to_db_and_execute(query_builder, tuple_getter, data: pd.DataFrame):
     return R.pipe(
         R.converge(

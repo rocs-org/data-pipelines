@@ -1,7 +1,6 @@
 from typing import Callable, List
 import pandas as pd
 from pandas.core.frame import DataFrame
-from returns.pipeline import pipe
 import ramda as R
 from datetime import timedelta
 from airflow import DAG
@@ -52,7 +51,7 @@ def write_dataframe_to_postgres(context: DBContext, table: str, data: DataFrame)
 
 @R.curry
 def _build_query(table: str) -> Callable[[DataFrame], str]:
-    return pipe(
+    return R.pipe(
         _get_columns,
         lambda columns: "INSERT INTO %s (%s) VALUES %%s;" % (table, columns),
     )

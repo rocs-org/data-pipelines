@@ -1,6 +1,6 @@
 import polars as po
 from typing import List
-from returns.curry import curry
+import ramda as R
 from datetime import timedelta, date
 from postgres_helpers import (
     with_db_context,
@@ -260,7 +260,7 @@ def calculate_incidence(
     ]
 
 
-@curry
+@R.curry
 def aggregate_df_on_keys(keys: List[str], df: po.DataFrame) -> po.DataFrame:
     return (
         df.groupby(keys)
@@ -274,7 +274,7 @@ def aggregate_df_on_keys(keys: List[str], df: po.DataFrame) -> po.DataFrame:
     )
 
 
-@curry
+@R.curry
 def get_continuous_dates(column_id: str, df: po.DataFrame):
     min_date = df[column_id].cast(po.Date32).min()
     max_date = df[column_id].cast(po.Date32).max()

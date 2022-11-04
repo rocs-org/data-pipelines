@@ -6,7 +6,6 @@
 name: Publish Docker image
 
 on:
-  # on push to main branch
   push:
     tags:
       - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10

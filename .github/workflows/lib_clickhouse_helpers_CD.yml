@@ -6,16 +6,15 @@ on:
   push:
     tags:
       - 'v*'
-    paths: ["libraries/postgres-helpers/**"]
+    paths: ["libraries/clickhouse-helpers/**"]
   workflow_dispatch:
-
 
 jobs:
   run-migrations:
     runs-on: [self-hosted, docker]
     defaults:
       run:
-        working-directory: ./libraries/postgres-helpers
+        working-directory: ./libraries/clickhouse-helpers
 
     steps:
       - uses: actions/checkout@v2
@@ -32,9 +31,11 @@ jobs:
 
       - name: Run migrations
         env:
-          DATABASE_CONNECTION_STRING: ${{ secrets.DATABASE_CONNECTION_STRING }}
+          PASSWORD: ${{ secrets.CLICKHOUSE_PASSWORD }}
         run:  |
-          poetry run yoyo apply \
-          --no-config-file \
-          --database ${DATABASE_CONNECTION_STRING} \
-          postgres_helpers/migrations/migration_files
+          poetry run migrate-clickhouse 
+          --host devi.biologie.hu-berlin.de 
+          --port 9000
+          --database rocs 
+          --user ornt 
+          --password ${PASSWORD}
