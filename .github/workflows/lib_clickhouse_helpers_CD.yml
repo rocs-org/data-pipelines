@@ -33,9 +33,4 @@ jobs:
         env:
           PASSWORD: ${{ secrets.CLICKHOUSE_PASSWORD }}
         run:  |
-          poetry run migrate-clickhouse 
-          --host devi.biologie.hu-berlin.de 
-          --port 9000
-          --database rocs 
-          --user ornt 
-          --password ${PASSWORD}
+          poetry run migrate-clickhouse --host devi.biologie.hu-berlin.de --port 9000 --database rocs --user ornt --password ${PASSWORD}
