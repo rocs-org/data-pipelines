@@ -10,4 +10,3 @@ DROP MATERIALIZED VIEW datenspende_derivatives.aggregates_for_standardization_by
 DROP MATERIALIZED VIEW datenspende_derivatives.daily_vital_statistics_before_infection;
 
 DROP MATERIALIZED VIEW datenspende_derivatives.daily_vital_statistics;
-

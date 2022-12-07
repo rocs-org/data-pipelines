@@ -10,13 +10,13 @@ build:
 
 setup:
 	docker-compose up -d && \
-	make migrations && \
-	bash wait-for-healthy-container.sh airflow-scheduler 300
+	bash wait-for-healthy-container.sh airflow-scheduler 300 && \
+	make migrations
 
 dev:
-	docker-compose -f docker-compose.yaml -f docker-compose.dev.yaml up -d
+	docker-compose -f docker-compose.yaml -f docker-compose.dev.yaml up -d && \
+	bash wait-for-healthy-container.sh airflow-scheduler 300 && \
 	make migrations
-	bash wait-for-healthy-container.sh airflow-scheduler 300
 
 down:
 	docker-compose down -v
