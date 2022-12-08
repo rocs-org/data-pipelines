@@ -1,5 +1,6 @@
 from datetime import date, timedelta
 from typing import List, Dict
+from warnings import filterwarnings
 
 import pandas as pd
 import ramda as R
@@ -7,6 +8,7 @@ from src.lib.test_helpers import set_env_variable_from_dag_config_if_present
 
 from clickhouse_helpers import DBContext, query_dataframe, create_db_context
 
+filterwarnings("ignore", message='.*Numpy support is not implemented.*')
 
 def extract_load_epoch_data(**kwargs):
 
@@ -50,18 +52,21 @@ def extract_data_between(
     tables: List[str],
 ) -> Dict[str, pd.DataFrame]:
     static_data = {}
+    print('extract data between', start_time, end_time)
     for table in tables:
-        q = f"SELECT * FROM {table} where {date_column_name} >= '{start_time}' and {date_column_name} <= '{end_time}'"
+        q = f"SELECT * FROM {table} where {date_column_name} > '{start_time}' and {date_column_name} <= '{end_time}'"
         print(q)
         static_data[table] = query_dataframe(
             context,
             q,
         )
+        print(static_data[table].info())
     return static_data
 
 
 @R.curry
 def load_data(context: DBContext, static_data: Dict[str, pd.DataFrame]) -> None:
+    print('load data')
     for table, df in static_data.items():
 
         columns = ", ".join(df.columns)
