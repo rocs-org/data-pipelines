@@ -43,14 +43,12 @@ x-airflow-common:
     AIRFLOW__API__AUTH_BACKEND: 'airflow.api.auth.backend.basic_auth'
   volumes:
     - ../../libraries:/libraries
-#    - ../../libraries/postgres-helpers/postgres_helpers/migrations/migration_files:/home/airflow/.local/lib/python3.8/site-packages/postgres_helpers/migrations/migration_files
     - ./src:/opt/airflow/src
-#    - ../dbt:/opt/airflow/dbt
     - dbt-pkg-volume:/opt/airflow/dbt/dbt_packages
     - dbt-logs-volume:/opt/airflow/dbt/logs
     - airflow-logs-volume:/opt/airflow/logs
-#    - ./setup.cfg:/opt/airflow/setup.cfg
-#    - ./pyproject.toml:/opt/airflow/pyproject.toml
+    - ./airflow.cfg:/opt/airflow/airflow.cfg
+    - ./pyproject.toml:/opt/airflow/pyproject.toml
   user: "${AIRFLOW_UID:-50000}:${AIRFLOW_GID:-50000}"
   depends_on:
     redis:

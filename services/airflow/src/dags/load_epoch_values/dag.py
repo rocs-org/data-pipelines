@@ -23,7 +23,7 @@ dag = DAG(
     "load_epoch_to_clickhouse",
     default_args=default_args,
     description="an example DAG that downloads a csv and uploads it to clickhouse",
-    schedule_interval=timedelta(days=1),
+    schedule=timedelta(days=1),
     start_date=datetime(2021, 10, 1, 22),
     tags=["ROCS pipelines"],
     on_failure_callback=slack_notifier_factory(

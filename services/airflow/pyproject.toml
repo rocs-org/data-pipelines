@@ -53,6 +53,9 @@ build-backend = "poetry.core.masonry.api"
 env_files =".env"
 looponfailroots = ['src', 'dbt']
 python_files = ['*_test.py', 'test_*.py']
+filterwarnings = [
+    "ignore::UserWarning",
+]
 
 
 [tool.flake8]
