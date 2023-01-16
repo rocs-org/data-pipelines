@@ -188,7 +188,7 @@ def collect_feature_names(questions, data: pd.DataFrame) -> pd.DataFrame:
                     [
                         "test_week_start",
                         "First day of the week in which the test was taken",
-                        False
+                        False,
                     ],
                 ],
             ),

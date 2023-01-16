@@ -1,4 +1,4 @@
-data-pipelines:
+rocs-postgres:
   target: postgres
   outputs:
     postgres:
