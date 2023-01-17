@@ -1,5 +1,5 @@
 from postgres_helpers import DBContext
-from src.lib.dag_helpers import execute_query_and_return_dataframe, run_dbt_models
+from src.lib.dag_helpers import execute_query_and_return_dataframe
 from src.lib.test_helpers import run_task_with_url, run_task
 import pytest
 
@@ -121,7 +121,6 @@ def db(pg_context):
             "datenspende_surveys_v2",
             "extract_features_from_one_off_answers",
         )
-        run_dbt_models("datenspende", "datenspende_derivatives", "/opt/airflow/dbt/")
 
         yield pg_context
     finally:

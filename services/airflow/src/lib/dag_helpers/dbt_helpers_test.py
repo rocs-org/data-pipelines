@@ -1,4 +1,4 @@
-from .dbt_helpers import (
+from src.lib.dag_helpers.dbt_helpers import (
     load_dbt_nodes_from_file,
     create_dbt_task,
     filter_dbt_nodes_for,
@@ -99,5 +99,7 @@ def test_create_task_tree_sets_base_task():
         {"TARGET_DB_SCHEMA": "test"},
     )
     assert len(task_tree) > 0
-    print(task_tree["model.data_pipelines.user_vital_don_stats"]["task"].upstream_list)
-    assert False
+    upstream_tasks = task_tree["model.data_pipelines.user_vital_don_stats"][
+        "task"
+    ].upstream_list
+    assert [str(t) for t in upstream_tasks] == ["<Task(BashOperator): base_task>"]

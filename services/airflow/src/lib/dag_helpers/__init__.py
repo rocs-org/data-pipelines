@@ -16,7 +16,7 @@ from .notify_slack import (
 from .load_dataframe_from_postgres import execute_query_and_return_dataframe
 from .refresh_materialized_view import refresh_materialized_view
 
-from .dbt_helpers import run_dbt_models, create_dbt_task_tree
+from .dbt_helpers import create_dbt_task_tree
 
 __all__ = [
     "download_7zfile",
@@ -33,6 +33,5 @@ __all__ = [
     "execute_query_and_return_dataframe",
     "upsert_pandas_dataframe_to_table_in_schema_with_db_context",
     "refresh_materialized_view",
-    "run_dbt_models",
     "create_dbt_task_tree",
 ]
