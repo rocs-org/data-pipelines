@@ -11,9 +11,8 @@ from src.lib.test_helpers import set_env_variable_from_dag_config_if_present
 from postgres_helpers import create_db_context, teardown_db_context, DBContext
 
 # silence warning about pandas only supporting SQLAlchemy
-import warnings
-
-warnings.filterwarnings("ignore", category=UserWarning)
+# import warnings
+# warnings.filterwarnings("ignore", category=UserWarning)
 
 import pandas as pd
 

@@ -15,7 +15,6 @@ from src.dags.datenspende_vitaldata.post_processing import (
 from src.lib.dag_helpers import (
     create_slack_error_message_from_task_context,
     slack_notifier_factory,
-    run_dbt_models,
     create_dbt_task_tree,
 )
 from src.lib.test_helpers import if_var_exists_in_dag_conf_use_as_first_arg

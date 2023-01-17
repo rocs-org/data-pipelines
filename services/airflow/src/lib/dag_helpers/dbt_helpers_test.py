@@ -1,10 +1,10 @@
-from src.lib.dag_helpers.dbt_helpers import (
+from .dbt_helpers import (
     load_dbt_nodes_from_file,
     create_dbt_task,
     filter_dbt_nodes_for,
     add_task_to_dbt_node,
     map_over_dict,
-    order_tasks_by_dependencies,
+    set_task_dependencies,
     create_dbt_task_tree,
 )
 from airflow.operators.bash import BashOperator
@@ -77,7 +77,7 @@ def test_create_all_tasks_and_order_by_dependencies():
         ),
     )("dbt/target/manifest.json")
 
-    ordered_tasks = order_tasks_by_dependencies(None, tasks)
+    ordered_tasks = set_task_dependencies(None, tasks)
 
     assert len(ordered_tasks) > 0
 
