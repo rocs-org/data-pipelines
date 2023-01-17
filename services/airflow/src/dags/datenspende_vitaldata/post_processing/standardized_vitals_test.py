@@ -1,7 +1,11 @@
 from postgres_helpers import DBContext
-from src.lib.dag_helpers import execute_query_and_return_dataframe
+from src.lib.dag_helpers import (
+    execute_query_and_return_dataframe,
+    load_dbt_nodes_from_file,
+)
 from src.lib.test_helpers import run_task_with_url, run_task
 import pytest
+import networkx as nx
 
 
 def test_standardized_vitals_pipeline(db: DBContext):
@@ -121,6 +125,29 @@ def db(pg_context):
             "datenspende_surveys_v2",
             "extract_features_from_one_off_answers",
         )
+
+        # Run dbt tasks in the order of their dependencies
+        node_data = load_dbt_nodes_from_file("/opt/airflow/dbt/target/manifest.json")
+
+        # sort nodes by dependencies
+        g = nx.DiGraph()
+        for node in list(node_data.keys()):
+            dependencies = node_data[node]["depends_on"]["nodes"]
+            for dep in dependencies:
+                g.add_edge(dep, node)
+        sorted_nodes = list(nx.topological_sort(g))
+
+        # create list of task names (exclude source models)
+        sorted_tasks = [
+            "dbt_run_" + x for x in sorted_nodes if x.split(".")[0] == "model"
+        ]
+
+        # run dbt tasks
+        for task in sorted_tasks:
+            run_task(
+                "datenspende_vitaldata_v2",
+                task,
+            )
 
         yield pg_context
     finally:
