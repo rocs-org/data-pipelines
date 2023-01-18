@@ -164,7 +164,7 @@ def collect_feature_names(questions, data: pd.DataFrame) -> pd.DataFrame:
     other_features.columns = ["description", "id"]
     other_features["is_choice"] = True
 
-    feature_ids = symptoms.append(other_features)
+    feature_ids = pd.concat([symptoms, other_features])
 
     feature_ids["id"] = feature_ids["id"].apply(
         lambda feature_id: feature_id
@@ -178,18 +178,21 @@ def collect_feature_names(questions, data: pd.DataFrame) -> pd.DataFrame:
         else feature_id
     )
 
-    return feature_ids.append(
-        pd.DataFrame(
-            columns=["id", "description", "is_choice"],
-            data=[
-                ["user_id", "User Id", False],
-                [
-                    "test_week_start",
-                    "First day of the week in which the test was taken",
-                    False,
+    return pd.concat(
+        [
+            feature_ids,
+            pd.DataFrame(
+                columns=["id", "description", "is_choice"],
+                data=[
+                    ["user_id", "User Id", False],
+                    [
+                        "test_week_start",
+                        "First day of the week in which the test was taken",
+                        False,
+                    ],
                 ],
-            ],
-        )
+            ),
+        ]
     ).drop_duplicates("id")
 
 

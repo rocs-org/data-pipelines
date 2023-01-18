@@ -12,7 +12,7 @@ build-docs:
 	poetry run dbt --profiles-dir . docs generate
 
 serve-docs:
-	poetry run dbt --profiles-dir . docs serve
+	poetry run dbt --profiles-dir . docs serve --port 8000
 
 docs:
 	make build-docs && make serve-docs

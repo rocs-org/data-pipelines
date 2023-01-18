@@ -7,6 +7,7 @@ from .add_vaccination_data import (
 
 import pandas.api.types as ptypes
 
+
 LOCAL_DOWNLOAD_URL = "http://static-files/thryve/exportStudy_reduced.7z"
 
 

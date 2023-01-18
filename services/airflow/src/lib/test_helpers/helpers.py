@@ -5,9 +5,13 @@ from datetime import datetime
 
 import ramda as R
 from airflow.models import DagBag, TaskInstance
-from airflow.utils.dates import days_ago
 from airflow.utils.types import DagRunType
+from pendulum import today
 from returns.curry import curry
+
+
+def days_ago(days: int):
+    return today("UTC").add(days=-days)
 
 
 def execute_dag(dag_id: str, execution_date: str, dag_config: dict = {}):
@@ -104,6 +108,8 @@ def run_task_with_url(dag_id: str, task_id: str, url: str):
     task, task_instance = create_task_instance(dag_id, task_id, url)
 
     task_instance.get_template_context()
+    # render template context
+    task_instance.render_templates()
     res = task.prepare_for_execution().execute(task_instance.get_template_context())
 
     return res
@@ -113,6 +119,10 @@ def run_task(dag_id: str, task_id: str):
     task, task_instance = create_task_instance(dag_id, task_id)
 
     task_instance.get_template_context()
+
+    # render template context
+    task_instance.render_templates()
+
     res = task.prepare_for_execution().execute(task_instance.get_template_context())
 
     return res

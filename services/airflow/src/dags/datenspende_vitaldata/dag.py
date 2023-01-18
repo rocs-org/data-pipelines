@@ -1,9 +1,8 @@
 from datetime import timedelta
-from pendulum import today
 
 from airflow import DAG
 from airflow.operators.python import PythonOperator
-from airflow.operators.bash import BashOperator
+from pendulum import today
 
 from src.dags.datenspende_vitaldata.data_update import (
     vital_data_update_etl,
@@ -16,8 +15,8 @@ from src.dags.datenspende_vitaldata.post_processing import (
 from src.lib.dag_helpers import (
     create_slack_error_message_from_task_context,
     slack_notifier_factory,
+    create_dbt_task_tree,
 )
-from src.lib.dag_helpers import run_dbt_models
 from src.lib.test_helpers import if_var_exists_in_dag_conf_use_as_first_arg
 
 default_args = {
@@ -28,6 +27,7 @@ default_args = {
     "provide_context": True,
     "dir": "/opt/airflow/dbt/",
 }
+
 
 dag = DAG(
     "datenspende_vitaldata_v2",
@@ -57,17 +57,42 @@ t2 = PythonOperator(
     op_args=PIVOT_TARGETS,
 )
 
-t3 = BashOperator(dag=dag, task_id="where_am_i", bash_command="pwd")
+t1 >> t2
 
-t4 = PythonOperator(
+dbt_tasks = create_dbt_task_tree(
     dag=dag,
-    task_id="run_dbt_models",
-    doc="""
-    1) Run the dbt models selected in the op_args against the specified target schema
-    """,
-    python_callable=run_dbt_models,
-    op_args=["datenspende", "datenspende_derivatives", "/opt/airflow/dbt/"],
+    base_task=t1,
+    dbt_dir="/opt/airflow/dbt/",
+    dbt_verb="run",
+    env={
+        "TARGET_DB_SCHEMA": "datenspende_derivatives",
+        "DBT_LOGS": "/opt/airflow/logs/dbt/",
+    },
+)
+
+# Since the thryve data loading is disabled, the above is merely a proof of concept.
+# The following is the actual DAG:
+
+dag2 = DAG(
+    "data_donation_in_warehouse",
+    default_args=default_args,
+    description="Data donation in warehouse transformations",
+    schedule=timedelta(days=1),
+    start_date=today("UTC").add(days=-1),
+    tags=["ROCS pipelines"],
+    on_failure_callback=slack_notifier_factory(
+        create_slack_error_message_from_task_context
+    ),
 )
 
 
-t1 >> [t2, t3, t4]
+create_dbt_task_tree(
+    dag=dag2,
+    base_task=None,
+    dbt_dir="/opt/airflow/dbt/",
+    dbt_verb="run",
+    env={
+        "TARGET_DB_SCHEMA": "datenspende_derivatives",
+        "DBT_LOGS": "/opt/airflow/logs/dbt/",
+    },
+)
