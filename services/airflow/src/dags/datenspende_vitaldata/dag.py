@@ -1,8 +1,8 @@
 from datetime import timedelta
-from pendulum import today
 
 from airflow import DAG
 from airflow.operators.python import PythonOperator
+from pendulum import today
 
 from src.dags.datenspende_vitaldata.data_update import (
     vital_data_update_etl,
@@ -27,6 +27,7 @@ default_args = {
     "provide_context": True,
     "dir": "/opt/airflow/dbt/",
 }
+
 
 dag = DAG(
     "datenspende_vitaldata_v2",

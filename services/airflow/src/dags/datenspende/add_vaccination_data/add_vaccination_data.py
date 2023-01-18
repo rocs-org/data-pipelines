@@ -1,20 +1,17 @@
-import ramda as R
-import numpy as np
-from typing import List, TypedDict, Union
 from datetime import datetime
+from typing import List, TypedDict, Union
+
+import numpy as np
+import pandas as pd
+import ramda as R
 from psycopg2.sql import SQL
+
+from postgres_helpers import create_db_context, teardown_db_context, DBContext
 from src.lib.dag_helpers import (
     execute_query_and_return_dataframe,
     connect_to_db_and_upsert_pandas_dataframe_on_constraint,
 )
 from src.lib.test_helpers import set_env_variable_from_dag_config_if_present
-from postgres_helpers import create_db_context, teardown_db_context, DBContext
-
-# silence warning about pandas only supporting SQLAlchemy
-# import warnings
-# warnings.filterwarnings("ignore", category=UserWarning)
-
-import pandas as pd
 
 
 class UserVaccinationData(TypedDict):

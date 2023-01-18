@@ -1,11 +1,12 @@
+import networkx as nx
+import pytest
+
 from postgres_helpers import DBContext
 from src.lib.dag_helpers import (
     execute_query_and_return_dataframe,
     load_dbt_nodes_from_file,
 )
 from src.lib.test_helpers import run_task_with_url, run_task
-import pytest
-import networkx as nx
 
 
 def test_standardized_vitals_pipeline(db: DBContext):
