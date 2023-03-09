@@ -6,3 +6,4 @@
 **/__pycache__
 **/.pytest__cache
 .gitsecret/keys/random_seed
+.DS_Store
