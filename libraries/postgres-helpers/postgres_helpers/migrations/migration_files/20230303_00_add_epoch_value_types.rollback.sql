@@ -1,0 +1,1 @@
+DROP TABLE datenspende.epoch_value_types;
