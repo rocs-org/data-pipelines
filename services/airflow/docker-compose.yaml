@@ -177,6 +177,9 @@ services:
       _AIRFLOW_WWW_USER_USERNAME: ${_AIRFLOW_WWW_USER_USERNAME:-airflow}
       _AIRFLOW_WWW_USER_PASSWORD: ${_AIRFLOW_WWW_USER_PASSWORD:-airflow}
 
+  mlflow:
+    image: ghcr.io/mlflow/mlflow:v2.2.2
+
 volumes:
   postgres-db-volume:
   airflow-logs-volume:
