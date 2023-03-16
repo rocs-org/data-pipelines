@@ -179,11 +179,18 @@ services:
 
   mlflow-server:
     image: ghcr.io/mlflow/mlflow:v2.2.2
-    command: mlflow server --backend-store-uri sqlite:////opt/mlflow/mlflow.db --default-artifact-root /opt/mlflow/artifact-store --host 0.0.0.0 --port 8800
+    command: mlflow server --backend-store-uri sqlite:////opt/mlflow/data/mlflow.db --default-artifact-root /opt/mlflow/data/artifact-store --host 0.0.0.0 --port 8800
     volumes:
-      - mlflow-volume:/opt/mlflow/artifact-store
+      - mlflow-volume:/opt/mlflow/data
     ports:
       - 8800:8800
+    healthcheck:
+      test:
+        - "curl localhost:8800/health"
+      interval: 60s
+      timeout: 5s
+      retries: 5
+    restart: always
 
 volumes:
   postgres-db-volume:
