@@ -10,3 +10,10 @@ rocs-postgres:
       pass: "{{ env_var('TARGET_DB_PW') }}"
       dbname: "{{ env_var('TARGET_DB') }}"
       schema: "{{ env_var('TARGET_DB_SCHEMA') }}"
+    mysql:
+      type: mysql
+      server: "{{ env_var('TARGET_MYSQL_DB_HOSTNAME') }}"
+      port: "{{ env_var('TARGET_MYSQL_DB_PORT') | as_number }}"
+      username: "{{ env_var('TARGET_MYSQL_DB_USER') }}"
+      password: "{{ env_var('TARGET_MYSQL_DB_PW') }}"
+      schema: "{{ env_var('TARGET_MYSQL_DB_SCHEMA') }}"
