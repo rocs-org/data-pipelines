@@ -3,16 +3,11 @@ pull_request_rules:
     conditions:
       - "#approved-reviews-by>=1"
       - or:
-        - check-success=integration-tests
-        - check-skipped=integration-tests
+          - check-success=integration-tests
+          - check-skipped=integration-tests
       - check-success=unit-tests
       - check-success=code-quality
     actions:
       merge:
         method: merge
-        
-  - name: delete head branch after merge
-    conditions:
-      - merged
-    actions:
-      delete_head_branch:
+
